@@ -1,8 +1,9 @@
 import React from 'react';
+import './Footer.css';
 
 function Footer() {
   return (
-    <footer>
+    <footer className="footer">
       <div className="container">
         <p>&copy; {new Date().getFullYear()} Tu Nombre o Nombre de la Empresa</p>
       </div>
@@ -11,3 +12,4 @@ function Footer() {
 }
 
 export default Footer;
+
