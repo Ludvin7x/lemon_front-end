@@ -1,31 +1,28 @@
+import React from 'react';
 import './App.css';
-import logo from './img/Logo.svg';
-import Header from './Header.js'
-import Nav from './Nav.js'
-import Main from './Main.js'
-import Footer from './Footer'
-import { ReactComponent as Logo } from './img/Logo.svg';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import Header from './components/Header';
+import Nav from './components/Nav'
+import HomePage from './components/Body/HomePage'
+import BookingPage from './components/Body/BookingPage';
+import Login from './components/Body/Login'
+import Footer from './components/Footer'
 
 function App() {
   return (
     <div className="App">
-      <Header>
-        <img src={logo} alt="Logo"/>
-        <meta name="description" content="Webpage of Little Lemon Restaurant"/>
-        <meta name="og:title" content="Little Lemon"/>
-        <meta name="og:description" content="Little Lemon Aplication"/>
-        <meta name="og:image" content={logo}/>
-        <Logo />
-        </Header>
-      <Nav>
-        <ul>
-          <li>hola</li>
-          <li>hola</li>
-          <li>hola</li>
-        </ul>
-      </Nav>
-      <Main></Main>
-      <Footer></Footer>
+      <Header />
+      <Router>
+      <div>
+        <Nav />
+        <Routes>
+          <Route path="/" element={<HomePage />} />
+          <Route path="/BookingPage" element={<BookingPage />} />
+          <Route path="/Login" element={<Login />} />
+        </Routes>
+      </div>
+    </Router>
+    <Footer/>
     </div>
   );
 }
