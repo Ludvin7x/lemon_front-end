@@ -1,13 +1,13 @@
 import React from 'react';
-import './Footer.css';
+import './Footer.css'
 
 function Footer() {
   return (
-    <footer className="footer">
-      <div className="container">
-        <p>&copy; {new Date().getFullYear()} Tu Nombre o Nombre de la Empresa</p>
-      </div>
-    </footer>
+    <div>
+
+        <p>&copy; {new Date().getFullYear()} Little Lemon®</p>
+
+    </div>
   );
 }
 

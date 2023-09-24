@@ -1,51 +1,40 @@
-/* Login.css */
+h1 {
+  text-align: center;
+}
 
-/* Estilo para el contenedor principal del formulario de inicio de sesión */
-.login-container {
+form {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
-  height: 100vh; /* Hace que el formulario ocupe toda la altura de la ventana */
 }
 
-/* Estilo para el formulario */
-.login-form {
-  max-width: 300px;
-  padding: 20px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  background-color: #fff;
-  box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+.user,
+.password {
+  margin: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
-/* Estilo para los campos de entrada de texto */
-.login-input {
-  width: 100%;
-  margin-bottom: 10px;
-  padding: 10px;
-  border: 1px solid #ccc;
-  border-radius: 3px;
+label {
+  font-weight: bold;
 }
 
-/* Estilo para el botón de inicio de sesión */
-.login-button {
-  width: 100%;
-  padding: 10px;
+input {
+  padding: 5px;
+  margin-top: 5px;
+  width: 100%; /* Para que ocupen el mismo ancho */
+}
+
+button {
   background-color: #007bff;
-  color: #fff;
+  color: white;
   border: none;
-  border-radius: 3px;
+  padding: 10px 20px;
+  margin-top: 20px;
   cursor: pointer;
 }
 
-/* Estilo para el botón de inicio de sesión al pasar el mouse sobre él */
-.login-button:hover {
+button:hover {
   background-color: #0056b3;
-}
-
-/* Estilo para los mensajes de error */
-.error-message {
-  color: red;
-  margin-top: 10px;
 }
