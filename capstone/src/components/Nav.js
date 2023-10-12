@@ -1,16 +1,16 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
-import './Nav.css';
+import React from "react";
+import "./Nav.css"
+import { Link } from "react-router-dom";
 
 function Nav() {
   return (
-    <nav>
+    <nav className="nav">
       <ul>
         <li>
-          <Link to="/">HomePage</Link>
+          <Link to="/">Home</Link>
         </li>
         <li>
-          <Link to="/BookingPage">BookingPage</Link>
+          <Link to="/BookingForm">Booking Form</Link>
         </li>
         <li>
           <Link to="/Login">Login</Link>
@@ -21,5 +21,6 @@ function Nav() {
 }
 
 export default Nav;
+
 
 
