@@ -1,39 +1,54 @@
-import React, {useState, useReducer} from "react";
-import {Route, Routes, useNavigate } from "react-router-dom";
+import React, { useEffect, useReducer } from "react";
+import { Route, Routes } from "react-router-dom";
 import BookingForm from "./Body/BookingForm";
 import HomePage from "./Body/HomePage";
 import Login from "./Body/Login";
+import NotFound from "./Body/NotFound";
+import { fetchAPI} from "./API/api";
+
+function updateTimes(state, action) {
+  switch (action.type) {
+    case 'FETCH_TIMES':
+      try {
+        const { date } = action.payload;
+        const times = fetchAPI(date); // Enviar la fecha recibida directamente a fetchAPI
+        return times;
+      } catch (error) {
+        console.error('Error fetching available times:', error);
+        return ["ERROR"];
+      }
+    default:
+      return state;
+  }
+}
 
 function Main() {
-  const navigate = useNavigate(); // Obtiene la función de navegación
+  const [availableTimes, dispatch] = useReducer(updateTimes, ["hoy", "mañana"]);
 
-  const initializeTimes = [
-    "17:00",
-    "18:00",
-    "19:00",
-    "20:00",
-    "21:00",
-    "22:00",
-    ];
+  useEffect(() => {
+    const fetchInitialTimes = async () => {
+      try {
+        const currentDate = new Date(); // Obtener la fecha actual
+        dispatch({ type: 'FETCH_TIMES', payload: { date: currentDate } }); // Enviar la fecha a través de dispatch
+      } catch (error) {
+        console.error('Error fetching available times:', error);
+      }
+    };
 
-  // Function to update availableTimes based on the selected date
-  const updateTimes = (selectedDate) => {
-    return [
-    "19:00",
-    "20:00",
-    "21:00",
-    "22:00",]
-  };
-
-  const [availableTimes, dispatch] = useReducer(updateTimes, initializeTimes);
+    fetchInitialTimes(); // Llamar a fetchInitialTimes al montar el componente para obtener las horas iniciales
+  }, []);
 
   return (
     <div>
-    <Routes>
-        <Route path="/" element={<HomePage/>} />
-        <Route path="/BookingForm" element={<BookingForm availableTimes={availableTimes} dispatch={dispatch} />} />
-        <Route path="/Login" element={<Login/> } />
-    </Routes>
+      <Routes>
+        <Route path="/" element={<HomePage />} />
+        <Route
+          path="/BookingForm"
+          element={<BookingForm availableTimes={availableTimes} dispatch={dispatch} />}
+        />
+        <Route path="/Login" element={<Login />} />
+        <Route path="*" element={<NotFound />} />
+      </Routes>
     </div>
   );
 }
