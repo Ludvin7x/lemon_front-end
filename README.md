@@ -31,7 +31,13 @@ https://github.com/mdalmamunit427/Meta-Front-End-Developer-Capstone-Booking-a-ta
 
 
 # Version 0.2 Interacting with the API
-Exercise: Connecting the bookings page to the API
-    -14 de Noviembre 2023
-        completado-> Exercise: Connecting the bookings page to the API
-
+Week 3
+    Interacting With The Api
+        -14 de Noviembre 2023
+            completado-> Exercise: Connecting the bookings page to the API
+        -16 de Noviembre 2023
+            Update the unit tests for the API queries
+        -17 de Noviembre 2023
+            Completed
+    Improving the experience
+        
