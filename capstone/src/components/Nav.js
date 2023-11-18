@@ -2,7 +2,8 @@ import React, { useEffect, useState } from "react";
 import "./Nav.css";
 import { NavLink, useLocation } from "react-router-dom";
 import Logo from "../img/Logo.svg";
-import icono_menu from "../img/icono_menu.png"
+import icono_menu from "../img/icono_menu.png";
+import icono_order from "../img/icono_order.png";
 
 function Nav() {
   const [activeLink, setActiveLink] = useState(""); // Estado para rastrear la ruta actual
@@ -20,8 +21,8 @@ function Nav() {
   return (
     <nav className="nav">
 
-       {/* Ícono del menú para dispositivos móviles */}
-       <div className="mobile-menu-icon" onClick={toggleMenu}>
+      {/* Ícono del menú para dispositivos móviles */}
+      <div className="mobile-menu-icon" onClick={toggleMenu}>
         <img
           src={icono_menu}
           alt="Menú"
@@ -37,7 +38,7 @@ function Nav() {
       {/* Lista de opciones */}
       <ul className={`menu ${showMenu ? 'active' : ''}`}>
         <li>
-        <NavLink exact activeClassName="selected" to="/" onClick={() => setShowMenu(false)} className={activeLink === "/" ? "selected" : ""}>
+          <NavLink exact activeClassName="selected" to="/" onClick={() => setShowMenu(false)} className={activeLink === "/" ? "selected" : ""}>
             Home
           </NavLink>
         </li>
@@ -49,6 +50,14 @@ function Nav() {
         <li>
           <NavLink activeClassName="selected" to="/Login" onClick={() => setShowMenu(false)} className={activeLink === "/Login" ? "selected" : ""}>
             Login
+          </NavLink>
+        </li>
+        <li>
+          <NavLink activeClassName="selected" to="/Order" onClick={() => setShowMenu(false)} className={activeLink === "/Order" ? "selected" : ""}>
+            Order Now
+            <img src={icono_order} alt="Order" className="order-icon"
+            style={{ width: "40px", height: "auto" }} // Ajusta el tamaño del ícono aquí (ejemplo: 30px)
+            />
           </NavLink>
         </li>
       </ul>

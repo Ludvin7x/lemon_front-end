@@ -1,7 +1,5 @@
 # react-frontend
 React front end capsone
-Link de referencia:
-https://github.com/mdalmamunit427/Meta-Front-End-Developer-Capstone-Booking-a-table-on-the-Little-Lemon-website
 
 # Version 0.1 Table Booking System
 -Septiembre 9/2023
@@ -31,7 +29,7 @@ https://github.com/mdalmamunit427/Meta-Front-End-Developer-Capstone-Booking-a-ta
 
 
 # Version 0.2 Interacting with the API
-Week 3
+Week 3, completed
     Interacting With The Api
         -14 de Noviembre 2023
             completado-> Exercise: Connecting the bookings page to the API
@@ -40,10 +38,13 @@ Week 3
         -17 de Noviembre 2023
             Completed
     Improving the experience
-        -17 de Noviembre 2023
+        -17 - 18 de Noviembre 2023
             Exercise: Ensuring your application is accessible to users
             Mejorar la interfaz
                 Eliminando el Footer (solo ocupa espacio)
                 actualizando el HomePage
                 actualizando Navbar
                 agregado version para telefonos
+
+# Version 0.3 Project Assessment
+    Order button

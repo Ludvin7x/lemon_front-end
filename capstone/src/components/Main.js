@@ -3,6 +3,7 @@ import { Route, Routes} from "react-router-dom";
 import BookingForm from "./Body/BookingForm";
 import HomePage from "./Body/HomePage";
 import Login from "./Body/Login";
+import Order from "./Body/Order";
 import NotFound from "./Body/NotFound";
 import { fetchAPI} from "./API/api";
 
@@ -47,6 +48,7 @@ function Main() {
           element={<BookingForm availableTimes={availableTimes} dispatch={dispatch} />}
         />
         <Route path="/Login" element={<Login />} />
+        <Route path="/Order" element={<Order />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
     </div>
