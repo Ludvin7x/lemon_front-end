@@ -1,5 +1,5 @@
 .confirmed-booking {
-  background-color: #f8f8f8;
+  background-color: #d6e6da;
   border-radius: 8px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   padding: 110px;
@@ -11,6 +11,7 @@
   flex-direction: column; /* Alinea verticalmente */
   justify-content: center; /* Centra verticalmente */
   align-items: center; /* Centra horizontalmente */
+  margin-top: 100px;
 }
 
 .confirmed-booking h2 {
@@ -20,7 +21,7 @@
 }
 
 .confirmed-booking p {
-  color: #555;
+  color: #504d4d;
   font-size: 18px;
   margin-bottom: 10px;
 }

@@ -1,10 +1,10 @@
 .homepage {
   width: 100%; /* Utiliza el ancho completo de la pantalla */
   max-width: 100%; /* Establece el ancho máximo igual al ancho de la pantalla */
-  margin: 0; /* Elimina cualquier margen */
-  padding: 0; /* Elimina cualquier relleno */
+  margin-top: 60px;
   box-sizing: border-box; /* Incluye el borde y el relleno en el cálculo del tamaño */
   overflow-x: hidden; /* Oculta el desbordamiento horizontal */
+  align-items: center;
 }
 
 /* Estilos para centrar las diapositivas */
@@ -14,11 +14,6 @@
   margin-left: 0px;
 }
 
-.slick-list {
-  width: 100%; /* Ancho del slider */
-  margin: 0 auto; /* Centrar el slider en la página */
-  overflow: hidden; /* Oculta el contenido que excede el tamaño del slider */
-}
 
 .slick-track {
   display: flex;
@@ -110,4 +105,50 @@
 .social-links a img {
   width: 40px;
   height: 40px;
+}
+
+/* Estilos para dispositivos moviles  */
+@media (max-width: 768px) {
+  .homepage {
+    width: 100%; /* Utiliza el ancho completo de la pantalla */
+    max-width: 100%; /* Establece el ancho máximo igual al ancho de la pantalla */
+    margin-top: 100px;
+    box-sizing: border-box; /* Incluye el borde y el relleno en el cálculo del tamaño */
+    overflow-x: hidden; /* Oculta el desbordamiento horizontal */
+    align-items: center;
+    margin-left: 0px;
+    padding-left: 0px;
+  }
+
+  .slick-slide {
+    margin-bottom: 20px;
+    margin: 10px;
+    padding-left: 0%;
+    width: 100%;
+  }
+
+  .slick-track{
+    margin-left: -50px;
+    padding: 0px;
+  }
+
+  .slick-list {
+    width: 100%;
+    padding: 0;
+    margin: 0;
+  }
+
+  .slick-slide img {
+    width: 100%;
+    height: 400px; /* Ajusta la altura según sea necesario */
+  }
+
+  .row {
+    flex-direction: column; /* Cambia la dirección a columna en dispositivos móviles */
+    align-items: center; /* Centra los boxes */
+  }
+
+  .box {
+    flex: 0 0 calc(100% - 20px); /* Ocupa el ancho completo menos el margen */
+  }
 }

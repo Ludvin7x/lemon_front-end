@@ -59,7 +59,7 @@ function BookingForm(props) {
   return (
     <div>
       {!submitted ? (
-        <div>
+        <div className="form">
           <h1>Book Now</h1>
           <form style={formStyle} onSubmit={handleSubmission}>
             <label htmlFor="res-date">Choose date</label>

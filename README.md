@@ -46,3 +46,4 @@ Week 3
                 Eliminando el Footer (solo ocupa espacio)
                 actualizando el HomePage
                 actualizando Navbar
+                agregado version para telefonos
