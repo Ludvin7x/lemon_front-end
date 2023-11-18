@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { submitAPI } from "../API/api";
-import Swal from 'sweetalert2';
+import Swal from "sweetalert2";
 import ConfirmedBooking from "./ConfirmedBooking";
 import "./BookingForm.css";
 
@@ -11,12 +11,13 @@ function BookingForm(props) {
     gap: "20px",
   };
 
-  const [date, setDate] = useState(new Date().toISOString().split('T')[0]);
+  const [date, setDate] = useState(new Date().toISOString().split("T")[0]);
   const [time, setTime] = useState("");
   const [guests, setGuest] = useState(1);
   const [occasion, setOccasion] = useState("Birthday");
   const [submitted, setSubmitted] = useState(false);
   const [bookingData, setBookingData] = useState(null);
+  const currentDate = new Date().toISOString().split("T")[0];
 
   const handleSubmission = async (e) => {
     e.preventDefault();
@@ -35,12 +36,16 @@ function BookingForm(props) {
         setSubmitted(true);
         setBookingData(formData);
         clearForm();
-        Swal.fire('¡Formulario enviado exitosamente!', '', 'success');
+        Swal.fire("¡Formulario enviado exitosamente!", "", "success");
       } else {
-        Swal.fire('Falló el envío del formulario', submissionResult.message, 'error');
+        Swal.fire(
+          "Falló el envío del formulario",
+          submissionResult.message,
+          "error"
+        );
       }
     } catch (error) {
-      Swal.fire('Error al enviar el formulario', error.message, 'error');
+      Swal.fire("Error al enviar el formulario", error.message, "error");
     }
   };
 
@@ -51,21 +56,32 @@ function BookingForm(props) {
   };
 
   const clearForm = () => {
-    setTime('');
+    setTime("");
     setGuest(1);
-    setOccasion('Birthday');
+    setOccasion("Birthday");
   };
 
   return (
-    <div>
+    <div className="bookingform">
       {!submitted ? (
-        <div className="form">
+        <div className="form-booking">
           <h1>Book Now</h1>
           <form style={formStyle} onSubmit={handleSubmission}>
             <label htmlFor="res-date">Choose date</label>
-            <input type="date" id="res-date" defaultValue={date} onChange={handleDateChange} />
+            <input
+              type="date"
+              id="res-date"
+              min={currentDate} // Establecer el mínimo como la fecha actual
+              defaultValue={currentDate} // Valor predeterminado como la fecha actual
+              onChange={handleDateChange}
+            />
             <label htmlFor="res-time">Choose time</label>
-            <select id="res-time" value={time} onChange={(e) => setTime(e.target.value)} aria-label="Select time">
+            <select
+              id="res-time"
+              value={time}
+              onChange={(e) => setTime(e.target.value)}
+              aria-label="Select time"
+            >
               {props.availableTimes.map((availableTime, index) => (
                 <option key={index} value={availableTime}>
                   {availableTime}
@@ -88,12 +104,23 @@ function BookingForm(props) {
               }}
               aria-label="Enter number of guests"
             />
-            <label htmlFor="occasion" aria-label="Occasion">Occasion</label>
-            <select id="occasion" value={occasion} onChange={(e) => setOccasion(e.target.value)} aria-label="Select occasion">
+            <label htmlFor="occasion" aria-label="Occasion">
+              Occasion
+            </label>
+            <select
+              id="occasion"
+              value={occasion}
+              onChange={(e) => setOccasion(e.target.value)}
+              aria-label="Select occasion"
+            >
               <option value="Birthday">Birthday</option>
               <option value="Anniversary">Anniversary</option>
             </select>
-            <input type="submit" value="Make Your reservation" aria-label="On Click: Submit reservation" />
+            <input
+              type="submit"
+              value="Make Your reservation"
+              aria-label="On Click: Submit reservation"
+            />
           </form>
         </div>
       ) : (

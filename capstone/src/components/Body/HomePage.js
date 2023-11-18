@@ -19,9 +19,6 @@ import Slide10 from '../../img/Slider/Diapositiva10.JPG';
 import BoxImage1 from "../../img/ensalada.jpg"
 import BoxImage2 from "../../img/food_carne.jpg"
 import BoxImage3 from "../../img/lugar.jpg"
-import facebookIcon from "../../img/icono_facebook.png"
-import whatsappIcon from "../../img/icono_whatsapp.png"
-
 
 const HomePage = () => {
   const images = [
@@ -85,18 +82,6 @@ const HomePage = () => {
             Un lugar acogedor diseñado para disfrutar momentos especiales y compartir experiencias inolvidables.
             Sumérgete en un espacio único que te brinda comodidad y calidez.
           </p>
-        </div>
-      </div>
-
-      <div className="footer">
-        <p>Little Lemon &copy; {new Date().getFullYear()} Todos los derechos reservados</p>
-        <div className="social-links">
-          <a href="link-de-facebook">
-            <img src={facebookIcon} alt="Facebook" />
-          </a>
-          <a href="link-de-whatsapp">
-            <img src={whatsappIcon} alt="WhatsApp" />
-          </a>
         </div>
       </div>
     </div>

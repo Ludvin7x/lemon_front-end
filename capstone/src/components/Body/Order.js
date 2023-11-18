@@ -1,6 +1,14 @@
 import React from "react";
 import "./Order.css"; // Asegúrate de tener el archivo CSS para el estilo
 
+import plato1 from "../../img/plato1.jpg"
+import plato2 from "../../img/plato2.jpg"
+import plato3 from "../../img/plato3.jpg"
+import plato4 from "../../img/plato4.jpg"
+import plato5 from "../../img/plato5.jpg"
+import plato6 from "../../img/plato6.jpg"
+
+
 function Order() {
   const products = [
     {
@@ -8,21 +16,21 @@ function Order() {
       title: "Producto 1",
       description: "Descripción del Producto 1. Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
       price: "$10",
-      image: "url_de_la_imagen_1",
+      image: plato1,
     },
     {
       id: 2,
       title: "Producto 2",
       description: "Descripción del Producto 2. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
       price: "$15",
-      image: "url_de_la_imagen_2",
+      image: plato2,
     },
     {
       id: 3,
       title: "Producto 3",
       description: "Descripción del Producto 3. Ut enim ad minim veniam, quis nostrud exercitation ullamco.",
       price: "$20",
-      image: "url_de_la_imagen_3",
+      image: plato3,
     },
 
     {
@@ -30,7 +38,7 @@ function Order() {
         title: "Producto 4",
         description: "Descripción del Producto 3. Ut enim ad minim veniam, quis nostrud exercitation ullamco.",
         price: "$20",
-        image: "url_de_la_imagen_4",
+        image: plato4,
       },
 
       {
@@ -38,7 +46,7 @@ function Order() {
         title: "Producto 5",
         description: "Descripción del Producto 3. Ut enim ad minim veniam, quis nostrud exercitation ullamco.",
         price: "$20",
-        image: "url_de_la_imagen_4",
+        image: plato5,
       },
 
       {
@@ -46,7 +54,7 @@ function Order() {
         title: "Producto 6",
         description: "Descripción del Producto 6. Ut enim ad minim veniam, quis nostrud exercitation ullamco.",
         price: "$20",
-        image: "url_de_la_imagen_4",
+        image: plato6,
       },
     // Puedes agregar más productos aquí si es necesario
   ];

@@ -3,7 +3,6 @@
   border-radius: 8px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   padding: 110px;
-  margin: 20px;
   width: 70%; /* Ancho del contenedor */
   margin: 20px auto; /* Centrar horizontalmente */
   text-align: center; /* Centrar el texto dentro del contenedor */
@@ -12,6 +11,7 @@
   justify-content: center; /* Centra verticalmente */
   align-items: center; /* Centra horizontalmente */
   margin-top: 100px;
+  margin-bottom: 80px;
 }
 
 .confirmed-booking h2 {
