@@ -40,4 +40,9 @@ Week 3
         -17 de Noviembre 2023
             Completed
     Improving the experience
-        
+        -17 de Noviembre 2023
+            Exercise: Ensuring your application is accessible to users
+            Mejorar la interfaz
+                Eliminando el Footer (solo ocupa espacio)
+                actualizando el HomePage
+                actualizando Navbar

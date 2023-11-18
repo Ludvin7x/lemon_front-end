@@ -1,23 +1,50 @@
-/* Estilos para la barra de navegación */
-nav {
-  overflow: hidden;
+.nav {
+  background-color: #333;
+  padding: 10px 0;
+  display: flex;
+  align-items: center;
+  justify-content: center; /* Alinea el contenido al centro horizontalmente */
 }
 
-nav ul {
-  padding: 0;
-  margin: 0;
+.logo {
+  width: 130px; /* Ajusta el tamaño del logo según sea necesario */
+  height: auto;
+  background-color: #2bff00;
+  margin-right: 50px;
+}
+
+ul {
   list-style: none;
-  display: flex; /* Hace que los elementos de la lista se muestren en línea horizontal */
-  justify-content: space-around; /* Distribuye los elementos de manera uniforme en el espacio disponible */
-}
-
-nav li {
   margin: 0;
+  padding: 0;
+  display: flex;
+  justify-content: center; /* Centra horizontalmente los elementos de la lista */
 }
 
-nav a {
-  display: block;
-  color: black; /* Cambia el color del texto según tus preferencias */
+li {
+  margin: 0 15px;
+  display: flex; /* Utiliza flexbox */
+  justify-content: center; /* Centra horizontalmente */
+  align-items: center; /* Centra verticalmente */
+}
+
+a {
   text-decoration: none;
-  padding: 1rem; /* Espaciado alrededor del texto del enlace */
+  color: #fff;
+  font-weight: bold;
+  transition: color 0.3s ease;
+  display: flex; /* Utiliza flexbox */
+  justify-content: center; /* Centra horizontalmente */
+  align-items: center; /* Centra verticalmente */
+  height: 100%; /* Ocupa toda la altura disponible en el <li> */
+}
+
+
+a:hover {
+  color: #2bff00;
+}
+
+.selected {
+  color: #ffcc00;
+  /* Estilos adicionales para el enlace activo si es necesario */
 }

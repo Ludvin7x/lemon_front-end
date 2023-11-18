@@ -1,5 +1,5 @@
 import React, { useEffect, useReducer } from "react";
-import { Route, Routes } from "react-router-dom";
+import { Route, Routes} from "react-router-dom";
 import BookingForm from "./Body/BookingForm";
 import HomePage from "./Body/HomePage";
 import Login from "./Body/Login";
@@ -23,7 +23,7 @@ function updateTimes(state, action) {
 }
 
 function Main() {
-  const [availableTimes, dispatch] = useReducer(updateTimes, ["hoy", "mañana"]);
+  const [availableTimes, dispatch] = useReducer(updateTimes, [""]);
 
   useEffect(() => {
     const fetchInitialTimes = async () => {
@@ -31,7 +31,7 @@ function Main() {
         const currentDate = new Date(); // Obtener la fecha actual
         dispatch({ type: 'FETCH_TIMES', payload: { date: currentDate } }); // Enviar la fecha a través de dispatch
       } catch (error) {
-        console.error('Error fetching available times:', error);
+        console.error('Error fetching available times for today:', error);
       }
     };
 

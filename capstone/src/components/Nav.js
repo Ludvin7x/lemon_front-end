@@ -1,19 +1,36 @@
-import React from "react";
-import "./Nav.css"
-import { Link } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import "./Nav.css";
+import { NavLink, useLocation } from "react-router-dom";
+import Logo from "../img/Logo.svg";
 
 function Nav() {
+  const [activeLink, setActiveLink] = useState(""); // Estado para rastrear la ruta actual
+  const location = useLocation();
+
+  useEffect(() => {
+    setActiveLink(location.pathname); // Actualiza el estado cuando cambia la ruta
+  }, [location]);
+
   return (
     <nav className="nav">
+      <div className="logo-container">
+        <img src={Logo} alt="Logo" className="logo" />
+      </div>
       <ul>
         <li>
-          <Link to="/">Home</Link>
+          <NavLink exact activeClassName="selected" to="/" className={activeLink === "/" ? "selected" : ""}>
+            Home
+          </NavLink>
         </li>
         <li>
-          <Link to="/BookingForm">Booking Form</Link>
+          <NavLink activeClassName="selected" to="/BookingForm" className={activeLink === "/BookingForm" ? "selected" : ""}>
+            Booking Form
+          </NavLink>
         </li>
         <li>
-          <Link to="/Login">Login</Link>
+          <NavLink activeClassName="selected" to="/Login" className={activeLink === "/Login" ? "selected" : ""}>
+            Login
+          </NavLink>
         </li>
       </ul>
     </nav>
@@ -21,6 +38,3 @@ function Nav() {
 }
 
 export default Nav;
-
-
-

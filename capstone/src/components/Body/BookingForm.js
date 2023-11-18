@@ -65,7 +65,7 @@ function BookingForm(props) {
             <label htmlFor="res-date">Choose date</label>
             <input type="date" id="res-date" defaultValue={date} onChange={handleDateChange} />
             <label htmlFor="res-time">Choose time</label>
-            <select id="res-time" value={time} onChange={(e) => setTime(e.target.value)}>
+            <select id="res-time" value={time} onChange={(e) => setTime(e.target.value)} aria-label="Select time">
               {props.availableTimes.map((availableTime, index) => (
                 <option key={index} value={availableTime}>
                   {availableTime}
@@ -77,17 +77,23 @@ function BookingForm(props) {
               type="number"
               placeholder="1"
               min="1"
-              max="10"
+              max="120"
               id="guests"
               value={guests}
-              onChange={(e) => setGuest(e.target.value)}
+              onChange={(e) => {
+                const value = parseInt(e.target.value);
+                if (!isNaN(value) && value >= 1) {
+                  setGuest(value);
+                }
+              }}
+              aria-label="Enter number of guests"
             />
-            <label htmlFor="occasion">Occasion</label>
-            <select id="occasion" value={occasion} onChange={(e) => setOccasion(e.target.value)}>
+            <label htmlFor="occasion" aria-label="Occasion">Occasion</label>
+            <select id="occasion" value={occasion} onChange={(e) => setOccasion(e.target.value)} aria-label="Select occasion">
               <option value="Birthday">Birthday</option>
               <option value="Anniversary">Anniversary</option>
             </select>
-            <input type="submit" value="Make Your reservation" />
+            <input type="submit" value="Make Your reservation" aria-label="On Click: Submit reservation" />
           </form>
         </div>
       ) : (
