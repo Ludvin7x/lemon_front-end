@@ -9,7 +9,6 @@ function ConfirmedBooking({ bookingDetails }) {
       <p>Time: {bookingDetails.time}</p>
       <p>Guests: {bookingDetails.guests}</p>
       <p>Occasion: {bookingDetails.occasion}</p>
-      {/* Agrega más campos según los datos que desees mostrar */}
     </div>
   );
 }
