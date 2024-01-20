@@ -57,8 +57,3 @@ Aplicación web desarrollada en REACT para un restaurante.
           - 3: Que al elegir una fecha cambien los datos del selector según `updateTimes`
       - Las pruebas deberán ser modificadas cuando se integre la API
 </details>
-
-        - 1: Que se renderice "Book Now"
-        - 2: Que el selector muestre `initializeTimes`
-        - 3: Que al elegir una fecha cambien los datos del selector según `updateTimes`
-    - Las pruebas deberán ser modificadas cuando se integre la API
