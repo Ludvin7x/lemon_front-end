@@ -1,59 +1,190 @@
-# react-frontend
-Aplicación web desarrollada en REACT para un restaurante.
-> [Ir a sitio web](https://restaurant-littlelemon.netlify.app/)
+# Little Lemon Restaurant — Front-End (React)
+
+A web application built with **React 18** providing **Little Lemon** customers a complete table reservation system along with a digital menu and a modern, accessible, responsive interface.
+
+> **Live Demo**
+> [https://restaurant-littlelemon.netlify.app/](https://restaurant-littlelemon.netlify.app/)
+
+---
+
+## Table of Contents
+
+1. [Key Features](#key-features)
+2. [Screenshots](#screenshots)
+3. [Tech Stack](#tech-stack)
+4. [Installation & Usage](#installation--usage)
+5. [Project Structure](#project-structure)
+6. [Testing](#testing)
+7. [Continuous Deployment](#continuous-deployment)
+8. [Roadmap](#roadmap)
+9. [Contributing](#contributing)
+10. [License](#license)
+11. [Author](#author)
+
+---
+
+## Key Features
+
+* **Table Reservation System** connected to the backend REST API (Django + Djoser) for availability and booking.
+* **Responsive design**, mobile-first approach supporting viewports down to 320px.
+* **Accessibility (WCAG 2.1 AA)**: keyboard navigation, ARIA roles, and audit-tested.
+* **Modular architecture** with reusable components and custom hooks.
+* **Internationalization ready** (`react-intl`), currently supports English and Spanish.
+* **Unit & Integration tests** using Jest + React Testing Library.
+* **CI/CD**: branch protection + automated deployment on Netlify from `main` branch.
+
+---
+
+## Screenshots
+
+<p align="center">
+  <img src="docs/screenshot-desktop.png" alt="Desktop View" width="700"/>
+</p>
+<p align="center">
+  <img src="docs/screenshot-mobile.png" alt="Mobile View" width="250"/>
+</p>
+
+---
+
+## Tech Stack
+
+| Category           | Stack                                |
+| ------------------ | ------------------------------------ |
+| Language           | JavaScript (ES2022)                  |
+| Framework          | React 18 + Vite                      |
+| Routing            | React Router DOM 6                   |
+| State Management   | Context API + `useReducer`           |
+| API Requests       | Axios                                |
+| Styling            | CSS Modules (BEM)                    |
+| Testing            | Jest, React Testing Library          |
+| Linting/Formatting | ESLint, Prettier, Husky, lint-staged |
+| DevOps             | Netlify, GitHub Actions              |
+
+---
+
+## Installation & Usage
+
+### Prerequisites
+
+* **Node.js ≥ 20**
+* **npm ≥ 10** (or pnpm/yarn)
+
+### Steps
+
+```bash
+# 1. Clone the repository
+git clone https://github.com/<your-username>/react-frontend.git
+cd react-frontend
+
+# 2. Install dependencies
+npm install
+
+# 3. Create environment variables file
+cp .env.example .env
+# Update API URL and other variables accordingly
+
+# 4. Start development server
+npm run dev
+
+# 5. Run tests
+npm test
+```
+
+App will be available at **[http://localhost:5173](http://localhost:5173)** (default Vite port).
+
+---
+
+## Project Structure
+
+```
+react-frontend/
+├── public/
+├── src/
+│   ├── api/            # API service abstractions
+│   ├── assets/         # Static assets
+│   ├── components/     # Reusable UI components
+│   ├── hooks/          # Custom hooks
+│   ├── pages/          # Route-based views
+│   ├── routes/         # Route definitions
+│   ├── contexts/       # Global state providers
+│   ├── tests/          # Test files
+│   └── utils/          # Helper utilities
+├── .env.example
+└── ...
+```
+
+---
+
+## Testing
+
+```bash
+# Run all tests in watch mode
+npm test
+```
+
+Tests cover business logic, component rendering, accessibility, and user interaction.
+
+---
+
+## Continuous Deployment
+
+Production builds are generated with:
+
+```bash
+npm run build
+```
+
+Each push to the `main` branch triggers a **GitHub Action** that:
+
+1. Runs ESLint and unit tests.
+2. Builds the optimized production bundle.
+3. Deploys to **Netlify** using a secure token.
+
+---
+
+## Roadmap
+
+Track progress via the **GitHub Projects** board. Key milestones:
+
+* [x] 💡 **v0.3 – Project Assessment**
+      Front-End MVP with reservations, menu, and auth flows.
+* [ ] 🚀 **v0.4 – Performance & SEO**
+      Optimize Core Web Vitals, lazy loading, metadata.
+* [ ] 🌐 **v0.5 – PWA**
+      Service Worker, offline cache, installable app.
 
 <details>
-  <summary><b>Version 0.3 Project Assessment</b></summary>
+  <summary><b>Detailed Changelog</b></summary>
 
-  - **Front-End desarrollado**
+### v0.3 – Project Assessment
+
+* Front-End completed (May 2025).
+
+### v0.2 – Interacting with the API
+
+* Connected bookings page to the API (Nov 14, 2023).
+* Updated unit tests (Nov 16, 2023).
+* UX & responsive improvements (Nov 17–18, 2023).
+
+### v0.1 – Table Booking System
+
+* Initial booking system implementation (Sep–Oct 2023).
+
 </details>
 
-<details>
-  <summary><b>Version 0.2 Interacting with the API</b></summary>
+---
 
-  > Week 3, completado
+## Contributing
 
-  * Interacting With The Api
-    - 14 de Noviembre 2023: Exercise: Connecting the bookings page to the API (completado)
-    - 16 de Noviembre 2023:
-      - Update the unit tests for the API queries
-      - 17 de Noviembre 2023: Completed
-      - Improving the experience
-    - 17 - 18 de Noviembre 2023:
-      - Exercise: Ensuring your application is accessible to users
-      - Mejorar la interfaz
-      - Eliminando el Footer (solo ocupa espacio)
-      - actualizando el HomePage
-      - actualizando Navbar
-      - agregado versión para teléfonos
-</details>
+Contributions are welcome!
+To report a bug or suggest a feature:
 
-<details>
-  <summary><b>Version 0.1 Table Booking System</b></summary>
+1. Open an **Issue** describing your change.
+2. Tag it with `bug`, `enhancement`, or `question`.
+3. Fork the project and create your branch: `git checkout -b feat/new-feature`.
+4. Make sure to run `npm test` before opening a **Pull Request**.
+5. Clearly describe changes and reference related Issues.
 
-  - Septiembre 9/2023: 1er prueba - modificar este archivo desde VS Code
 
-  - Septiembre 22:
-      - Creación de página web genérica
-          - Uso de React Route / Path
-          - Header/Nav/Footer
-          - Route(Body)->BookingPage, Login, Home
 
-  - Octubre 12 2023:
-      - Se modificó Router para que lo maneje Main y Nav, ya que generaba problema el usar `props.availableTimes.map` en BookingForm, se modificó index.js debido a Router.
-      - Funcionando todo hasta la lección Week 3 > Adding Table Booking state > Step 1
-      - API como script ya no está disponible en línea, de todas formas, Chrome lo bloqueaba, ahora se agregó de forma local como api.js
-
-  - Octubre 14/2023:
-      - Week 3 -> Table Booking System completo
-          - 1: Al inicio se muestran horas predeterminadas de `initializeTimes`, cuando se selecciona cualquier fecha, dispatch se acciona ejecutando `updateTimes` que modifica las horas (lo anterior se va a modificar en la próxima lección, para que las horas sean acorde a lo que el API devuelva en función de la fecha que el usuario seleccione).
-          - 2: Se agregó Test a App.Test.js
-          - 3: Se agregó la página Not Found 404
-
-  - Octubre 15/2023:
-      - Se modificó App.test.js:
-          - 1: Que se renderice "Book Now"
-          - 2: Que el selector muestre `initializeTimes`
-          - 3: Que al elegir una fecha cambien los datos del selector según `updateTimes`
-      - Las pruebas deberán ser modificadas cuando se integre la API
-</details>
+---
