@@ -6,28 +6,27 @@ import icono_menu from "../img/icono_menu.png";
 import icono_order from "../img/icono_order.png";
 
 function Nav() {
-  const [activeLink, setActiveLink] = useState(""); // Estado para rastrear la ruta actual
-  const [showMenu, setShowMenu] = useState(false); // Estado para controlar la visibilidad del menú en dispositivos móviles
+  const [showMenu, setShowMenu] = useState(false); // Estado para el menú móvil
   const location = useLocation();
 
   const toggleMenu = () => {
-    setShowMenu(!showMenu); // Alternar la visibilidad del menú al hacer clic en el ícono
+    setShowMenu(!showMenu);
   };
 
+  // Cierra menú al cambiar de ruta
   useEffect(() => {
-    setActiveLink(location.pathname); // Actualiza el estado cuando cambia la ruta
+    setShowMenu(false);
   }, [location]);
 
   return (
     <nav className="nav">
-
-      {/* Ícono del menú para dispositivos móviles */}
+      {/* Ícono del menú para móvil */}
       <div className="mobile-menu-icon" onClick={toggleMenu}>
         <img
           src={icono_menu}
           alt="Menú"
           className="menu-icon"
-          style={{ width: "60px", height: "auto" }} // Ajusta el tamaño del ícono aquí (ejemplo: 30px)
+          style={{ width: "60px", height: "auto" }}
         />
       </div>
 
@@ -36,27 +35,53 @@ function Nav() {
       </div>
 
       {/* Lista de opciones */}
-      <ul className={`menu ${showMenu ? 'active' : ''}`}>
+      <ul className={`menu ${showMenu ? "active" : ""}`}>
+        {/* Home y Menu juntos */}
         <li>
-          <NavLink exact activeClassName="selected" to="/" onClick={() => setShowMenu(false)} className={activeLink === "/" ? "selected" : ""}>
+          <NavLink
+            to="/"
+            className={({ isActive }) => (isActive ? "selected" : "")}
+          >
             Home
           </NavLink>
         </li>
         <li>
-          <NavLink activeClassName="selected" to="/BookingForm" onClick={() => setShowMenu(false)} className={activeLink === "/BookingForm" ? "selected" : ""}>
+          <NavLink
+            to="/MenuPage"
+            className={({ isActive }) => (isActive ? "selected" : "")}
+          >
+            Menu
+          </NavLink>
+        </li>
+
+        {/* Otros links */}
+        <li>
+          <NavLink
+            to="/BookingForm"
+            className={({ isActive }) => (isActive ? "selected" : "")}
+          >
             Booking Form
           </NavLink>
         </li>
         <li>
-          <NavLink activeClassName="selected" to="/Login" onClick={() => setShowMenu(false)} className={activeLink === "/Login" ? "selected" : ""}>
+          <NavLink
+            to="/Login"
+            className={({ isActive }) => (isActive ? "selected" : "")}
+          >
             Login
           </NavLink>
         </li>
         <li>
-          <NavLink activeClassName="selected" to="/Order" onClick={() => setShowMenu(false)} className={activeLink === "/Order" ? "selected" : ""}>
+          <NavLink
+            to="/Order"
+            className={({ isActive }) => (isActive ? "selected" : "")}
+          >
             Order Now
-            <img src={icono_order} alt="Order" className="order-icon"
-            style={{ width: "40px", height: "auto" }} // Ajusta el tamaño del ícono aquí (ejemplo: 30px)
+            <img
+              src={icono_order}
+              alt="Order"
+              className="order-icon"
+              style={{ width: "40px", height: "auto", marginLeft: "5px" }}
             />
           </NavLink>
         </li>

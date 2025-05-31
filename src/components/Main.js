@@ -1,18 +1,19 @@
 import React, { useEffect, useReducer } from "react";
 import { Route, Routes} from "react-router-dom";
-import BookingForm from "./Body/BookingForm";
-import HomePage from "./Body/HomePage";
-import Login from "./Body/Login";
-import Order from "./Body/Order";
-import NotFound from "./Body/NotFound";
+import BookingForm from "./Pages/BookingForm";
+import HomePage from "./Pages/HomePage";
+import Login from "./Pages/Login";
+import Order from "./Pages/Order";
+import NotFound from "./Pages/NotFound";
 import { fetchAPI} from "./API/api";
+import MenuPage  from "./Pages/MenuPage";
 
 function updateTimes(state, action) {
   switch (action.type) {
     case 'FETCH_TIMES':
       try {
         const { date } = action.payload;
-        const times = fetchAPI(date); // Enviar la fecha recibida directamente a fetchAPI
+        const times = fetchAPI(date);
         return times;
       } catch (error) {
         console.error('Error fetching available times:', error);
@@ -47,6 +48,7 @@ function Main() {
           path="/BookingForm"
           element={<BookingForm availableTimes={availableTimes} dispatch={dispatch} />}
         />
+        <Route path="/MenuPage" element={<MenuPage />} />
         <Route path="/Login" element={<Login />} />
         <Route path="/Order" element={<Order />} />
         <Route path="*" element={<NotFound />} />
