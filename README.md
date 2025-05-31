@@ -35,17 +35,6 @@ A web application built with **React 18** providing **Little Lemon** customers a
 
 ---
 
-## Screenshots
-
-<p align="center">
-  <img src="docs/screenshot-desktop.png" alt="Desktop View" width="700"/>
-</p>
-<p align="center">
-  <img src="docs/screenshot-mobile.png" alt="Mobile View" width="250"/>
-</p>
-
----
-
 ## Tech Stack
 
 | Category           | Stack                                |
