@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { Spinner, Card, Button, Container, Row, Col, Alert } from "react-bootstrap";
 
 const MenuPage = () => {
   const [menuItems, setMenuItems] = useState([]);
@@ -7,17 +8,22 @@ const MenuPage = () => {
 
   const API_URL = import.meta.env.VITE_API_URL;
 
+  // Función para generar URL de imagen basada en el nombre del plato
+  const getImageUrl = (title) => {
+    // CDN ejemplo: https://source.unsplash.com/featured/?food,[nombre]
+    // Reemplaza espacios por comas para que el CDN busque mejor
+    const query = encodeURIComponent(title.split(" ").join(","));
+    return `https://source.unsplash.com/400x300/?food,${query}`;
+  };
+
   useEffect(() => {
     const fetchMenu = async () => {
       try {
         const response = await fetch(`${API_URL}/api/menu-items/`);
-
         if (!response.ok) {
           const errorData = await response.json();
-          // Usa el mensaje de error del backend si está disponible
           throw new Error(errorData.detail || "Error al obtener los datos del menú");
         }
-
         const data = await response.json();
         setMenuItems(data.results);
       } catch (err) {
@@ -31,33 +37,50 @@ const MenuPage = () => {
     fetchMenu();
   }, [API_URL]);
 
-  if (loading) return <p className="p-6">Cargando menú...</p>;
-
-  if (error) {
+  if (loading) {
     return (
-      <div className="p-6 text-red-600 bg-red-100 rounded">
-        <h2 className="text-xl font-bold mb-2">Error</h2>
-        <p>{error}</p>
+      <div className="text-center my-5">
+        <Spinner animation="border" role="status" />
+        <p className="mt-3">Cargando menú...</p>
       </div>
     );
   }
 
+  if (error) {
+    return (
+      <Alert variant="danger" className="my-5">
+        <Alert.Heading>Error</Alert.Heading>
+        <p>{error}</p>
+      </Alert>
+    );
+  }
+
   return (
-    <div className="p-6">
-      <h1 className="text-2xl font-bold mb-4">Menú</h1>
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+    <Container className="my-5">
+      <h1 className="mb-4 text-center">Menú</h1>
+      <Row xs={1} sm={2} md={3} lg={4} className="g-4">
         {menuItems.map((item) => (
-          <div
-            key={item.id}
-            className="border rounded p-4 shadow hover:shadow-lg transition"
-          >
-            <h2 className="text-lg font-semibold">{item.title}</h2>
-            <p className="text-gray-600">{item.description}</p>
-            <p className="font-bold mt-2">${item.price}</p>
-          </div>
+          <Col key={item.id}>
+            <Card className="h-100 shadow-sm">
+              <Card.Img variant="top" src={getImageUrl(item.title)} alt={item.title} />
+              <Card.Body className="d-flex flex-column">
+                <Card.Title>{item.title}</Card.Title>
+                <Card.Text className="flex-grow-1">{item.description}</Card.Text>
+                <div className="d-flex justify-content-between align-items-center">
+                  <span className="fw-bold fs-5">
+                  ${isNaN(Number(item.price)) ? "N/A" : Number(item.price).toFixed(2)}
+                </span>
+
+                  <Button variant="primary" onClick={() => alert(`Agregar ${item.title} al carrito`)}>
+                    Añadir
+                  </Button>
+                </div>
+              </Card.Body>
+            </Card>
+          </Col>
         ))}
-      </div>
-    </div>
+      </Row>
+    </Container>
   );
 };
 
