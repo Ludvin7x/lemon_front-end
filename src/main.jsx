@@ -1,16 +1,19 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import HomePage from './HomePage';
-import OtraPagina from './OtraPagina'; // otro componente que tengas
+import ReactDOM from 'react-dom/client';
+import { BrowserRouter } from 'react-router-dom';
+import './index.css';
+import App from './App';
+import 'bootstrap/dist/css/bootstrap.min.css';
 
-function Main() {
-  return (
-    <Router>
-      <Routes>
-        <Route path="/" element={<HomePage />} />
-      </Routes>
-    </Router>
-  );
-}
+import { UserProvider } from './contexts/UserContext';
 
-export default Main;
+const root = ReactDOM.createRoot(document.getElementById('root'));
+root.render(
+  <React.StrictMode>
+    <BrowserRouter>
+      <UserProvider> 
+        <App />
+      </UserProvider>
+    </BrowserRouter>
+  </React.StrictMode>
+);

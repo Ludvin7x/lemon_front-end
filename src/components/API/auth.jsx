@@ -1,4 +1,4 @@
-const API_URL = process.env.REACT_APP_API_URL;
+const apiUrl = import.meta.env.VITE_API_URL;
 
 // Login - obtiene tokens access y refresh
 export const login = async (username, password) => {
