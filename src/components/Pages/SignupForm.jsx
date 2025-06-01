@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { register } from '../API/auth'; 
+import { register } from '../api/auth'; 
 
 import './Login.css';
 

@@ -1,20 +1,16 @@
 import { useEffect, useState } from "react";
 import { Spinner, Card, Button, Container, Row, Col, Alert } from "react-bootstrap";
+import { fetchUnsplashImage } from "../api/getUnsplashImage";
+import { useNavigate } from "react-router-dom";
 
 const MenuPage = () => {
   const [menuItems, setMenuItems] = useState([]);
+  const [images, setImages] = useState({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   const API_URL = import.meta.env.VITE_API_URL;
-
-  // Función para generar URL de imagen basada en el nombre del plato
-  const getImageUrl = (title) => {
-    // CDN ejemplo: https://source.unsplash.com/featured/?food,[nombre]
-    // Reemplaza espacios por comas para que el CDN busque mejor
-    const query = encodeURIComponent(title.split(" ").join(","));
-    return `https://source.unsplash.com/400x300/?food,${query}`;
-  };
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchMenu = async () => {
@@ -26,6 +22,13 @@ const MenuPage = () => {
         }
         const data = await response.json();
         setMenuItems(data.results);
+
+        const newImages = {};
+        for (const item of data.results) {
+          const imageUrl = await fetchUnsplashImage(item.title);
+          newImages[item.id] = imageUrl;
+        }
+        setImages(newImages);
       } catch (err) {
         console.error("Error fetching menu:", err);
         setError(err.message || "Error inesperado");
@@ -55,6 +58,10 @@ const MenuPage = () => {
     );
   }
 
+  const handleViewMore = (id) => {
+    navigate(`/menu/${id}`);
+  };
+
   return (
     <Container className="my-5">
       <h1 className="mb-4 text-center">Menú</h1>
@@ -62,18 +69,25 @@ const MenuPage = () => {
         {menuItems.map((item) => (
           <Col key={item.id}>
             <Card className="h-100 shadow-sm">
-              <Card.Img variant="top" src={getImageUrl(item.title)} alt={item.title} />
+              <Card.Img
+                variant="top"
+                src={images[item.id]}
+                alt={item.title}
+              />
               <Card.Body className="d-flex flex-column">
                 <Card.Title>{item.title}</Card.Title>
                 <Card.Text className="flex-grow-1">{item.description}</Card.Text>
-                <div className="d-flex justify-content-between align-items-center">
+                <div className="d-flex justify-content-between align-items-center mb-2">
                   <span className="fw-bold fs-5">
-                  ${isNaN(Number(item.price)) ? "N/A" : Number(item.price).toFixed(2)}
-                </span>
-                  <Button variant="primary" onClick={() => alert(`Agregar ${item.title} al carrito`)}>
-                    Añadir
-                  </Button>
+                    ${isNaN(Number(item.price)) ? "N/A" : Number(item.price).toFixed(2)}
+                  </span>
                 </div>
+                <Button
+                  variant="outline-secondary"
+                  onClick={() => handleViewMore(item.id)}
+                >
+                  View More
+                </Button>
               </Card.Body>
             </Card>
           </Col>
