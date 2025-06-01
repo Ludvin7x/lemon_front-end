@@ -70,7 +70,6 @@ const MenuPage = () => {
                   <span className="fw-bold fs-5">
                   ${isNaN(Number(item.price)) ? "N/A" : Number(item.price).toFixed(2)}
                 </span>
-
                   <Button variant="primary" onClick={() => alert(`Agregar ${item.title} al carrito`)}>
                     Añadir
                   </Button>
