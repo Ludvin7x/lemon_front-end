@@ -4,8 +4,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100vh;
-  background-color: #f4f4f4;
+  min-height: 100vh;
   font-family: Arial, sans-serif;
 }
 
@@ -14,7 +13,6 @@
   padding: 40px;
   border-radius: 8px;
   box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.1);
-  width: 400px;
 }
 
 .form-booking h1 {
@@ -25,7 +23,6 @@
 
 .form-booking form {
   display: grid;
-  gap: 15px;
 }
 
 .form-booking label {

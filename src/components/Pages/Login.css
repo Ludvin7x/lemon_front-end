@@ -4,6 +4,7 @@
   padding: 30px;
   border-radius: 12px;
   background-color: #ffffff;
+  color: #000000; /* <-- Color de texto negro para visibilidad */
   box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
 }
 
