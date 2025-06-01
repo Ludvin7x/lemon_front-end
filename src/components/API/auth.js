@@ -1,7 +1,8 @@
 const API_URL = process.env.REACT_APP_API_URL;
 
+// Login - obtiene tokens access y refresh
 export const login = async (username, password) => {
-  const res = await fetch(`${API_URL}/auth/token/login/`, {
+  const res = await fetch(`${API_URL}/auth/token/`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ username, password })
@@ -9,15 +10,16 @@ export const login = async (username, password) => {
 
   if (!res.ok) {
     const error = await res.json();
-    throw new Error(error?.non_field_errors?.[0] || 'Invalid credentials');
+    throw new Error(error.detail || 'Invalid credentials');
   }
 
-  return res.json();  // { auth_token: '...' }
+  return res.json();  // { access: '...', refresh: '...' }
 };
 
+// Obtener info del usuario actual con token access
 export const getUserInfo = async (token) => {
-  const res = await fetch(`${API_URL}/auth/users/me/`, {
-    headers: { Authorization: `Token ${token}` }
+  const res = await fetch(`${API_URL}/api/users/me/`, {
+    headers: { Authorization: `Bearer ${token}` }
   });
 
   if (!res.ok) {
@@ -27,21 +29,15 @@ export const getUserInfo = async (token) => {
   return res.json();
 };
 
-export const logout = async (token) => {
-  const res = await fetch(`${API_URL}/auth/token/logout/`, {
-    method: 'POST',
-    headers: { Authorization: `Token ${token}` }
-  });
-
-  if (!res.ok) {
-    throw new Error('Logout failed');
-  }
-
-  return res.json();
+// Logout - simplemente elimina tokens localmente
+export const logout = () => {
+  localStorage.removeItem('accessToken');
+  localStorage.removeItem('refreshToken');
 };
 
+// Registro - crea usuario nuevo
 export const register = async ({ username, email, password }) => {
-  const res = await fetch(`${API_URL}/auth/users/`, {
+  const res = await fetch(`${API_URL}/api/register/`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ username, email, password })

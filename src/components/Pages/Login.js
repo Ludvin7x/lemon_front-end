@@ -10,32 +10,53 @@ export default function Login() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [isSignup, setIsSignup] = useState(false);
-  const [errorMsg, setErrorMsg] = useState('');
+
+  const [errorMsg, setErrorMsg]   = useState('');
   const [successMsg, setSuccessMsg] = useState('');
+  const [loading, setLoading] = useState(false);
+
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setErrorMsg('');
     setSuccessMsg('');
-    try {
-      const { auth_token } = await login(username, password);
-      localStorage.setItem('token', auth_token);
+    setLoading(true);
 
-      const user = await getUserInfo(auth_token);
+    try {
+      // 1. Login: obtiene access y refresh
+      const { access, refresh } = await login(username, password);
+
+      // 2. Guarda tokens
+      localStorage.setItem('accessToken', access);
+      localStorage.setItem('refreshToken', refresh);
+
+      // 3. Solicita info del usuario
+      const user = await getUserInfo(access);
       localStorage.setItem('user', JSON.stringify(user));
 
-      setSuccessMsg(`Welcome! Hello ${user.username}`);
+      setSuccessMsg(`¡Bienvenido, ${user.username}! Redirigiendo…`);
 
-      // Navegar con un pequeño delay para que el usuario vea el mensaje
-      setTimeout(() => navigate('/'), 1500);
+      // 4. Pequeño delay para mostrar el mensaje
+      setTimeout(() => navigate('/'), 1200);
     } catch (err) {
-      setErrorMsg(err.message);
+      setErrorMsg(err.message || 'Error inesperado');
+    } finally {
+      setLoading(false);
     }
   };
 
+  // Cambia a formulario de registro
   if (isSignup) {
-    return <SignupForm onCancel={() => setIsSignup(false)} />;
+    return (
+      <SignupForm
+        onCancel={() => {
+          setIsSignup(false);
+          setErrorMsg('');
+          setSuccessMsg('');
+        }}
+      />
+    );
   }
 
   return (
@@ -65,6 +86,7 @@ export default function Login() {
             onChange={(e) => setUsername(e.target.value)}
             required
             autoFocus
+            disabled={loading}
           />
         </div>
 
@@ -77,17 +99,23 @@ export default function Login() {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
+            disabled={loading}
           />
         </div>
 
-        <button type="submit" className="btn btn-primary w-100 mb-2">
-          Login
+        <button
+          type="submit"
+          className="btn btn-primary w-100 mb-2"
+          disabled={loading}
+        >
+          {loading ? 'Ingresando…' : 'Login'}
         </button>
 
         <button
           type="button"
           className="btn btn-outline-secondary w-100"
           onClick={() => setIsSignup(true)}
+          disabled={loading}
         >
           Sign Up
         </button>

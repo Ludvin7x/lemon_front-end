@@ -1,93 +1,98 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
+import { NavLink, useLocation, useNavigate } from "react-router-dom";
+import { UserContext } from "../contexts/UserContext";
+import { Navbar, Nav, Container, NavDropdown } from "react-bootstrap";
+
 import "./Nav.css";
-import { NavLink, useLocation } from "react-router-dom";
 import Logo from "../img/Logo.svg";
 import icono_menu from "../img/icono_menu.png";
 import icono_order from "../img/icono_order.png";
 
-function Nav() {
-  const [showMenu, setShowMenu] = useState(false); // Estado para el menú móvil
+export default function NavigationBar() {
+  const [expanded, setExpanded] = useState(false);
+  const [scrolled, setScrolled] = useState(false);  // Estado para scroll
   const location = useLocation();
+  const navigate = useNavigate();
+  const { user, logout } = useContext(UserContext);
 
-  const toggleMenu = () => {
-    setShowMenu(!showMenu);
-  };
-
-  // Cierra menú al cambiar de ruta
   useEffect(() => {
-    setShowMenu(false);
+    setExpanded(false); // Cierra menú al cambiar ruta
   }, [location]);
 
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.scrollY > 50) {  // Cambia el valor a tu gusto
+        setScrolled(true);
+      } else {
+        setScrolled(false);
+      }
+    };
+    window.addEventListener("scroll", handleScroll);
+
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  const handleLogout = () => {
+    logout();
+    navigate("/login");
+  };
+
   return (
-    <nav className="nav">
-      {/* Ícono del menú para móvil */}
-      <div className="mobile-menu-icon" onClick={toggleMenu}>
-        <img
-          src={icono_menu}
-          alt="Menú"
-          className="menu-icon"
-          style={{ width: "60px", height: "auto" }}
-        />
-      </div>
+    <Navbar
+      expand="lg"
+      variant="dark"
+      fixed="top"
+      expanded={expanded}
+      className={`mb-4 ${scrolled ? "navbar-scrolled" : "navbar-top"}`}
+    >
+      <Container>
+        <Navbar.Toggle
+          aria-controls="main-navbar"
+          onClick={() => setExpanded(!expanded)}
+        >
+          <img
+            src={icono_menu}
+            alt="Menú"
+            style={{ width: "40px", height: "auto" }}
+          />
+        </Navbar.Toggle>
 
-      <div className="logo-container">
-        <img src={Logo} alt="Logo" className="logo" />
-      </div>
+        <Navbar.Brand as={NavLink} to="/">
+          <img
+            src={Logo}
+            alt="Logo"
+            className="d-inline-block align-top"
+            style={{ height: "50px" }}
+          />
+        </Navbar.Brand>
 
-      {/* Lista de opciones */}
-      <ul className={`menu ${showMenu ? "active" : ""}`}>
-        {/* Home y Menu juntos */}
-        <li>
-          <NavLink
-            to="/"
-            className={({ isActive }) => (isActive ? "selected" : "")}
-          >
-            Home
-          </NavLink>
-        </li>
-        <li>
-          <NavLink
-            to="/MenuPage"
-            className={({ isActive }) => (isActive ? "selected" : "")}
-          >
-            Menu
-          </NavLink>
-        </li>
+        <Navbar.Collapse id="main-navbar">
+          <Nav className="me-auto">
+            <Nav.Link as={NavLink} to="/" className={({ isActive }) => isActive ? "selected" : ""}>Home</Nav.Link>
+            <Nav.Link as={NavLink} to="/MenuPage" className={({ isActive }) => isActive ? "selected" : ""}>Menu</Nav.Link>
+            <Nav.Link as={NavLink} to="/BookingForm" className={({ isActive }) => isActive ? "selected" : ""}>Booking Form</Nav.Link>
+            <Nav.Link as={NavLink} to="/Order" className={({ isActive }) => isActive ? "selected" : ""}>
+              Order Now
+              <img
+                src={icono_order}
+                alt="Order"
+                className="order-icon"
+                style={{ width: "30px", height: "auto", marginLeft: "5px" }}
+              />
+            </Nav.Link>
+          </Nav>
 
-        {/* Otros links */}
-        <li>
-          <NavLink
-            to="/BookingForm"
-            className={({ isActive }) => (isActive ? "selected" : "")}
-          >
-            Booking Form
-          </NavLink>
-        </li>
-        <li>
-          <NavLink
-            to="/Login"
-            className={({ isActive }) => (isActive ? "selected" : "")}
-          >
-            Login
-          </NavLink>
-        </li>
-        <li>
-          <NavLink
-            to="/Order"
-            className={({ isActive }) => (isActive ? "selected" : "")}
-          >
-            Order Now
-            <img
-              src={icono_order}
-              alt="Order"
-              className="order-icon"
-              style={{ width: "40px", height: "auto", marginLeft: "5px" }}
-            />
-          </NavLink>
-        </li>
-      </ul>
-    </nav>
+          <Nav>
+            {user ? (
+              <NavDropdown title={user.username} id="user-dropdown" align="end">
+                <NavDropdown.Item onClick={handleLogout}>Logout</NavDropdown.Item>
+              </NavDropdown>
+            ) : (
+              <Nav.Link as={NavLink} to="/Login">Login</Nav.Link>
+            )}
+          </Nav>
+        </Navbar.Collapse>
+      </Container>
+    </Navbar>
   );
 }
-
-export default Nav;

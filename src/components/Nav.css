@@ -1,116 +1,42 @@
-.nav {
-  position: fixed;
-  top: 0;
-  width: 100%;
-  background-color: #52b146c9;
-  padding: 10px 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 1000;
+/* Estado inicial, transparente o el color que quieras */
+.navbar-top {
+  background-color: transparent;
+  transition: background-color 0.3s ease, box-shadow 0.3s ease;
+  box-shadow: none;
 }
 
-.logo {
-  width: 130px;
-  height: auto;
-  margin-right: 50px;
+/* Estado al hacer scroll: fondo oscuro, sombra, etc */
+.navbar-scrolled {
+  background-color: #212529; /* fondo oscuro Bootstrap */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  transition: background-color 0.3s ease, box-shadow 0.3s ease;
 }
 
-ul {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: flex;
-  justify-content: center;
+/* Opcional: cambiar color texto si quieres */
+.navbar-scrolled .nav-link,
+.navbar-scrolled .navbar-brand,
+.navbar-scrolled .dropdown-toggle {
+  color: #fff !important;
 }
 
-li {
-  margin: 0 15px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+/* Mantener el color texto claro para navbar-top también */
+.navbar-top .nav-link,
+.navbar-top .navbar-brand,
+.navbar-top .dropdown-toggle {
+  color: #f8f9fa !important;
 }
 
-a {
-  text-decoration: none;
-  color: #fff;
-  font-weight: bold;
-  transition: color 0.3s ease;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100%;
-}
-
-a:hover {
-  color: #2bff00;
-}
-
+/* Ejemplo para selected */
 .selected {
-  color: #ffcc00; /* Color del menú seleccionado */
+  font-weight: 700;
+  text-decoration: underline;
 }
 
-/* Media query para dispositivos móviles */
-@media screen and (max-width: 768px) {
-  .nav {
-    /* Ajusta la alineación de los elementos */
-    justify-content: space-between;
-    padding: 10px;
-  }
-
-  .mobile-menu-icon {
-    display: block;
-    cursor: pointer;
-    color: #fff;
-    font-size: 24px;
-    margin-right: 15px;
-  }
-
-  .logo-container {
-    display: flex;
-    justify-content: center; /* Centra el contenido horizontalmente */
-    align-items: center; /* Centra el contenido verticalmente */
-    flex: 1; /* Permite que el logo ocupe el espacio restante */
-  }
-
-  .logo {
-    width: 130px;
-    height: auto;
-    background-color: #2bff00;
-  }
-
-  ul.menu {
-    display: none;
-    width: 100%;
-    flex-direction: column;
-    position: absolute;
-    top: 60px;
-    left: 0;
-    background-color: #333;
-    padding: 10px 0;
-    z-index: 999;
-  }
-
-  ul.menu.active {
-    display: flex;
-  }
-
-  ul.menu li {
-    margin: 10px 0;
-  }
+/* Ajusta el logo para cuando cambia el navbar */
+.navbar-scrolled .navbar-brand img {
+  filter: brightness(1); /* sin cambio */
 }
 
-/* Para pantallas más grandes (escritorio) */
-@media screen and (min-width: 769px) {
-  .mobile-menu-icon {
-    display: none; /* Oculta el icono del menú en pantallas más grandes */
-  }
-
-  .logo-container {
-    display: block; /* Muestra el logo en pantallas más grandes */
-  }
-
-  ul.menu {
-    display: flex; /* Muestra el menú en pantallas más grandes */
-  }
+.navbar-top .navbar-brand img {
+  filter: brightness(0.8); /* un poco más tenue si quieres */
 }
