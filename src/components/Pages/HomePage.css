@@ -1,117 +1,52 @@
+/* HomePage.css */
+
 .homepage {
-  width: 100%; /* Utiliza el ancho completo de la pantalla */
-  max-width: 100%; /* Establece el ancho máximo igual al ancho de la pantalla */
-  margin-top: 60px;
-  box-sizing: border-box; /* Incluye el borde y el relleno en el cálculo del tamaño */
-  overflow-x: hidden; /* Oculta el desbordamiento horizontal */
-  align-items: center;
+  background-color: #f8f9fa; 
+  min-height: 100vh;
 }
 
-/* Estilos para centrar las diapositivas */
-.slick-slide {
-  margin-top: 20px; /* Ajusta el margen superior a cero */
-  margin-bottom: 20px;
-  margin-left: 0px;
+
+.slick-slider {
+  margin-bottom: 2rem;
 }
 
-.slick-track {
-  display: flex;
-  justify-content: center;
-  overflow: hidden; /* Oculta el contenido que excede el tamaño del slider */
-}
 
-.slick-list {
-    width: 100%; /* Ancho del slider */
-    margin: 0 auto; /* Centrar el slider en la página */
-    overflow: hidden; /* Oculta el contenido que excede el tamaño del slider */
-    padding-left: -115px; /* Ajuste negativo del margen izquierdo para compensar */
-  }
-
-.slick-slide img {
-  width: 93%;/* Ajustar el tamaño de las imágenes */
-  height: auto;
-  max-height: 500px;
-}
-
-/* Estilos para los cuadros (boxes) */
-.row {
-  display: flex;
-  justify-content: space-around; /* Distribuye el espacio alrededor de los elementos */
-  flex-wrap: wrap;
-  margin: 10px; /* Margen negativo para compensar el padding interno */
-  background-color: rgb(241, 239, 235);
-}
-
-.box {
-  text-align: center;
-  flex: 0 0 calc(30% - 20px);
-  margin: 20px; /* Espacio entre los boxes */
-  border-radius: 8px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-  overflow: hidden;
-}
-
-.box:hover {
-  transform: translateY(-5px); /* Efecto de levantamiento al pasar el mouse */
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2); /* Sombra más pronunciada al pasar el mouse */
-}
-
-.box p {
-  margin: 0;
-  text-align: center;
-  text-align: justify;
-}
-
-.box-image {
+.slide-container img {
   width: 100%;
   height: auto;
-  border-bottom-left-radius: 8px;
-  border-bottom-right-radius: 8px;
+  border-radius: 0.5rem;
+  box-shadow: 0 4px 10px rgb(0 0 0 / 0.15);
 }
 
-/* Estilos para dispositivos moviles  */
-@media (max-width: 768px) {
-  .homepage {
-    width: 100%; /* Utiliza el ancho completo de la pantalla */
-    max-width: 100%; /* Establece el ancho máximo igual al ancho de la pantalla */
-    margin-top: 100px;
-    box-sizing: border-box; /* Incluye el borde y el relleno en el cálculo del tamaño */
-    overflow-x: hidden; /* Oculta el desbordamiento horizontal */
-    align-items: center;
-    margin-left: 0px;
-    padding-left: 0px;
-  }
 
-  .slick-slide {
-    margin-bottom: 50px;
-    margin: 10px;
-    padding-left: 0%;
-    width: 100%;
-  }
+.card {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
 
-  .slick-track{
-    margin-left: -50px;
-    padding: 0px;
-  }
+.card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 12px 20px rgb(0 0 0 / 0.2);
+}
 
-  .slick-list {
-    width: 100%;
-    padding: 0;
-    margin: 0;
-  }
+.card-img-top {
+  border-top-left-radius: 0.5rem;
+  border-top-right-radius: 0.5rem;
+}
 
-  .slick-slide img {
-    width: 100%;
-    height: 400px; /* Ajusta la altura según sea necesario */
-  }
 
-  .row {
-    flex-direction: column; /* Cambia la dirección a columna en dispositivos móviles */
-    align-items: center; /* Centra los boxes */
-  }
+.card-title {
+  font-weight: 600;
+  color: #212529;
+}
 
-  .box {
-    flex: 0 0 calc(100% - 20px); /* Ocupa el ancho completo menos el margen */
+.card-text {
+  color: #495057;
+  font-size: 0.95rem;
+  line-height: 1.4;
+}
+
+@media (max-width: 767.98px) {
+  .card-img-top {
+    height: 180px !important;
   }
 }

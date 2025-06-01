@@ -1,10 +1,6 @@
 import React from 'react';
-import Slider from 'react-slick';
-import 'slick-carousel/slick/slick.css';
-import 'slick-carousel/slick/slick-theme.css';
-import './HomePage.css';
+import 'bootstrap/dist/css/bootstrap.min.css';
 
-// Importar las 10 imágenes
 import Slide1 from '../../img/Slider/Diapositiva1.JPG';
 import Slide2 from '../../img/Slider/Diapositiva2.JPG';
 import Slide3 from '../../img/Slider/Diapositiva3.JPG';
@@ -16,75 +12,103 @@ import Slide8 from '../../img/Slider/Diapositiva8.JPG';
 import Slide9 from '../../img/Slider/Diapositiva9.JPG';
 import Slide10 from '../../img/Slider/Diapositiva10.JPG';
 
-import BoxImage1 from "../../img/ensalada.jpg"
-import BoxImage2 from "../../img/food_carne.jpg"
-import BoxImage3 from "../../img/lugar.jpg"
+import BoxImage1 from "../../img/ensalada.jpg";
+import BoxImage2 from "../../img/food_carne.jpg";
+import BoxImage3 from "../../img/lugar.jpg";
 
 const HomePage = () => {
   const images = [
-    { id: 1, path: Slide1 },
-    { id: 2, path: Slide2 },
-    { id: 3, path: Slide3 },
-    { id: 4, path: Slide4 },
-    { id: 5, path: Slide5 },
-    { id: 6, path: Slide6 },
-    { id: 7, path: Slide7 },
-    { id: 8, path: Slide8 },
-    { id: 9, path: Slide9 },
-    { id: 10, path: Slide10 },
+    Slide1, Slide2, Slide3, Slide4, Slide5, Slide6, Slide7, Slide8, Slide9, Slide10
   ];
 
-  const sliderSettings = {
-    dots: true,
-    infinite: true,
-    speed: 500,
-    slidesToShow: 1,
-    slidesToScroll: 1,
-    autoplay: true,
-    autoplaySpeed: 5000,
-    centerMode: true, // Centrar las diapositivas
-  };
+  const boxes = [
+    {
+      image: BoxImage1,
+      title: "Ensaladas Frescas",
+      text: "Variedad de ensaladas frescas y saludables para disfrutar en cualquier momento del día. Descubre opciones deliciosas y nutritivas para tu alimentación diaria.",
+    },
+    {
+      image: BoxImage2,
+      title: "Opciones de Carne",
+      text: "Deliciosas selecciones de carnes para los amantes de los sabores intensos y la calidad en cada bocado. Disfruta de platos preparados con los mejores ingredientes.",
+    },
+    {
+      image: BoxImage3,
+      title: "Ambiente Acogedor",
+      text: "Un lugar acogedor diseñado para disfrutar momentos especiales y compartir experiencias inolvidables. Sumérgete en un espacio único que te brinda comodidad y calidez.",
+    },
+  ];
 
   return (
-    <div className="homepage">
-      <Slider {...sliderSettings}>
-        {images.map((image) => (
-          <div key={image.id} className="slide-container">
-            <img src={image.path} alt={`Slide ${image.id}`} className="slide-image" />
+    <div className="homepage container py-4">
+      {/* Bootstrap Carousel */}
+      <div id="carouselExampleIndicators" className="carousel slide" data-bs-ride="carousel" style={{ maxHeight: '500px' }}>
+        <div className="carousel-indicators">
+          {images.map((_, idx) => (
+            <button
+              key={idx}
+              type="button"
+              data-bs-target="#carouselExampleIndicators"
+              data-bs-slide-to={idx}
+              className={idx === 0 ? 'active' : ''}
+              aria-current={idx === 0 ? 'true' : undefined}
+              aria-label={`Slide ${idx + 1}`}
+            />
+          ))}
+        </div>
+        <div className="carousel-inner">
+          {images.map((img, idx) => (
+            <div key={idx} className={`carousel-item ${idx === 0 ? 'active' : ''}`}>
+              <img
+                src={img}
+                className="d-block w-100"
+                alt={`Slide ${idx + 1}`}
+                style={{ objectFit: 'cover', maxHeight: '500px' }}
+              />
+            </div>
+          ))}
+        </div>
+        <button
+          className="carousel-control-prev"
+          type="button"
+          data-bs-target="#carouselExampleIndicators"
+          data-bs-slide="prev"
+        >
+          <span className="carousel-control-prev-icon" aria-hidden="true"></span>
+          <span className="visually-hidden">Anterior</span>
+        </button>
+        <button
+          className="carousel-control-next"
+          type="button"
+          data-bs-target="#carouselExampleIndicators"
+          data-bs-slide="next"
+        >
+          <span className="carousel-control-next-icon" aria-hidden="true"></span>
+          <span className="visually-hidden">Siguiente</span>
+        </button>
+      </div>
+
+      {/* Boxes */}
+      <div className="row mt-5 g-4">
+        {boxes.map(({ image, title, text }, idx) => (
+          <div key={idx} className="col-md-4">
+            <div className="card h-100 shadow-sm">
+              <img
+                src={image}
+                className="card-img-top"
+                alt={title}
+                style={{ height: '200px', objectFit: 'cover' }}
+              />
+              <div className="card-body d-flex flex-column">
+                <h5 className="card-title">{title}</h5>
+                <p className="card-text flex-grow-1">{text}</p>
+              </div>
+            </div>
           </div>
         ))}
-      </Slider>
-
-      <div className="row">
-        {/* Primer cuadro */}
-        <div className="box">
-          <img src={BoxImage1} alt="Box 1" className="box-image" />
-          <h3>Ensaladas Frescas</h3>
-          <p>
-            Variedad de ensaladas frescas y saludables para disfrutar en cualquier momento del día.
-            Descubre opciones deliciosas y nutritivas para tu alimentación diaria.
-          </p>
-        </div>
-        {/* Segundo cuadro */}
-        <div className="box">
-          <img src={BoxImage2} alt="Box 2" className="box-image" />
-          <h3>Opciones de Carne</h3>
-          <p>
-            Deliciosas selecciones de carnes para los amantes de los sabores intensos y la calidad en cada bocado.
-            Disfruta de platos preparados con los mejores ingredientes.
-          </p>
-        </div>
-        {/* Tercer cuadro */}
-        <div className="box">
-          <img src={BoxImage3} alt="Box 3" className="box-image" />
-          <h3>Ambiente Acogedor</h3>
-          <p>
-            Un lugar acogedor diseñado para disfrutar momentos especiales y compartir experiencias inolvidables.
-            Sumérgete en un espacio único que te brinda comodidad y calidez.
-          </p>
-        </div>
       </div>
     </div>
   );
-}
+};
+
 export default HomePage;
