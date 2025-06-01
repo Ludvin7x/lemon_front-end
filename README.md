@@ -3,7 +3,7 @@
 A web application built with **React 18** providing **Little Lemon** customers a complete table reservation system along with a digital menu and a modern, accessible, responsive interface.
 
 > **Live Demo**
-> [https://restaurant-littlelemon.netlify.app/](https://restaurant-littlelemon.netlify.app/)
+> [https://lemon-front.netlify.app](https://lemon-front.netlify.app)
 
 ---
 
