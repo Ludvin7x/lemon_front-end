@@ -1,9 +1,19 @@
-body {
-  background-color: #121212; 
-  color: white; 
+.app {
+  background-color: #121212; /* fondo oscuro */
+  color: #eee;               /* texto claro */
+  min-height: 100vh;         /* que ocupe toda la altura de la ventana */
+  display: flex;
+  flex-direction: column;
+  /* Opcional: para que el contenido principal crezca */
 }
 
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
+.app__nav,
+.app__footer {
+  padding: 1rem;
+  background-color: #1f1f1f; /* un gris oscuro para diferenciar header y footer */
+}
+
+.app__main {
+  flex-grow: 1;
+  padding: 1rem;
 }

@@ -1,13 +1,14 @@
 import React from "react";
 import "./Order.css"; // Asegúrate de tener el archivo CSS para el estilo
 
-import plato1 from "../../img/plato1.jpg"
-import plato2 from "../../img/plato2.jpg"
-import plato3 from "../../img/plato3.jpg"
-import plato4 from "../../img/plato4.jpg"
-import plato5 from "../../img/plato5.jpg"
-import plato6 from "../../img/plato6.jpg"
-
+const images = [
+  "/img/plato1.jpg",
+  "/img/plato2.jpg",
+  "/img/plato3.jpg",
+  "/img/plato4.jpg",
+  "/img/plato5.jpg",
+  "/img/plato6.jpg",
+];
 
 function Order() {
   const products = [

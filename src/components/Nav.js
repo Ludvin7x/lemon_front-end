@@ -4,9 +4,10 @@ import { UserContext } from "../contexts/UserContext";
 import { Navbar, Nav, Container, NavDropdown } from "react-bootstrap";
 
 import "./Nav.css";
-import Logo from "../img/Logo.svg";
-import icono_menu from "../img/icono_menu.png";
-import icono_order from "../img/icono_order.png";
+
+const logo = "/img/Logo.svg";
+const iconoMenu = "/img/icono_menu.png";
+const iconoOrder = "/img/icono_order.png";
 
 export default function NavigationBar() {
   const [expanded, setExpanded] = useState(false);
@@ -51,7 +52,7 @@ export default function NavigationBar() {
           onClick={() => setExpanded(!expanded)}
         >
           <img
-            src={icono_menu}
+            src={iconoMenu}
             alt="Menú"
             style={{ width: "40px", height: "auto" }}
           />
@@ -59,7 +60,7 @@ export default function NavigationBar() {
 
         <Navbar.Brand as={NavLink} to="/">
           <img
-            src={Logo}
+            src={logo}
             alt="Logo"
             className="d-inline-block align-top"
             style={{ height: "50px" }}
@@ -74,7 +75,7 @@ export default function NavigationBar() {
             <Nav.Link as={NavLink} to="/Order" className={({ isActive }) => isActive ? "selected" : ""}>
               Order Now
               <img
-                src={icono_order}
+                src={iconoOrder}
                 alt="Order"
                 className="order-icon"
                 style={{ width: "30px", height: "auto", marginLeft: "5px" }}

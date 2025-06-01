@@ -1,52 +1,60 @@
-/* HomePage.css */
-
-.homepage {
-  background-color: #f8f9fa; 
-  min-height: 100vh;
+/* Carousel */
+.carousel-inner .carousel-item img {
+  filter: brightness(0.75); /* oscurece un poco las imágenes para destacar el texto si hubiera */
 }
 
-
-.slick-slider {
-  margin-bottom: 2rem;
+/* Indicadores del carousel */
+.carousel-indicators [data-bs-target] {
+  background-color: #bbb; 
+}
+.carousel-indicators .active {
+  background-color: #fff; /* indicador activo blanco */
 }
 
-
-.slide-container img {
-  width: 100%;
-  height: auto;
-  border-radius: 0.5rem;
-  box-shadow: 0 4px 10px rgb(0 0 0 / 0.15);
+/* Controles del carousel */
+.carousel-control-prev-icon,
+.carousel-control-next-icon {
+  filter: invert(1); /* iconos blancos */
 }
 
-
+/* Tarjetas */
 .card {
+  background-color: #1e1e1e; /* fondo oscuro para tarjetas */
+  border: none;
+  color: #eee;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
 .card:hover {
-  transform: translateY(-8px);
-  box-shadow: 0 12px 20px rgb(0 0 0 / 0.2);
+  transform: translateY(-5px);
+  box-shadow: 0 10px 20px rgba(255, 255, 255, 0.2);
 }
 
-.card-img-top {
-  border-top-left-radius: 0.5rem;
-  border-top-right-radius: 0.5rem;
-}
-
-
+/* Títulos de las cartas */
 .card-title {
-  font-weight: 600;
-  color: #212529;
+  color: #ffcc00; /* un amarillo para que resalte */
+  font-weight: 700;
 }
 
+/* Texto de las cartas */
 .card-text {
-  color: #495057;
-  font-size: 0.95rem;
-  line-height: 1.4;
+  color: #ddd;
 }
 
-@media (max-width: 767.98px) {
-  .card-img-top {
-    height: 180px !important;
-  }
+/* Links o botones si se agregan en el futuro */
+a,
+button {
+  color: #ffcc00;
+}
+
+/* Scrollbar oscuro opcional */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #121212;
+}
+::-webkit-scrollbar-thumb {
+  background-color: #444;
+  border-radius: 4px;
 }

@@ -1,42 +1,39 @@
-/* Estado inicial, transparente o el color que quieras */
-.navbar-top {
+.app__nav.navbar-top {
   background-color: transparent;
   transition: background-color 0.3s ease, box-shadow 0.3s ease;
   box-shadow: none;
 }
 
-/* Estado al hacer scroll: fondo oscuro, sombra, etc */
-.navbar-scrolled {
+.app__nav.navbar-scrolled {
   background-color: #212529; /* fondo oscuro Bootstrap */
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
   transition: background-color 0.3s ease, box-shadow 0.3s ease;
 }
 
-/* Opcional: cambiar color texto si quieres */
-.navbar-scrolled .nav-link,
-.navbar-scrolled .navbar-brand,
-.navbar-scrolled .dropdown-toggle {
-  color: #fff !important;
-}
-
-/* Mantener el color texto claro para navbar-top también */
-.navbar-top .nav-link,
-.navbar-top .navbar-brand,
-.navbar-top .dropdown-toggle {
+/* Texto claro para ambos estados */
+.app__nav.navbar-top .nav-link,
+.app__nav.navbar-top .navbar-brand,
+.app__nav.navbar-top .dropdown-toggle {
   color: #f8f9fa !important;
 }
 
-/* Ejemplo para selected */
+.app__nav.navbar-scrolled .nav-link,
+.app__nav.navbar-scrolled .navbar-brand,
+.app__nav.navbar-scrolled .dropdown-toggle {
+  color: #fff !important;
+}
+
+/* Logo con brillo diferente */
+.app__nav.navbar-top .navbar-brand img {
+  filter: brightness(0.8);
+}
+
+.app__nav.navbar-scrolled .navbar-brand img {
+  filter: brightness(1);
+}
+
+/* Clase para ítem seleccionado */
 .selected {
   font-weight: 700;
   text-decoration: underline;
-}
-
-/* Ajusta el logo para cuando cambia el navbar */
-.navbar-scrolled .navbar-brand img {
-  filter: brightness(1); /* sin cambio */
-}
-
-.navbar-top .navbar-brand img {
-  filter: brightness(0.8); /* un poco más tenue si quieres */
 }
