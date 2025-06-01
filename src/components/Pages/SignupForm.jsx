@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { register } from '../API/auth';  // Asume que tienes esta función para registrar usuarios
+import { register } from '../API/auth'; 
 
 import './Login.css';
 
@@ -8,7 +8,7 @@ export default function SignupForm({ onCancel }) {
   const [email, setEmail] = useState('');
   const [password1, setPassword1] = useState('');
   const [password2, setPassword2] = useState('');
-  const [alert, setAlert] = useState(null); // { type: 'success' | 'danger', message: string }
+  const [alert, setAlert] = useState(null); 
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -21,7 +21,6 @@ export default function SignupForm({ onCancel }) {
     try {
       await register({ username, email, password: password1 });
       setAlert({ type: 'success', message: 'Account created! Please login.' });
-      // Opcional: si quieres cerrar automáticamente el formulario después de un tiempo:
       setTimeout(() => onCancel(), 2000);
     } catch (err) {
       setAlert({ type: 'danger', message: err.message || 'Registration failed' });
