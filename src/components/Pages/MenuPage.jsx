@@ -19,7 +19,7 @@ const MenuPage = () => {
         }
 
         const data = await response.json();
-        setMenuItems(data);
+        setMenuItems(data.results);
       } catch (err) {
         console.error("Error fetching menu:", err);
         setError(err.message || "Error inesperado");
