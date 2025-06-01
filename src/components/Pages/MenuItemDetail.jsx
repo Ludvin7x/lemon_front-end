@@ -67,7 +67,7 @@ const MenuItemDetail = () => {
             variant="top"
             src={imageUrl}
             alt={item.title}
-            fluid="true"  // React Bootstrap prop to make image responsive
+            fluid="true" 
             style={{ 
               maxHeight: "400px", 
               objectFit: "cover", 
