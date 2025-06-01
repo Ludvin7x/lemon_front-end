@@ -1,6 +1,4 @@
 import React, { useState } from 'react';
-import Swal from 'sweetalert2';
-
 import { register } from '../API/auth';  // Asume que tienes esta función para registrar usuarios
 
 import './Login.css';
@@ -10,27 +8,42 @@ export default function SignupForm({ onCancel }) {
   const [email, setEmail] = useState('');
   const [password1, setPassword1] = useState('');
   const [password2, setPassword2] = useState('');
+  const [alert, setAlert] = useState(null); // { type: 'success' | 'danger', message: string }
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     if (password1 !== password2) {
-      Swal.fire('Error', 'Passwords do not match', 'error');
+      setAlert({ type: 'danger', message: 'Passwords do not match' });
       return;
     }
 
     try {
       await register({ username, email, password: password1 });
-      Swal.fire('Success', 'Account created! Please login.', 'success');
-      onCancel(); // Vuelve al login
+      setAlert({ type: 'success', message: 'Account created! Please login.' });
+      // Opcional: si quieres cerrar automáticamente el formulario después de un tiempo:
+      setTimeout(() => onCancel(), 2000);
     } catch (err) {
-      Swal.fire('Error', err.message || 'Registration failed', 'error');
+      setAlert({ type: 'danger', message: err.message || 'Registration failed' });
     }
   };
 
   return (
     <div className="login">
       <h1 className="text-center mb-4">Sign Up</h1>
+
+      {/* Mostrar alerta si hay mensaje */}
+      {alert && (
+        <div className={`alert alert-${alert.type} alert-dismissible fade show`} role="alert">
+          {alert.message}
+          <button
+            type="button"
+            className="btn-close"
+            aria-label="Close"
+            onClick={() => setAlert(null)}
+          ></button>
+        </div>
+      )}
 
       <form className="form-login" onSubmit={handleSubmit}>
         <div className="form-group mb-3">
