@@ -1,12 +1,12 @@
 .app__nav.navbar-top {
-  background-color: transparent;
+  background-color: #0d1b2a; /* Azul oscuro inicial */
   transition: background-color 0.3s ease, box-shadow 0.3s ease;
   box-shadow: none;
 }
 
 .app__nav.navbar-scrolled {
-  background-color: #212529; /* fondo oscuro Bootstrap */
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  background-color: #1b2a4d; /* Azul más claro al hacer scroll */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
   transition: background-color 0.3s ease, box-shadow 0.3s ease;
 }
 

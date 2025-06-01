@@ -3,7 +3,7 @@ import React from "react";
 function importSlides() {
   const slides = [];
   for (let i = 1; i <= 23; i++) {
-    slides.push(`/img/slider/Diapositiva${i}.jpg`);
+    slides.push(`/img/Slider/Diapositiva${i}.jpg`);
   }
   return slides;
 }

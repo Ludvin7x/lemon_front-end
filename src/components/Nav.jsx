@@ -43,8 +43,8 @@ export default function NavigationBar() {
       expand="lg"
       variant="dark"
       fixed="top"
-      expanded={expanded}
-      className={`mb-4 ${scrolled ? "navbar-scrolled" : "navbar-top"}`}
+      expanded={expanded} 
+     className={`app__nav mb-4 ${scrolled ? "navbar-scrolled" : "navbar-top"}`}
     >
       <Container>
         <Navbar.Toggle

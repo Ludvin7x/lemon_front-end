@@ -1,23 +1,22 @@
-import React from "react";
-import Nav from "./components/Nav";
-import Main from "./components/Main";
-import Footer from "./components/Footer";
-import HomePage from "./components/Pages/HomePage";
+import { Routes, Route } from "react-router-dom";
+import NavigationBar from "./components/Nav";
+import Home from "./components/Pages/HomePage";
+import MenuPage from "./components/Pages/MenuPage";
+import BookingForm from "./components/Pages/BookingForm";
+import Order from "./components/Pages/Order";
+import Login from "./components/Pages/Login";
 
-function App() {
+export default function App() {
   return (
-    <div className="app">
-      <nav className="app__nav">
-        <Nav />
-      </nav>
-      <main className="app__main">
-        <HomePage />
-      </main>
-      <footer className="app__footer">
-        <Footer />
-      </footer>
-    </div>
+    <>
+      <NavigationBar />
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/MenuPage" element={<MenuPage />} />
+        <Route path="/BookingForm" element={<BookingForm />} />
+        <Route path="/Order" element={<Order />} />
+        <Route path="/Login" element={<Login />} />
+      </Routes>
+    </>
   );
 }
-
-export default App;
