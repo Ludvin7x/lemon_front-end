@@ -13,7 +13,7 @@ import {
 import { fetchUnsplashImage } from "../api/getUnsplashImage";
 import { useNavigate } from "react-router-dom";
 import { useCart } from "../../contexts/CartContext";
-import { UserContext } from "../../contexts/UserContext";
+import { useUser } from "../../contexts/UserContext";
 
 
 const MenuPage = () => {
@@ -22,7 +22,7 @@ const MenuPage = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [quantities, setQuantities] = useState({});
-  const { user } = useContext(UserContext);
+  const { user, logout } = useUser();
 
   const { addToCart } = useCart();
   const API_URL = import.meta.env.VITE_API_URL;

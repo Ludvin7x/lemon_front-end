@@ -1,13 +1,13 @@
 import React, { useContext, useEffect, useState } from "react";
 import { NavLink, useLocation, useNavigate } from "react-router-dom";
-import { UserContext } from "../contexts/UserContext";
-import { CartContext } from "../contexts/CartContext";
+import { useUser } from "../contexts/UserContext";
+import { useCart } from "../contexts/CartContext";
 import { Navbar, Nav, Container, NavDropdown, Badge } from "react-bootstrap";
 import { ShoppingCart } from "phosphor-react";
 import "./Nav.css";
 
 
-const logo = "/img/Logo.svg";
+const logo = "/img/logo.png";
 const iconoMenu = "/img/icono_menu.png";
 const iconoOrder = "/img/icono_order.png";
 const iconoCart = "/img/icono_cart.svg";
@@ -17,9 +17,9 @@ export default function NavigationBar() {
   const [scrolled, setScrolled] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
-  const { user, logout } = useContext(UserContext);
+  const { user, logout } = useUser();
+  const { cart } = useCart();
 
-  const { cart } = useContext(CartContext);
   const totalQuantity = cart ? cart.reduce((sum, item) => sum + item.quantity, 0) : 0;
 
   useEffect(() => {

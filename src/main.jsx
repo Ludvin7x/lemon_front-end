@@ -11,12 +11,12 @@ import { UserProvider } from "./contexts/UserContext";
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <React.StrictMode>
-    <BrowserRouter future={{ v7_startTransition: true }}> 
-      <CartProvider>
-        <UserProvider>
+    <BrowserRouter future={{ v7_startTransition: true }}>
+      <UserProvider>
+        <CartProvider>
           <App />
-        </UserProvider>
-      </CartProvider>
+        </CartProvider>
+      </UserProvider>
     </BrowserRouter>
   </React.StrictMode>
 );
