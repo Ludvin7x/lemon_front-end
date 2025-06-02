@@ -1,14 +1,30 @@
-import { useEffect, useState } from "react";
-import { Spinner, Card, Button, Container, Row, Col, Alert } from "react-bootstrap";
+import { useEffect, useState, useContext } from "react";
+import {
+  Spinner,
+  Card,
+  Button,
+  Container,
+  Row,
+  Col,
+  Alert,
+  Form,
+  InputGroup,
+} from "react-bootstrap";
 import { fetchUnsplashImage } from "../api/getUnsplashImage";
 import { useNavigate } from "react-router-dom";
+import { useCart } from "../../contexts/CartContext";
+import { UserContext } from "../../contexts/UserContext";
+
 
 const MenuPage = () => {
   const [menuItems, setMenuItems] = useState([]);
   const [images, setImages] = useState({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [quantities, setQuantities] = useState({});
+  const { user } = useContext(UserContext);
 
+  const { addToCart } = useCart();
   const API_URL = import.meta.env.VITE_API_URL;
   const navigate = useNavigate();
 
@@ -24,11 +40,16 @@ const MenuPage = () => {
         setMenuItems(data.results);
 
         const newImages = {};
+        const newQuantities = {};
+
         for (const item of data.results) {
           const imageUrl = await fetchUnsplashImage(item.title);
           newImages[item.id] = imageUrl;
+          newQuantities[item.id] = 1; // valor inicial
         }
+
         setImages(newImages);
+        setQuantities(newQuantities);
       } catch (err) {
         console.error("Error fetching menu:", err);
         setError(err.message || "Error inesperado");
@@ -39,6 +60,26 @@ const MenuPage = () => {
 
     fetchMenu();
   }, [API_URL]);
+
+  const handleQuantityChange = (itemId, value) => {
+    setQuantities((prev) => ({
+      ...prev,
+      [itemId]: Math.max(1, parseInt(value) || 1),
+    }));
+  };
+
+  const handleAddToCart = (item) => {
+  if (!user) {
+    navigate("/login");
+    return;
+  }
+  const quantity = quantities[item.id] || 1;
+  addToCart({ ...item, quantity });
+};
+
+  const handleViewMore = (id) => {
+    navigate(`/menu/${id}`);
+  };
 
   if (loading) {
     return (
@@ -58,10 +99,6 @@ const MenuPage = () => {
     );
   }
 
-  const handleViewMore = (id) => {
-    navigate(`/menu/${id}`);
-  };
-
   return (
     <Container className="my-5">
       <h1 className="mb-4 text-center">Menú</h1>
@@ -76,17 +113,37 @@ const MenuPage = () => {
               />
               <Card.Body className="d-flex flex-column">
                 <Card.Title>{item.title}</Card.Title>
-                <Card.Text className="flex-grow-1">{item.description}</Card.Text>
-                <div className="d-flex justify-content-between align-items-center mb-2">
+                <Card.Text className="flex-grow-1">
+                  {item.description}
+                </Card.Text>
+                <div className="mb-2">
                   <span className="fw-bold fs-5">
                     ${isNaN(Number(item.price)) ? "N/A" : Number(item.price).toFixed(2)}
                   </span>
                 </div>
+
+                <InputGroup className="mb-3">
+                  <Form.Control
+                    type="number"
+                    min={1}
+                    value={quantities[item.id]}
+                    onChange={(e) =>
+                      handleQuantityChange(item.id, e.target.value)
+                    }
+                  />
+                  <Button
+                    variant="primary"
+                    onClick={() => handleAddToCart(item)}
+                  >
+                    Añadir al carrito
+                  </Button>
+                </InputGroup>
+
                 <Button
                   variant="outline-secondary"
                   onClick={() => handleViewMore(item.id)}
                 >
-                  View More
+                  Ver más
                 </Button>
               </Card.Body>
             </Card>

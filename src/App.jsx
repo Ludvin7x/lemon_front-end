@@ -16,7 +16,7 @@ export default function App() {
         <Route path="/" element={<Home />} />
         <Route path="/MenuPage" element={<MenuPage />} />
         <Route path="/menu/:id" element={<MenuItemDetail />} />
-        <Route path="/BookingForm" element={<BookingForm />} />
+      {/*  <Route path="/BookingForm" element={<BookingForm />} /> */}
         <Route path="/Order" element={<Order />} />
         <Route path="/Login" element={<Login />} />
       </Routes>

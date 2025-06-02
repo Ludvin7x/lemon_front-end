@@ -29,7 +29,7 @@ export const getUserInfo = async (token) => {
   return res.json();
 };
 
-// Logout - simplemente elimina tokens localmente
+// Logout - elimina tokens localmente
 export const logout = () => {
   localStorage.removeItem('accessToken');
   localStorage.removeItem('refreshToken');
