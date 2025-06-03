@@ -7,16 +7,19 @@ import "bootstrap/dist/js/bootstrap.bundle.min.js";
 import "./index.css";
 import { CartProvider } from "./contexts/CartContext";
 import { UserProvider } from "./contexts/UserContext";
+import { ToastProvider } from "./contexts/ToastContext";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <React.StrictMode>
     <BrowserRouter future={{ v7_startTransition: true }}>
-      <UserProvider>
-        <CartProvider>
-          <App />
-        </CartProvider>
-      </UserProvider>
+      <ToastProvider>
+        <UserProvider>
+          <CartProvider>
+            <App />
+          </CartProvider>
+        </UserProvider>
+      </ToastProvider>
     </BrowserRouter>
   </React.StrictMode>
 );

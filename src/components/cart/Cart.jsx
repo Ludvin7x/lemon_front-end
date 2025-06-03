@@ -3,35 +3,15 @@ import { useCart } from "../../contexts/CartContext";
 import { PlusCircle, MinusCircle, Trash } from "phosphor-react";
 
 export default function Cart() {
-  const {
-    cart,
-    loading,
-    setQuantity,
-    removeFromCart,
-    clearCart,
-    fetchCart,
-  } = useCart();
+  const { cart, loading, setQuantity, removeFromCart, clearCart, fetchCart } =
+    useCart();
 
   const [error, setError] = useState(null);
 
-  // Llamar a fetchCart cada vez que el componente monta
+  // Refrescar carrito al montar
   useEffect(() => {
     fetchCart();
   }, []);
-
-  // Manejar disminución con eliminación si llega a 0
-  const handleDecrease = (id, quantity) => {
-    if (quantity <= 1) {
-      removeFromCart(id);
-    } else {
-      setQuantity(id, quantity - 1);
-    }
-  };
-
-  // Calcular total solo si cart es array y tiene items
-  const total = Array.isArray(cart)
-    ? cart.reduce((acc, item) => acc + item.unit_price * item.quantity, 0)
-    : 0;
 
   // Mostrar error temporal
   useEffect(() => {
@@ -40,6 +20,40 @@ export default function Cart() {
       return () => clearTimeout(timer);
     }
   }, [error]);
+
+  const handleDecrease = async (id, quantity) => {
+    try {
+      if (quantity <= 1) {
+        await removeFromCart(id);
+      } else {
+        await setQuantity(id, quantity - 1);
+      }
+    } catch {
+      setError("Error updating cart. Please try again.");
+    }
+  };
+
+  const handleIncrease = async (id, quantity) => {
+    try {
+      await setQuantity(id, quantity + 1);
+    } catch {
+      setError("Error updating cart. Please try again.");
+    }
+  };
+
+  const handleClearCart = async () => {
+    if (window.confirm("Are you sure you want to clear the cart?")) {
+      try {
+        await clearCart();
+      } catch {
+        setError("Error clearing cart. Please try again.");
+      }
+    }
+  };
+
+  const total = Array.isArray(cart)
+    ? cart.reduce((acc, item) => acc + item.unit_price * item.quantity, 0)
+    : 0;
 
   if (loading)
     return <div className="alert alert-info mt-4">Loading cart...</div>;
@@ -70,21 +84,21 @@ export default function Cart() {
         <tbody>
           {cart.map(({ id, menuitem, quantity, unit_price }) => (
             <tr key={id}>
-              <td>{menuitem.name}</td>
+              <td>{menuitem?.title}</td>
               <td>
                 <div className="d-flex align-items-center">
                   <button
                     className="btn btn-sm btn-outline-secondary me-2"
                     onClick={() => handleDecrease(id, quantity)}
-                    title="Disminuir cantidad"
+                    title="Decrease quantity"
                   >
                     <MinusCircle size={20} weight="bold" />
                   </button>
                   <span>{quantity}</span>
                   <button
                     className="btn btn-sm btn-outline-secondary ms-2"
-                    onClick={() => setQuantity(id, quantity + 1)}
-                    title="Aumentar cantidad"
+                    onClick={() => handleIncrease(id, quantity)}
+                    title="Increase quantity"
                   >
                     <PlusCircle size={20} weight="bold" />
                   </button>
@@ -95,8 +109,14 @@ export default function Cart() {
               <td>
                 <button
                   className="btn btn-sm btn-danger"
-                  onClick={() => removeFromCart(id)}
-                  title="Eliminar producto"
+                  onClick={async () => {
+                    try {
+                      await removeFromCart(id);
+                    } catch {
+                      setError("Error removing item. Please try again.");
+                    }
+                  }}
+                  title="Remove item"
                 >
                   <Trash size={18} weight="bold" />
                 </button>
@@ -108,16 +128,25 @@ export default function Cart() {
 
       <div className="d-flex justify-content-between align-items-center mt-3">
         <h4>Total: ${total.toFixed(2)}</h4>
-        <button
-          className="btn btn-outline-danger"
-          onClick={() => {
-            clearCart().catch(() =>
-              setError("Error al vaciar el carrito. Intente de nuevo.")
-            );
-          }}
-        >
-          Clear Cart
-        </button>
+        <div>
+          <button
+            className="btn btn-outline-danger me-2"
+            onClick={handleClearCart}
+          >
+            Clear Cart
+          </button>
+          <button
+            className="btn btn-primary"
+            onClick={() => {
+              // Aquí puedes redirigir a la página de pago (Checkout)
+              // Ejemplo con React Router:
+              // navigate("/checkout");
+              alert("Redirect to payment page (Checkout)");
+            }}
+          >
+            Proceed to Checkout
+          </button>
+        </div>
       </div>
     </div>
   );
