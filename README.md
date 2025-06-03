@@ -41,9 +41,9 @@ A web application built with **React 18** providing **Little Lemon** customers a
 | ------------------ | ------------------------------------ |
 | Language           | JavaScript (ES2022)                  |
 | Framework          | React 18 + Vite                      |
-| Routing            | React Router DOM 6                   |
+| Routing            | React Router DOM 7                   |
 | State Management   | Context API + `useReducer`           |
-| API Requests       | Axios                                |
+| API Requests       | Fetch                                |
 | Styling            | CSS Modules (BEM)                    |
 | Testing            | Jest, React Testing Library          |
 | Linting/Formatting | ESLint, Prettier, Husky, lint-staged |
@@ -69,14 +69,12 @@ cd react-frontend
 npm install
 
 # 3. Create environment variables file
-cp .env.example .env
+cp .env.development, .env.production
 # Update API URL and other variables accordingly
 
 # 4. Start development server
 npm run dev
 
-# 5. Run tests
-npm test
 ```
 
 App will be available at **[http://localhost:5173](http://localhost:5173)** (default Vite port).
@@ -92,13 +90,12 @@ react-frontend/
 │   ├── api/            # API service abstractions
 │   ├── assets/         # Static assets
 │   ├── components/     # Reusable UI components
-│   ├── hooks/          # Custom hooks
 │   ├── pages/          # Route-based views
 │   ├── routes/         # Route definitions
 │   ├── contexts/       # Global state providers
 │   ├── tests/          # Test files
 │   └── utils/          # Helper utilities
-├── .env.example
+├── .env.development
 └── ...
 ```
 
