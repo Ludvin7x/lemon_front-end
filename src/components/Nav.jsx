@@ -47,7 +47,7 @@ export default function NavigationBar() {
           aria-controls="main-navbar"
           onClick={() => setExpanded(!expanded)}
         >
-          <img src={iconoMenu} alt="Menú" style={{ width: "40px" }} />
+          <img src={iconoMenu} alt="Menú/Orden" style={{ width: "40px" }} />
         </Navbar.Toggle>
 
         <Navbar.Brand as={NavLink} to="/">
