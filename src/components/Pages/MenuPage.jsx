@@ -85,7 +85,7 @@ const MenuPage = () => {
     return (
       <div className="text-center my-5">
         <Spinner animation="border" role="status" />
-        <p className="mt-3">Cargando menú...</p>
+        <p className="mt-3">Loading menú...</p>
       </div>
     );
   }
@@ -135,7 +135,7 @@ const MenuPage = () => {
                     variant="primary"
                     onClick={() => handleAddToCart(item)}
                   >
-                    Añadir al carrito
+                    Add to Cart
                   </Button>
                 </InputGroup>
 
@@ -143,7 +143,7 @@ const MenuPage = () => {
                   variant="outline-secondary"
                   onClick={() => handleViewMore(item.id)}
                 >
-                  Ver más
+                  View More
                 </Button>
               </Card.Body>
             </Card>

@@ -1,8 +1,7 @@
-import React, { useState, useContext } from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { login, getUserInfo } from '../api/auth';
-import { useUser } from "../../contexts/UserContext";
+import { useUser } from '../../contexts/UserContext';
 import SignupForm from './SignupForm';
 
 import './Login.css';
@@ -16,7 +15,7 @@ export default function Login() {
   const [successMsg, setSuccessMsg] = useState('');
   const [loading, setLoading] = useState(false);
 
-  const { user, logout } = useUser();
+  const { login } = useUser();
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
@@ -26,23 +25,8 @@ export default function Login() {
     setLoading(true);
 
     try {
-      // 1. Login: obtener tokens
-      const { access, refresh } = await login(username, password);
-
-      // 2. Guardar tokens en localStorage
-      localStorage.setItem('accessToken', access);
-      localStorage.setItem('refreshToken', refresh);
-
-      // 3. Obtener info del usuario
-      const user = await getUserInfo(access);
-      localStorage.setItem('user', JSON.stringify(user));
-
-      // 4. Actualizar contexto con usuario
-      setUser(user);
-
-      setSuccessMsg(`¡Bienvenido, ${user.username}! Redirigiendo…`);
-
-      // 5. Redirigir después de un pequeño delay
+      await login({ username, password });
+      setSuccessMsg(`¡Bienvenido, ${username}! Redirigiendo…`);
       setTimeout(() => navigate('/'), 1200);
     } catch (err) {
       setErrorMsg(err.message || 'Error inesperado');
@@ -51,7 +35,6 @@ export default function Login() {
     }
   };
 
-  // Cambiar a formulario de registro
   if (isSignup) {
     return (
       <SignupForm
@@ -68,7 +51,6 @@ export default function Login() {
     <div className="login">
       <h1 className="text-center mb-4">Login</h1>
 
-      {/* Alertas */}
       {errorMsg && (
         <div className="alert alert-danger" role="alert">
           {errorMsg}

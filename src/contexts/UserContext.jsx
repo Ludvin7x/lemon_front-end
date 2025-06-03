@@ -6,62 +6,66 @@ import {
   useState,
 } from "react";
 import {
-  login as apiLogin,      // ⇨ POST /auth/token/login/  (Djoser)
-  getUserInfo,            // ⇨ GET /auth/users/me/
-  logout as apiLogout,    // ⇨ POST /auth/token/logout/
+  login as apiLogin,
+  getUserInfo,
+  logout as apiLogout,
 } from "../components/api/auth";
 
 const UserContext = createContext();
+
 export const useUser = () => useContext(UserContext);
 
 export const UserProvider = ({ children }) => {
-  /* -------------------------- Estado local -------------------------- */
-  const [user, setUser] = useState(
-    JSON.parse(localStorage.getItem("user")) || null
-  );
-  const [token, setToken] = useState(localStorage.getItem("accessToken"));
+  const [user, setUser] = useState(() => {
+    const savedUser = localStorage.getItem("user");
+    return savedUser ? JSON.parse(savedUser) : null;
+  });
+  const [token, setToken] = useState(() => localStorage.getItem("accessToken"));
 
-  /* --------------------------- Side-effects ------------------------- */
-  // Si hay token pero no user (recarga de página), pide los datos al backend.
   useEffect(() => {
+
     if (token && !user) {
-      getUserInfo(token)
+      getUserInfo()
         .then((u) => {
-          localStorage.setItem("user", JSON.stringify(u));
           setUser(u);
+          localStorage.setItem("user", JSON.stringify(u));
         })
-        .catch(() => handleLogout()); // token expirado o inválido
+        .catch(() => {
+          handleLogout();
+        });
+    } else if (!token) {
+      setUser(null);
+      localStorage.removeItem("user");
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [token]);
 
-  /* ------------------------- Acciones ------------------------------ */
-  // Login: guarda token, pide info de usuario y la persiste.
-  const handleLogin = useCallback(async (credentials) => {
-    const { auth_token } = await apiLogin(credentials);
-    localStorage.setItem("accessToken", auth_token);
-    setToken(auth_token);
+  const handleLogin = useCallback(async ({ username, password }) => {
+    try {
+      const data = await apiLogin(username, password);
+      localStorage.setItem("accessToken", data.access);
+      localStorage.setItem("refreshToken", data.refresh);
+      setToken(data.access);
 
-    const u = await getUserInfo(auth_token);
-    localStorage.setItem("user", JSON.stringify(u));
-    setUser(u);
+      const u = await getUserInfo();
+      setUser(u);
+      localStorage.setItem("user", JSON.stringify(u));
+    } catch (error) {
+      throw error;
+    }
   }, []);
 
-  // Logout: limpia todo local + backend
   const handleLogout = useCallback(() => {
-    if (token) apiLogout(token).catch(() => {});
+    apiLogout();
     localStorage.removeItem("accessToken");
-    localStorage.removeItem("user");
+    localStorage.removeItem("refreshToken");
     setToken(null);
     setUser(null);
-  }, [token]);
+  }, []);
 
-  /* ------------------------ Context value -------------------------- */
   const value = {
     user,
     token,
-    setUser,
-    setToken,
     login: handleLogin,
     logout: handleLogout,
     isAuthenticated: !!token,

@@ -1,81 +1,123 @@
-import { useCart } from "../contexts/CartContext";
-import { toCurrency } from "../utils/currency";
-import { Button, Table } from "react-bootstrap";
-import { Link } from "react-router-dom";
-import { Plus, Minus, Trash2 } from "lucide-react";
+import React, { useState, useEffect } from "react";
+import { useCart } from "../../contexts/CartContext";
+import { PlusCircle, MinusCircle, Trash } from "phosphor-react";
 
 export default function Cart() {
   const {
     cart,
-    removeFromCart,
+    loading,
     setQuantity,
+    removeFromCart,
     clearCart,
-    totalPrice,
+    fetchCart,
   } = useCart();
 
-  if (!cart.length) return <p className="p-4">El carrito está vacío.</p>;
+  const [error, setError] = useState(null);
+
+  // Llamar a fetchCart cada vez que el componente monta
+  useEffect(() => {
+    fetchCart();
+  }, []);
+
+  // Manejar disminución con eliminación si llega a 0
+  const handleDecrease = (id, quantity) => {
+    if (quantity <= 1) {
+      removeFromCart(id);
+    } else {
+      setQuantity(id, quantity - 1);
+    }
+  };
+
+  // Calcular total solo si cart es array y tiene items
+  const total = Array.isArray(cart)
+    ? cart.reduce((acc, item) => acc + item.unit_price * item.quantity, 0)
+    : 0;
+
+  // Mostrar error temporal
+  useEffect(() => {
+    if (error) {
+      const timer = setTimeout(() => setError(null), 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [error]);
+
+  if (loading)
+    return <div className="alert alert-info mt-4">Loading cart...</div>;
+
+  if (!loading && cart.length === 0)
+    return <div className="alert alert-info mt-4">Empty cart.</div>;
 
   return (
-    <div className="p-4 bg-white rounded shadow-sm">
-      <h2 className="mb-4">Tu carrito</h2>
+    <div className="container mt-4">
+      <h2>Your Cart</h2>
 
-      <Table responsive>
+      {error && (
+        <div className="alert alert-danger" role="alert">
+          {error}
+        </div>
+      )}
+
+      <table className="table table-hover align-middle">
         <thead>
           <tr>
-            <th>Producto</th>
-            <th className="text-center">Cantidad</th>
-            <th className="text-end">Subtotal</th>
-            <th></th>
+            <th>Product</th>
+            <th>Quantity</th>
+            <th>Unit Price</th>
+            <th>Subtotal</th>
+            <th>Actions</th>
           </tr>
         </thead>
         <tbody>
-          {cart.map((item) => (
-            <tr key={item.id}>
-              <td>{item.title}</td>
-              <td className="text-center">
-                <Button
-                  size="sm"
-                  variant="outline-secondary"
-                  onClick={() => setQuantity(item.id, item.quantity - 1)}
-                >
-                  <Minus size={14} />
-                </Button>{" "}
-                {item.quantity}{" "}
-                <Button
-                  size="sm"
-                  variant="outline-secondary"
-                  onClick={() => setQuantity(item.id, item.quantity + 1)}
-                >
-                  <Plus size={14} />
-                </Button>
-              </td>
-              <td className="text-end">
-                {toCurrency(item.price * item.quantity)}
-              </td>
+          {cart.map(({ id, menuitem, quantity, unit_price }) => (
+            <tr key={id}>
+              <td>{menuitem.name}</td>
               <td>
-                <Button
-                  size="sm"
-                  variant="outline-danger"
-                  onClick={() => removeFromCart(item.id)}
+                <div className="d-flex align-items-center">
+                  <button
+                    className="btn btn-sm btn-outline-secondary me-2"
+                    onClick={() => handleDecrease(id, quantity)}
+                    title="Disminuir cantidad"
+                  >
+                    <MinusCircle size={20} weight="bold" />
+                  </button>
+                  <span>{quantity}</span>
+                  <button
+                    className="btn btn-sm btn-outline-secondary ms-2"
+                    onClick={() => setQuantity(id, quantity + 1)}
+                    title="Aumentar cantidad"
+                  >
+                    <PlusCircle size={20} weight="bold" />
+                  </button>
+                </div>
+              </td>
+              <td>${Number(unit_price).toFixed(2)}</td>
+              <td>${(Number(unit_price) * quantity).toFixed(2)}</td>
+              <td>
+                <button
+                  className="btn btn-sm btn-danger"
+                  onClick={() => removeFromCart(id)}
+                  title="Eliminar producto"
                 >
-                  <Trash2 size={14} />
-                </Button>
+                  <Trash size={18} weight="bold" />
+                </button>
               </td>
             </tr>
           ))}
         </tbody>
-      </Table>
+      </table>
 
       <div className="d-flex justify-content-between align-items-center mt-3">
-        <strong>Total: {toCurrency(totalPrice)}</strong>
-        <div>
-          <Button variant="secondary" onClick={clearCart} className="me-2">
-            Vaciar carrito
-          </Button>
-          <Link to="/checkout" className="btn btn-success">
-            Proceder al pago
-          </Link>
-        </div>
+        <h4>Total: ${total.toFixed(2)}</h4>
+        <button
+          className="btn btn-outline-danger"
+          onClick={() => {
+            clearCart().catch(() =>
+              setError("Error al vaciar el carrito. Intente de nuevo.")
+            );
+          }}
+        >
+          Clear Cart
+        </button>
       </div>
     </div>
   );

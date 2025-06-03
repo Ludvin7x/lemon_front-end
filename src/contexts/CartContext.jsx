@@ -1,5 +1,6 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import { useUser } from "./UserContext";
+
 const CartContext = createContext();
 export const useCart = () => useContext(CartContext);
 
@@ -8,7 +9,7 @@ export const CartProvider = ({ children }) => {
   const [cart, setCart] = useState([]);
   const [loading, setLoading] = useState(false);
 
-  const API_URL = `${import.meta.env.VITE_API_URL}/api/cart/menu-items/`;
+  const API_URL = `${import.meta.env.VITE_API_URL}/api/cart/`;
 
   // Cargar carrito desde la API
   const fetchCart = async () => {
@@ -18,13 +19,17 @@ export const CartProvider = ({ children }) => {
     try {
       const res = await fetch(API_URL, {
         headers: {
-          Authorization: `Token ${token}`,
+          Authorization: `Bearer ${token}`,
         },
       });
 
       if (res.ok) {
         const data = await res.json();
-        setCart(data); // el backend ya entrega quantity y price
+        if (data && Array.isArray(data.results)) {
+          setCart(data.results);
+        } else {
+          setCart([]);
+        }
       } else {
         console.error("Error al obtener el carrito");
       }
@@ -35,63 +40,62 @@ export const CartProvider = ({ children }) => {
     }
   };
 
-  // Añadir item al carrito (o incrementar cantidad)
   const addToCart = async (item, quantity = 1) => {
+    const existingItem = cart.find((i) => i.menuitem.id === item.id);
+
     try {
-      const res = await fetch(API_URL, {
-        method: "POST",
+      const url = existingItem ? `${API_URL}${existingItem.id}/` : API_URL;
+      const method = existingItem ? "PATCH" : "POST";
+      const body = existingItem
+        ? JSON.stringify({ quantity: existingItem.quantity + quantity })
+        : JSON.stringify({ menuitem_id: item.id, quantity });
+
+      const res = await fetch(url, {
+        method,
         headers: {
-          Authorization: `Token ${token}`,
+          Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({
-          menuitem_id: item.id,
-          quantity,
-        }),
+        body,
       });
 
       if (res.ok) {
-        fetchCart(); // Actualizar estado
+        fetchCart();
       } else {
-        console.error("Error al añadir al carrito");
+        console.error("Error al añadir/actualizar item en el carrito");
       }
     } catch (error) {
       console.error("Error en addToCart:", error);
     }
   };
 
-  // Establecer cantidad exacta (sobrescribe)
   const setQuantity = async (id, quantity) => {
-    await addToCart({ id }, quantity); // La API suma, por lo que se necesita backend con PUT para esto.
-  };
-
-  // Eliminar un ítem del carrito
-  const removeFromCart = async (id) => {
     try {
       const res = await fetch(`${API_URL}${id}/`, {
-        method: "DELETE",
+        method: "PATCH",
         headers: {
-          Authorization: `Token ${token}`,
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
         },
+        body: JSON.stringify({ quantity }),
       });
 
       if (res.ok) {
         fetchCart();
       } else {
-        console.error("Error al eliminar item");
+        console.error("Error al actualizar la cantidad");
       }
     } catch (error) {
-      console.error("Error en removeFromCart:", error);
+      console.error("Error en setQuantity:", error);
     }
   };
 
-  // Vaciar carrito completo
   const clearCart = async () => {
     try {
       const res = await fetch(API_URL, {
         method: "DELETE",
         headers: {
-          Authorization: `Token ${token}`,
+          Authorization: `Bearer ${token}`,
         },
       });
 
@@ -105,13 +109,36 @@ export const CartProvider = ({ children }) => {
     }
   };
 
-  // Calcular totales
-  const totalItems = cart.reduce((acc, i) => acc + i.quantity, 0);
-  const totalPrice = cart.reduce((acc, i) => acc + i.unit_price * i.quantity, 0);
+  const totalItems = Array.isArray(cart)
+    ? cart.reduce((acc, i) => acc + i.quantity, 0)
+    : 0;
+
+  const totalPrice = Array.isArray(cart)
+    ? cart.reduce((acc, i) => acc + i.unit_price * i.quantity, 0)
+    : 0;
 
   useEffect(() => {
     fetchCart();
   }, [token]);
+
+  const removeFromCart = async (id) => {
+    try {
+      const res = await fetch(`${API_URL}${id}/`, {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (res.ok) {
+        fetchCart();
+      } else {
+        console.error("Error al eliminar el item del carrito");
+      }
+    } catch (error) {
+      console.error("Error en removeFromCart:", error);
+    }
+  };
 
   return (
     <CartContext.Provider
