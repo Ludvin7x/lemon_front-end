@@ -1,0 +1,47 @@
+/* Cart.css */
+
+/* Usamos un contenedor con clase única para limitar el alcance */
+.cart-container {
+  background-color: #fff;
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.cart-container h2 {
+  font-weight: 700;
+  margin-bottom: 1.5rem;
+  color: #222;
+}
+
+.cart-table th {
+  font-size: 0.95rem;
+  color: #6c757d;
+}
+
+.cart-table td {
+  vertical-align: middle;
+}
+
+.cart-actions button {
+  margin: 0 0.25rem;
+}
+
+.cart-total {
+  border-top: 1px solid #dee2e6;
+  padding-top: 1rem;
+  margin-top: 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.cart-total h4 {
+  margin: 0;
+}
+
+.alert {
+  margin-bottom: 1.5rem;
+}

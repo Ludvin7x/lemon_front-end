@@ -1,19 +1,17 @@
 import React, { useState, useEffect } from "react";
 import { useCart } from "../../contexts/CartContext";
 import { PlusCircle, MinusCircle, Trash } from "phosphor-react";
+import "./Cart.css"; // ✅ solo afecta este componente
 
 export default function Cart() {
   const { cart, loading, setQuantity, removeFromCart, clearCart, fetchCart } =
     useCart();
-
   const [error, setError] = useState(null);
 
-  // Refrescar carrito al montar
   useEffect(() => {
     fetchCart();
   }, []);
 
-  // Mostrar error temporal
   useEffect(() => {
     if (error) {
       const timer = setTimeout(() => setError(null), 3000);
@@ -62,16 +60,12 @@ export default function Cart() {
     return <div className="alert alert-info mt-4">Empty cart.</div>;
 
   return (
-    <div className="container mt-4">
+    <div className="cart-container mt-4">
       <h2>Your Cart</h2>
 
-      {error && (
-        <div className="alert alert-danger" role="alert">
-          {error}
-        </div>
-      )}
+      {error && <div className="alert alert-danger">{error}</div>}
 
-      <table className="table table-hover align-middle">
+      <table className="table table-hover align-middle cart-table">
         <thead>
           <tr>
             <th>Product</th>
@@ -86,17 +80,17 @@ export default function Cart() {
             <tr key={id}>
               <td>{menuitem?.title}</td>
               <td>
-                <div className="d-flex align-items-center">
+                <div className="d-flex align-items-center cart-actions">
                   <button
-                    className="btn btn-sm btn-outline-secondary me-2"
+                    className="btn btn-sm btn-outline-secondary"
                     onClick={() => handleDecrease(id, quantity)}
                     title="Decrease quantity"
                   >
                     <MinusCircle size={20} weight="bold" />
                   </button>
-                  <span>{quantity}</span>
+                  <span className="mx-2">{quantity}</span>
                   <button
-                    className="btn btn-sm btn-outline-secondary ms-2"
+                    className="btn btn-sm btn-outline-secondary"
                     onClick={() => handleIncrease(id, quantity)}
                     title="Increase quantity"
                   >
@@ -126,23 +120,16 @@ export default function Cart() {
         </tbody>
       </table>
 
-      <div className="d-flex justify-content-between align-items-center mt-3">
+      <div className="cart-total">
         <h4>Total: ${total.toFixed(2)}</h4>
         <div>
-          <button
-            className="btn btn-outline-danger me-2"
-            onClick={handleClearCart}
-          >
+          <button className="btn btn-danger me-2" onClick={handleClearCart}>
             Clear Cart
           </button>
+
           <button
             className="btn btn-primary"
-            onClick={() => {
-              // Aquí puedes redirigir a la página de pago (Checkout)
-              // Ejemplo con React Router:
-              // navigate("/checkout");
-              alert("Redirect to payment page (Checkout)");
-            }}
+            onClick={() => alert("Redirect to payment page (Checkout)")}
           >
             Proceed to Checkout
           </button>
