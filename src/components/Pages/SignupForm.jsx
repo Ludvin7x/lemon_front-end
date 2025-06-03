@@ -1,29 +1,41 @@
-import React, { useState } from 'react';
-import { register } from '../api/auth'; 
+import React, { useState } from "react";
+import { register } from "../api/auth";
 
-import './Login.css';
+import "./Login.css";
 
 export default function SignupForm({ onCancel }) {
-  const [username, setUsername] = useState('');
-  const [email, setEmail] = useState('');
-  const [password1, setPassword1] = useState('');
-  const [password2, setPassword2] = useState('');
-  const [alert, setAlert] = useState(null); 
+  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [password1, setPassword1] = useState("");
+  const [password2, setPassword2] = useState("");
+  const [alert, setAlert] = useState(null);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     if (password1 !== password2) {
-      setAlert({ type: 'danger', message: 'Passwords do not match' });
+      setAlert({ type: "danger", message: "Passwords do not match" });
       return;
     }
 
     try {
-      await register({ username, email, password: password1 });
-      setAlert({ type: 'success', message: 'Account created! Please login.' });
+      await register({
+        username,
+        email,
+        first_name: firstName,
+        last_name: lastName,
+        password: password1,
+        password2: password2,
+      });
+      setAlert({ type: "success", message: "Account created! Please login." });
       setTimeout(() => onCancel(), 2000);
     } catch (err) {
-      setAlert({ type: 'danger', message: err.message || 'Registration failed' });
+      setAlert({
+        type: "danger",
+        message: err.message || "Registration failed",
+      });
     }
   };
 
@@ -31,9 +43,11 @@ export default function SignupForm({ onCancel }) {
     <div className="login">
       <h1 className="text-center mb-4">Sign Up</h1>
 
-      {/* Mostrar alerta si hay mensaje */}
       {alert && (
-        <div className={`alert alert-${alert.type} alert-dismissible fade show`} role="alert">
+        <div
+          className={`alert alert-${alert.type} alert-dismissible fade show`}
+          role="alert"
+        >
           {alert.message}
           <button
             type="button"
@@ -66,6 +80,30 @@ export default function SignupForm({ onCancel }) {
             className="form-control"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
+            required
+          />
+        </div>
+
+        <div className="form-group mb-3">
+          <label htmlFor="firstName">First Name:</label>
+          <input
+            id="firstName"
+            type="text"
+            className="form-control"
+            value={firstName}
+            onChange={(e) => setFirstName(e.target.value)}
+            required
+          />
+        </div>
+
+        <div className="form-group mb-3">
+          <label htmlFor="lastName">Last Name:</label>
+          <input
+            id="lastName"
+            type="text"
+            className="form-control"
+            value={lastName}
+            onChange={(e) => setLastName(e.target.value)}
             required
           />
         </div>

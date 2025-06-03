@@ -85,11 +85,11 @@ export async function getUserInfo() {
 }
 
 // Registro: crea nuevo usuario
-export async function register({ username, email, password }) {
-  const res = await fetch(url('/api/register/'), {
+export async function register({ username, email, password, password2, first_name, last_name }) {
+  const res = await fetch(url('/api/auth/register/'), {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ username, email, password }),
+    body: JSON.stringify({ username, email, password, password2, first_name, last_name }),
   });
 
   if (!res.ok) {
@@ -98,6 +98,9 @@ export async function register({ username, email, password }) {
     if (error.username) messages.push(`Username: ${error.username.join(' ')}`);
     if (error.email) messages.push(`Email: ${error.email.join(' ')}`);
     if (error.password) messages.push(`Password: ${error.password.join(' ')}`);
+    if (error.password2) messages.push(`Confirm Password: ${error.password2.join(' ')}`);
+    if (error.first_name) messages.push(`First Name: ${error.first_name.join(' ')}`);
+    if (error.last_name) messages.push(`Last Name: ${error.last_name.join(' ')}`);
     throw new Error(messages.join(' ') || 'Error al registrar usuario');
   }
 
