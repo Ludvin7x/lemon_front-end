@@ -43,35 +43,38 @@ export const CartProvider = ({ children }) => {
   const addToCart = async (item, quantity = 1) => {
     const existingItem = cart.find((i) => i.menuitem.id === item.id);
 
-  try {
-    const url = existingItem ? `${API_URL}${existingItem.id}/` : API_URL;
-    const method = existingItem ? "PATCH" : "POST";
-    const body = existingItem
-      ? JSON.stringify({ quantity: existingItem.quantity + quantity })
-      : JSON.stringify({ menuitem_id: item.id, quantity });
+    try {
+      const url = existingItem ? `${API_URL}${existingItem.id}/` : API_URL;
+      const method = existingItem ? "PATCH" : "POST";
+      const body = existingItem
+        ? JSON.stringify({ quantity: existingItem.quantity + quantity })
+        : JSON.stringify({ menuitem_id: item.id, quantity });
 
-    const res = await fetch(url, {
-      method,
-      headers: {
-        Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json",
-      },
-      body,
-    });
+      const res = await fetch(url, {
+        method,
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body,
+      });
 
-    if (res.ok) {
-      fetchCart();
-      return { ok: true };
-    } else {
-      const errorText = await res.text();
-      console.error("Error al añadir/actualizar item en el carrito", errorText);
-      return { ok: false, error: errorText };
+      if (res.ok) {
+        fetchCart();
+        return { ok: true };
+      } else {
+        const errorText = await res.text();
+        console.error(
+          "Error al añadir/actualizar item en el carrito",
+          errorText
+        );
+        return { ok: false, error: errorText };
+      }
+    } catch (error) {
+      console.error("Error en addToCart:", error);
+      return { ok: false, error: error.message };
     }
-  } catch (error) {
-    console.error("Error en addToCart:", error);
-    return { ok: false, error: error.message };
-  }
-};
+  };
 
   const setQuantity = async (id, quantity) => {
     try {
@@ -96,20 +99,17 @@ export const CartProvider = ({ children }) => {
 
   const clearCart = async () => {
     try {
-      const res = await fetch(API_URL, {
+      const res = await fetch(`${API_URL}clear/`, {
         method: "DELETE",
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
 
-      if (res.ok) {
-        setCart([]);
-      } else {
-        console.error("Error al vaciar carrito");
-      }
+      if (!res.ok) throw new Error("Error al vaciar el carrito");
+      setCart([]);
     } catch (error) {
-      console.error("Error en clearCart:", error);
+      console.error("Error al vaciar carrito", error);
     }
   };
 
