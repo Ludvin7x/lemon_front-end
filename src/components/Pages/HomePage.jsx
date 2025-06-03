@@ -1,5 +1,3 @@
-
-
 function importSlides() {
   const slides = [];
   for (let i = 1; i <= 23; i++) {
