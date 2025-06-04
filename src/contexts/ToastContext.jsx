@@ -1,18 +1,34 @@
 import { createContext, useContext, useState, useCallback } from "react";
 import { Toast } from "react-bootstrap";
+import {
+  CheckCircle,
+  WarningCircle,
+  XCircle,
+  Info,
+} from "phosphor-react";
 
 const ToastContext = createContext();
 
 export const useToast = () => useContext(ToastContext);
 
+const ICONS = {
+  success: <CheckCircle size={20} weight="fill" className="me-2 text-white" />,
+  danger: <XCircle size={20} weight="fill" className="me-2 text-white" />,
+  warning: <WarningCircle size={20} weight="fill" className="me-2 text-white" />,
+  info: <Info size={20} weight="fill" className="me-2 text-white" />,
+};
+
 export const ToastProvider = ({ children }) => {
   const [show, setShow] = useState(false);
+  // Siempre iniciar como string, no como objeto para evitar confusión
   const [message, setMessage] = useState("");
-  const [bg, setBg] = useState("success"); // success, danger, info...
+  const [variant, setVariant] = useState("success");
+  const [header, setHeader] = useState(null);
 
-  const showToast = useCallback((msg, variant = "success") => {
+  const showToast = useCallback((msg, variant = "success", header = null) => {
     setMessage(msg);
-    setBg(variant);
+    setVariant(variant);
+    setHeader(header);
     setShow(true);
   }, []);
 
@@ -27,13 +43,14 @@ export const ToastProvider = ({ children }) => {
         show={show}
         delay={3000}
         autohide
-        bg={bg}
-        className="position-fixed top-0 start-50 translate-middle-x mt-3"
-        style={{ maxWidth: "90vw", width: "350px", zIndex: 1050 }}
+        bg={variant}
+        className="position-fixed top-0 start-50 translate-middle-x mt-3 shadow-lg"
+        style={{ maxWidth: "90vw", width: "350px", zIndex: 1080 }}
       >
         <Toast.Header closeButton={false}>
-          <strong className={`me-auto text-${bg === "danger" ? "danger" : "success"}`}>
-            {bg.charAt(0).toUpperCase() + bg.slice(1)}
+          {ICONS[variant] || null}
+          <strong className="me-auto text-white">
+            {header || variant.charAt(0).toUpperCase() + variant.slice(1)}
           </strong>
         </Toast.Header>
         <Toast.Body className="text-white">{message}</Toast.Body>

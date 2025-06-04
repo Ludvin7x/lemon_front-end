@@ -111,6 +111,13 @@ export default function NavigationBar() {
             >
               Menu/Order
             </Nav.Link>
+            <Nav.Link
+              as={NavLink}
+              to="/BookingForm"
+              className={({ isActive }) => (isActive ? "selected" : "")}
+            >
+              Booking
+            </Nav.Link>
           </Nav>
 
           <Nav>

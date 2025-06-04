@@ -1,14 +1,12 @@
 import React, { useState, useEffect } from "react";
-import { Alert, Spinner, Button, Form } from "react-bootstrap";
+import { Container, Row, Col, Form, Button, Spinner } from "react-bootstrap";
 import ConfirmedBooking from "./ConfirmedBooking";
+import { getAvailableTimes, submitBooking } from "../api/apiBooking";
+import { useToast } from "../../contexts/ToastContext";
 import "./BookingForm.css";
 
 function BookingForm() {
-  const formStyle = {
-    display: "grid",
-    maxWidth: "200px",
-    gap: "20px",
-  };
+  const { showToast } = useToast();
 
   const currentDate = new Date().toISOString().split("T")[0];
 
@@ -22,36 +20,28 @@ function BookingForm() {
 
   const [submitted, setSubmitted] = useState(false);
   const [bookingData, setBookingData] = useState(null);
-  const [alert, setAlert] = useState({ show: false, variant: "", message: "" });
 
-  // Función para obtener horarios disponibles del backend según la fecha
   const fetchAvailableTimes = async (selectedDate) => {
     setLoadingTimes(true);
     try {
-      // Cambia esta URL por la de tu backend real que devuelva horarios disponibles
-      const response = await fetch(`https://tu-backend/api/available-times?date=${selectedDate}`);
-      if (!response.ok) throw new Error("Error al obtener horarios");
-      const data = await response.json();
-
-      setAvailableTimes(data.times || []);
-      // Si no hay hora seleccionada o la hora seleccionada no está en la lista, la reseteamos
-      if (!data.times.includes(time)) {
+      const { times } = await getAvailableTimes(selectedDate);
+      setAvailableTimes(times || []);
+      if (!times.includes(time)) {
         setTime("");
       }
     } catch (error) {
-      setAlert({ show: true, variant: "danger", message: "Error al cargar horarios disponibles." });
+      showToast("Error al cargar horarios disponibles.", "danger");
       setAvailableTimes([]);
       setTime("");
     }
     setLoadingTimes(false);
   };
 
-  // Cargar horarios disponibles al cargar el componente con la fecha inicial
   useEffect(() => {
     fetchAvailableTimes(date);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Maneja el cambio de fecha
   const handleDateChange = (e) => {
     const selectedDate = e.target.value;
     setDate(selectedDate);
@@ -64,46 +54,41 @@ function BookingForm() {
     setOccasion("Birthday");
   };
 
-  // Manejo del submit solo localmente (no se envía a backend)
-  const handleSubmission = (e) => {
+  const handleSubmission = async (e) => {
     e.preventDefault();
 
     if (!time) {
-      setAlert({ show: true, variant: "warning", message: "Por favor selecciona una hora." });
+      showToast("Por favor selecciona una hora.", "warning");
       return;
     }
 
-    const formData = {
-      date,
-      time,
-      guests,
-      occasion,
-    };
+    const formData = { date, time, guests, occasion };
 
-    setBookingData(formData);
-    setSubmitted(true);
-    clearForm();
-    setAlert({ show: true, variant: "success", message: "¡Formulario enviado exitosamente!" });
+    try {
+      const result = await submitBooking(formData);
+      if (result.ok) {
+        setBookingData(result.booking);
+        setSubmitted(true);
+        clearForm();
+        showToast("¡Reserva enviada exitosamente!", "success");
+      }
+    } catch (err) {
+      showToast(err.message || "No se pudo enviar la reserva.", "danger");
+    }
   };
 
+  if (submitted) {
+    return <ConfirmedBooking bookingDetails={bookingData} />;
+  }
+
   return (
-    <div className="bookingform">
-      {!submitted ? (
-        <div className="form-booking">
-          <h1>Book Now</h1>
+    <Container className="bookingform py-4">
+      <Row className="justify-content-center">
+        <Col xs={12} md={8} lg={6}>
+          <h1 className="mb-4 text-center">Book Now</h1>
 
-          {alert.show && (
-            <Alert
-              variant={alert.variant}
-              onClose={() => setAlert({ show: false, variant: "", message: "" })}
-              dismissible
-            >
-              {alert.message}
-            </Alert>
-          )}
-
-          <Form style={formStyle} onSubmit={handleSubmission}>
-            <Form.Group className="mb-3" controlId="res-date">
+          <Form onSubmit={handleSubmission} className="d-grid gap-3">
+            <Form.Group controlId="res-date">
               <Form.Label>Choose date</Form.Label>
               <Form.Control
                 type="date"
@@ -113,13 +98,12 @@ function BookingForm() {
               />
             </Form.Group>
 
-            <Form.Group className="mb-3" controlId="res-time">
+            <Form.Group controlId="res-time">
               <Form.Label>Choose time</Form.Label>
               {loadingTimes ? (
                 <Spinner animation="border" size="sm" />
               ) : (
                 <Form.Select
-                  aria-label="Select time"
                   value={time}
                   onChange={(e) => setTime(e.target.value)}
                 >
@@ -133,7 +117,7 @@ function BookingForm() {
               )}
             </Form.Group>
 
-            <Form.Group className="mb-3" controlId="guests">
+            <Form.Group controlId="guests">
               <Form.Label>Number of guests</Form.Label>
               <Form.Control
                 type="number"
@@ -141,19 +125,17 @@ function BookingForm() {
                 max="120"
                 value={guests}
                 onChange={(e) => {
-                  const value = parseInt(e.target.value);
+                  const value = parseInt(e.target.value, 10);
                   if (!isNaN(value) && value >= 1) {
                     setGuest(value);
                   }
                 }}
-                aria-label="Enter number of guests"
               />
             </Form.Group>
 
-            <Form.Group className="mb-3" controlId="occasion">
+            <Form.Group controlId="occasion">
               <Form.Label>Occasion</Form.Label>
               <Form.Select
-                aria-label="Select occasion"
                 value={occasion}
                 onChange={(e) => setOccasion(e.target.value)}
               >
@@ -162,15 +144,13 @@ function BookingForm() {
               </Form.Select>
             </Form.Group>
 
-            <Button type="submit" variant="primary" aria-label="Submit reservation">
+            <Button type="submit" variant="primary" className="w-100">
               Make Your reservation
             </Button>
           </Form>
-        </div>
-      ) : (
-        <ConfirmedBooking bookingDetails={bookingData} />
-      )}
-    </div>
+        </Col>
+      </Row>
+    </Container>
   );
 }
 
