@@ -155,7 +155,7 @@ function BookingForm() {
               </Form.Select>
             </Form.Group>
 
-            <Button type="submit" variant="light" className="custom-btn">
+            <Button type="submit"  className="custom-btn">
               Make your reservation
             </Button>
           </Form>
