@@ -118,6 +118,13 @@ export default function NavigationBar() {
             >
               Booking
             </Nav.Link>
+            <Nav.Link
+              as={NavLink}
+              to="/About"
+              className={({ isActive }) => (isActive ? "selected" : "")}
+            >
+              About
+            </Nav.Link>
           </Nav>
 
           <Nav>
@@ -136,14 +143,6 @@ export default function NavigationBar() {
                   {totalItems}
                 </Badge>
               )}
-            </Nav.Link>
-
-            <Nav.Link
-              as={NavLink}
-              to="/About"
-              className={({ isActive }) => (isActive ? "selected" : "")}
-            >
-              About
             </Nav.Link>
 
             {user ? (
