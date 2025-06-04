@@ -1,14 +1,16 @@
-import { useEffect, useState } from "react";
+// src/pages/MenuPage.jsx
+import { useState, useEffect, useCallback, useRef } from "react";
 import {
-  Spinner,
-  Card,
   Button,
+  ButtonGroup,
+  Spinner,
   Container,
   Row,
   Col,
   Alert,
-  Form,
   InputGroup,
+  Form,
+  Card,
   Pagination,
 } from "react-bootstrap";
 import { fetchUnsplashImage } from "../api/getUnsplashImage";
@@ -17,72 +19,115 @@ import { useCart } from "../../contexts/CartContext";
 import { useUser } from "../../contexts/UserContext";
 import { useToast } from "../../contexts/ToastContext";
 
-const PAGE_SIZE = 10;                     // debe coincidir con tu paginador Django
+const PAGE_SIZE = 10;
 
 const MenuPage = () => {
+  /* ──────────── Estados ──────────── */
   const [menuItems, setMenuItems] = useState([]);
   const [images, setImages] = useState({});
   const [quantities, setQuantities] = useState({});
-  const [adding, setAdding] = useState({});
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [categories, setCategories] = useState([]);
+  const [selectedCategory, setSelectedCategory] = useState("all");
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
+  /* ──────────── Contextos ──────────── */
   const { user } = useUser();
   const { addToCart } = useCart();
   const { showToast } = useToast();
   const navigate = useNavigate();
   const API_URL = import.meta.env.VITE_API_URL;
 
-  /* ──────── Petición al backend + imágenes ──────── */
-  const fetchMenu = async (targetPage = 1) => {
-    try {
-      setLoading(true);
-      const res = await fetch(
-        `${API_URL}/api/menu-items/?page=${targetPage}`
-      );
-      if (!res.ok) throw new Error("Failed to fetch menu");
+  /* ──────────── Refs de control ──────────── */
+  const lastFetchRef = useRef({ page: null, category: null });
+  const imagesCacheRef = useRef({}); // cache de imágenes
 
-      const data = await res.json();
-      setMenuItems(data.results);
-      setTotalPages(Math.ceil(data.count / PAGE_SIZE));
-      setPage(targetPage);
+  /* ──────────── Fetch menú ──────────── */
+  const fetchMenu = useCallback(
+    async (pageNum = 1, categorySlug = "all") => {
+      // evita llamadas duplicadas
+      if (
+        lastFetchRef.current.page === pageNum &&
+        lastFetchRef.current.category === categorySlug
+      )
+        return;
 
-      /* imágenes en paralelo: título + categoría  */
-      const imgs = await Promise.all(
-        data.results.map(async (item) => {
-          const categoryName =
-            typeof item.category === "string"
-              ? item.category
-              : item.category?.title || item.category?.slug || "";
-          const query = `${item.title} ${categoryName}`.trim();
-          const url = await fetchUnsplashImage(query, item.id);
-          return { id: item.id, url };
-        })
-      );
+      lastFetchRef.current = { page: pageNum, category: categorySlug };
 
-      /* Se guardan en un map para acceso O(1) */
-      const map = {};
-      const qty = {};
-      imgs.forEach(({ id, url }) => {
-        map[id] = url;
-        qty[id] = 1;
-      });
-      setImages(map);
-      setQuantities(qty);
-    } catch (err) {
-      setError(err.message);
-    } finally {
-      setLoading(false);
-    }
-  };
+      try {
+        setLoading(true);
+        setError(null);
 
+        let url = `${API_URL}/api/menu-items/?page=${pageNum}`;
+        if (categorySlug !== "all") url += `&category=${categorySlug}`;
+
+        const res = await fetch(url);
+        if (!res.ok) throw new Error("Failed to fetch menu");
+
+        const data = await res.json();
+        setMenuItems(data.results);
+        setTotalPages(Math.ceil(data.count / PAGE_SIZE));
+        setPage(pageNum);
+
+        /* ── Cargar imágenes (con cache) ── */
+        const imgs = await Promise.all(
+          data.results.map(async (item) => {
+            if (imagesCacheRef.current[item.id]) {
+              return { id: item.id, url: imagesCacheRef.current[item.id] };
+            }
+            const categoryName =
+              typeof item.category === "string"
+                ? item.category
+                : item.category?.title || item.category?.slug || "";
+            const query = `${item.title} ${categoryName}`.trim();
+            const url = await fetchUnsplashImage(query, item.id);
+            imagesCacheRef.current[item.id] = url; // guarda en cache
+            return { id: item.id, url };
+          })
+        );
+
+        const map = {};
+        const qtyMap = {};
+        imgs.forEach(({ id, url }) => {
+          map[id] = url;
+          qtyMap[id] = quantities[id] || 1;
+        });
+        setImages(map);
+        setQuantities(qtyMap);
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    },
+    [API_URL, quantities]
+  );
+
+  /* ──────────── Fetch categorías ──────────── */
   useEffect(() => {
-    fetchMenu(1);
+    const fetchCategories = async () => {
+      try {
+        const res = await fetch(`${API_URL}/api/categories/`);
+        if (!res.ok) throw new Error("Failed to fetch categories");
+        const data = await res.json();
+        setCategories(Array.isArray(data.results) ? data.results : []);
+      } catch (err) {
+        console.error("Error loading categories:", err);
+      }
+    };
+    fetchCategories();
   }, [API_URL]);
 
-  /* ──────── Helpers ──────── */
+  /* ──────────── Carga inicial & cambio de categoría ──────────── */
+  useEffect(() => {
+    fetchMenu(1, selectedCategory);
+  }, [selectedCategory, fetchMenu]);
+
+  /* ──────────── Handlers ──────────── */
+  const handleCategorySelect = (slug) => setSelectedCategory(slug);
+
   const handleQuantityChange = (id, value) => {
     const qty = Math.max(1, Math.min(99, parseInt(value) || 1));
     setQuantities((prev) => ({ ...prev, [id]: qty }));
@@ -90,7 +135,6 @@ const MenuPage = () => {
 
   const handleAddToCart = async (item) => {
     if (!user) return navigate("/login");
-    setAdding((prev) => ({ ...prev, [item.id]: true }));
     const qty = quantities[item.id] || 1;
     const { ok } = await addToCart(item, qty);
     showToast(
@@ -99,13 +143,14 @@ const MenuPage = () => {
         : `Failed to add ${item.title} to cart.`,
       ok ? "success" : "danger"
     );
-    setAdding((prev) => ({ ...prev, [item.id]: false }));
   };
 
   const handleViewMore = (id) => navigate(`/menu/${id}`);
-  const gotoPage = (p) => p >= 1 && p <= totalPages && fetchMenu(p);
 
-  /* ──────── Render ──────── */
+  const gotoPage = (p) =>
+    p >= 1 && p <= totalPages && fetchMenu(p, selectedCategory);
+
+  /* ──────────── Render ──────────── */
   if (loading)
     return (
       <div className="text-center my-5">
@@ -124,8 +169,32 @@ const MenuPage = () => {
 
   return (
     <Container className="my-5">
-      <h1 className="mb-4 text-center">Menu</h1>
+      <h1 className="text-center mb-4">Menu</h1>
 
+      {/* Botones de Categoría */}
+      <div className="text-center mb-4">
+        <ButtonGroup>
+          <Button
+            variant={selectedCategory === "all" ? "primary" : "outline-primary"}
+            onClick={() => handleCategorySelect("all")}
+          >
+            All
+          </Button>
+          {categories.map((cat) => (
+            <Button
+              key={cat.id}
+              variant={
+                selectedCategory === cat.slug ? "primary" : "outline-primary"
+              }
+              onClick={() => handleCategorySelect(cat.slug)}
+            >
+              {cat.title}
+            </Button>
+          ))}
+        </ButtonGroup>
+      </div>
+
+      {/* Tarjetas de menú */}
       <Row xs={1} sm={2} md={3} lg={4} className="g-4">
         {menuItems.map((item) => {
           const categoryName =
@@ -164,15 +233,8 @@ const MenuPage = () => {
                       onChange={(e) =>
                         handleQuantityChange(item.id, e.target.value)
                       }
-                      disabled={adding[item.id]}
                     />
-                    <Button
-                      variant="primary"
-                      onClick={() => handleAddToCart(item)}
-                      disabled={adding[item.id]}
-                    >
-                      {adding[item.id] ? "Adding..." : "Add to Cart"}
-                    </Button>
+                    <Button onClick={() => handleAddToCart(item)}>Add</Button>
                   </InputGroup>
 
                   <Button
@@ -188,6 +250,7 @@ const MenuPage = () => {
         })}
       </Row>
 
+      {/* Paginación */}
       {totalPages > 1 && (
         <Pagination className="justify-content-center mt-4">
           <Pagination.Prev
