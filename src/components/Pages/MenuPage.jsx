@@ -13,7 +13,7 @@ import {
   Card,
   Pagination,
 } from "react-bootstrap";
-import { fetchUnsplashImage } from "../api/getUnsplashImage";
+import { getImage } from "../api/images/getImage";
 import { useNavigate } from "react-router-dom";
 import { useCart } from "../../contexts/CartContext";
 import { useUser } from "../../contexts/UserContext";
@@ -82,8 +82,8 @@ const MenuPage = () => {
                 ? item.category
                 : item.category?.title || item.category?.slug || "";
             const query = `${item.title} ${categoryName}`.trim();
-            const url = await fetchUnsplashImage(query, item.id);
-            imagesCacheRef.current[item.id] = url; // guarda en cache
+            const url = await getImage(query, item.id);
+            imagesCacheRef.current[item.id] = url;
             return { id: item.id, url };
           })
         );

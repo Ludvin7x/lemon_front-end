@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Spinner, Button, Container, Card, Alert } from "react-bootstrap";
-import { fetchUnsplashImage } from "../api/getUnsplashImage";
+import { getImage } from "../api/images/getImage";
 
 const MenuItemDetail = () => {
   const { id } = useParams();
@@ -16,6 +16,8 @@ const MenuItemDetail = () => {
 
   useEffect(() => {
     const fetchItem = async () => {
+      setLoading(true);
+      setError(null);
       try {
         const response = await fetch(`${API_URL}/api/menu-items/${id}/`);
         if (!response.ok) {
@@ -25,8 +27,8 @@ const MenuItemDetail = () => {
         const data = await response.json();
         setItem(data);
 
-        const fetchedImage = await fetchUnsplashImage(data.title);
-        setImageUrl(fetchedImage);
+        const fetchedImage = await getImage(data.title);
+        if (fetchedImage) setImageUrl(fetchedImage);
       } catch (err) {
         console.error("Error al obtener el ítem:", err);
         setError(err.message || "Error inesperado");
@@ -59,6 +61,10 @@ const MenuItemDetail = () => {
     );
   }
 
+  if (!item) {
+    return null; // O un mensaje que diga "No se encontró el ítem"
+  }
+
   return (
     <Container className="my-5" style={{ maxWidth: "600px" }}>
       <Card className="shadow-lg">
@@ -66,20 +72,16 @@ const MenuItemDetail = () => {
           <Card.Img
             variant="top"
             src={imageUrl}
-            alt={item.title}
-            fluid="true" 
-            style={{ 
-              maxHeight: "400px", 
-              objectFit: "cover", 
-              width: "100%" 
-            }}
+            alt={item.title || "Imagen del producto"}
+            className="img-fluid"
+            style={{ maxHeight: "400px", objectFit: "cover", width: "100%" }}
           />
         )}
         <Card.Body>
-          <Card.Title as="h2">{item.title}</Card.Title>
-          <Card.Text className="fs-5">{item.description}</Card.Text>
+          <Card.Title as="h2">{item.title || "Título no disponible"}</Card.Title>
+          <Card.Text className="fs-5">{item.description || "Sin descripción"}</Card.Text>
           <Card.Text className="fw-bold fs-4">
-            Precio: ${Number(item.price).toFixed(2)}
+            Precio: ${Number(item.price || 0).toFixed(2)}
           </Card.Text>
           <div className="d-flex gap-3 mt-4">
             <Button variant="success" onClick={() => alert("Producto añadido al carrito")}>
