@@ -1,7 +1,7 @@
 {
-  "name": "react-frontend",
+  "name": "lemon-frontend",
   "version": "1.0.0",
-  "description": "A web application built with **React 18** providing **Little Lemon** customers a complete table reservation system along with a digital menu and a modern, accessible, responsive interface.",
+  "description": "A web application providing **Lemon** customers a complete table reservation system along with a digital menu and a modern, accessible, responsive interface.",
   "main": "eslint.config.js",
   "dependencies": {
     "ansi-regex": "^5.0.1",

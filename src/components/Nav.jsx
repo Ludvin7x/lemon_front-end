@@ -138,6 +138,14 @@ export default function NavigationBar() {
               )}
             </Nav.Link>
 
+            <Nav.Link
+              as={NavLink}
+              to="/About"
+              className={({ isActive }) => (isActive ? "selected" : "")}
+            >
+              About
+            </Nav.Link>
+
             {user ? (
               <NavDropdown title={user.username} id="user-dropdown" align="end">
                 <NavDropdown.Item onClick={handleLogout}>
