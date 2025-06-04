@@ -62,14 +62,13 @@ A web application built with **React 18** providing **Little Lemon** customers a
 
 ```bash
 # 1. Clone the repository
-git clone https://github.com/<your-username>/react-frontend.git
-cd react-frontend
+git clone https://github.com/ludvin7x/lemon_front-end.git
 
 # 2. Install dependencies
 npm install
 
-# 3. Create environment variables file
-cp .env.development, .env.production
+# 3. Create environment variables file, run: generateEnvFiles.js 
+node generateEnvFiles.js
 # Update API URL and other variables accordingly
 
 # 4. Start development server
@@ -79,52 +78,6 @@ npm run dev
 
 App will be available at **[http://localhost:5173](http://localhost:5173)** (default Vite port).
 
----
-
-## Project Structure
-
-```
-react-frontend/
-├── public/
-├── src/
-│   ├── api/            # API service abstractions
-│   ├── assets/         # Static assets
-│   ├── components/     # Reusable UI components
-│   ├── pages/          # Route-based views
-│   ├── routes/         # Route definitions
-│   ├── contexts/       # Global state providers
-│   ├── tests/          # Test files
-│   └── utils/          # Helper utilities
-├── .env.development
-└── ...
-```
-
----
-
-## Testing
-
-```bash
-# Run all tests in watch mode
-npm test
-```
-
-Tests cover business logic, component rendering, accessibility, and user interaction.
-
----
-
-## Continuous Deployment
-
-Production builds are generated with:
-
-```bash
-npm run build
-```
-
-Each push to the `main` branch triggers a **GitHub Action** that:
-
-1. Runs ESLint and unit tests.
-2. Builds the optimized production bundle.
-3. Deploys to **Netlify** using a secure token.
 
 ---
 
@@ -132,15 +85,83 @@ Each push to the `main` branch triggers a **GitHub Action** that:
 
 Track progress via the **GitHub Projects** board. Key milestones:
 
-* [x] 💡 **v0.3 – Project Assessment**
-      Front-End MVP with reservations, menu, and auth flows.
-* [ ] 🚀 **v0.4 – Performance & SEO**
-      Optimize Core Web Vitals, lazy loading, metadata.
-* [ ] 🌐 **v0.5 – PWA**
-      Service Worker, offline cache, installable app.
+
+Current Milestone: Version 1.0 - Full Release (Current)
+This release marks a significant milestone, integrating core functionalities for a comprehensive and complete user experience.
 
 <details>
   <summary><b>Detailed Changelog</b></summary>
+
+API Integration: Established robust connectivity to the backend API, enabling seamless data retrieval and submission for all dynamic content.
+
+Menu & Online Ordering System: Implemented a full-featured menu display with intuitive browsing and a streamlined ordering process for customers.
+
+Shopping Cart Functionality: Developed a persistent and interactive shopping cart, allowing users to effortlessly add, remove, and manage items before checkout.
+
+Reservation Management: Integrated a user-friendly reservation form, facilitating convenient booking for tables or services.
+
+Responsive UI with Bootstrap: Enhanced the user interface and overall user experience through the strategic adoption of the Bootstrap framework, ensuring responsive design and consistent component styling.
+
+Dynamic Image Delivery (Dual API Support): Incorporated two distinct image APIs (e.g., Unsplash, Pexels) to provide diverse, high-quality, and dynamically loaded visuals for menu items and across the application.
+
+Past Releases
+Version 0.5 - Core Infrastructure & User Management
+This version focused on establishing the foundational technological stack and essential user interaction features.
+
+Frontend Migration to React Vite: Successfully migrated the entire frontend development environment to React with Vite, significantly improving development speed and optimizing build processes for production.
+
+Initial Bootstrap Integration: Laid the groundwork for UI/UX consistency with the initial implementation of the Bootstrap framework for foundational styling and responsive layout.
+
+Secure User Authentication & Registration: Developed a robust user authentication system, encompassing user registration, secure login, and efficient session management.
+
+Django Backend Connectivity: Established and meticulously configured the primary connection to the Django backend, enabling seamless and reliable data exchange between the frontend and the server.
+
+Version 0.4 - Security & Detail Views
+This release introduced critical security measures and enhanced content presentation capabilities.
+
+JWT Token-Based Authentication: Implemented a JSON Web Token (JWT) system for secure, stateless authentication, ensuring authenticated access to all protected routes and resources.
+
+Dedicated Menu Item Detail Page: Developed a comprehensive detail page for individual menu items, providing users with in-depth information and a richer browsing experience.
+
+Upcoming Milestones
+[ ] 🚀 v0.4 – Performance & SEO
+
+Optimize Core Web Vitals for faster loading and responsiveness.
+
+Implement lazy loading for images and components to improve initial page load times.
+
+Enhance metadata and structured data for improved search engine optimization.
+
+[ ] 🌐 v0.5 – Progressive Web App (PWA) Capabilities
+
+Integrate a Service Worker for advanced caching and offline functionality.
+
+Enable offline content access and basic application functionality without an internet connection.
+
+Make the application installable on user devices for a native app-like experience.
+
+Version 0.5
+
+Integrated React Router for client-side navigation.
+
+Setup ESLint and Prettier for code consistency.
+
+Initial database schema design for users and menu items.
+
+... (more specific features/fixes for v0.5)
+
+Version 0.4
+
+Created authentication middleware for protected routes.
+
+Implemented refresh token mechanism for JWTs.
+
+Dynamic content rendering for menu item details.
+
+* [ ] 🌐 **v0.5 – PWA**
+      Service Worker, offline cache, installable app.
+
+
 
 ### v0.3 – Project Assessment
 
