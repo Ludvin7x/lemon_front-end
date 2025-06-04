@@ -1,4 +1,3 @@
-// src/pages/MenuPage.jsx
 import { useState, useEffect, useCallback, useRef } from "react";
 import {
   Button,
@@ -13,6 +12,7 @@ import {
   Card,
   Pagination,
 } from "react-bootstrap";
+import { ClockClockwise } from "phosphor-react";
 import { getImage } from "../api/images/getImage";
 import { useNavigate } from "react-router-dom";
 import { useCart } from "../../contexts/CartContext";
@@ -153,10 +153,25 @@ const MenuPage = () => {
   /* ──────────── Render ──────────── */
   if (loading)
     return (
-      <div className="text-center my-5">
-        <Spinner animation="border" />
-        <p className="mt-3">Loading menu...</p>
-      </div>
+      <Container
+        className="d-flex justify-content-center align-items-center"
+        style={{ minHeight: "60vh" }}
+      >
+        <Card className="text-center p-4 shadow-sm">
+          <Card.Body>
+            <ClockClockwise
+              size={48}
+              weight="duotone"
+              className="mb-3 text-primary"
+            />
+            <Card.Text className="mb-3 fw-semibold">
+              The backend automatically deactivates after 15&nbsp;minutes of
+              inactivity and is now waking up. This may take a few seconds…
+            </Card.Text>
+            <Spinner animation="border" />
+          </Card.Body>
+        </Card>
+      </Container>
     );
 
   if (error)
