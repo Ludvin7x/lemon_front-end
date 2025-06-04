@@ -37,3 +37,10 @@
   font-weight: 700;
   text-decoration: underline;
 }
+
+#user-dropdown-mobile .dropdown-toggle {
+  background: none;
+  border: none;
+  color: white;
+  padding: 0;
+}
