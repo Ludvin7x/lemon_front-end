@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Container, Row, Col, Form, Button, Spinner } from "react-bootstrap";
+import { CalendarBlank, Clock, UsersThree, Sparkle } from "phosphor-react";
 import ConfirmedBooking from "./ConfirmedBooking";
 import { getAvailableTimes, submitBooking } from "../api/apiBooking";
 import { useToast } from "../../contexts/ToastContext";
@@ -7,7 +8,6 @@ import "./BookingForm.css";
 
 function BookingForm() {
   const { showToast } = useToast();
-
   const currentDate = new Date().toISOString().split("T")[0];
 
   const [date, setDate] = useState(currentDate);
@@ -30,7 +30,7 @@ function BookingForm() {
         setTime("");
       }
     } catch (error) {
-      showToast("Error al cargar horarios disponibles.", "danger");
+      showToast("Failed to load available times.", "danger");
       setAvailableTimes([]);
       setTime("");
     }
@@ -56,9 +56,8 @@ function BookingForm() {
 
   const handleSubmission = async (e) => {
     e.preventDefault();
-
     if (!time) {
-      showToast("Por favor selecciona una hora.", "warning");
+      showToast("Please select a time.", "warning");
       return;
     }
 
@@ -70,10 +69,10 @@ function BookingForm() {
         setBookingData(result.booking);
         setSubmitted(true);
         clearForm();
-        showToast("¡Reserva enviada exitosamente!", "success");
+        showToast("Reservation submitted successfully!", "success");
       }
     } catch (err) {
-      showToast(err.message || "No se pudo enviar la reserva.", "danger");
+      showToast(err.message || "Reservation could not be submitted.", "danger");
     }
   };
 
@@ -82,30 +81,36 @@ function BookingForm() {
   }
 
   return (
-    <Container className="bookingform py-4">
+    <Container className="bookingform py-5">
       <Row className="justify-content-center">
         <Col xs={12} md={8} lg={6}>
-          <h1 className="mb-4 text-center">Book Now</h1>
+          <h1 className="mb-4 text-center text-white">Make a Reservation</h1>
 
           <Form onSubmit={handleSubmission} className="d-grid gap-3">
             <Form.Group controlId="res-date">
-              <Form.Label>Choose date</Form.Label>
+              <Form.Label className="text-white d-flex align-items-center gap-2">
+                <CalendarBlank size={20} /> Choose date
+              </Form.Label>
               <Form.Control
                 type="date"
                 min={currentDate}
                 value={date}
                 onChange={handleDateChange}
+                className="custom-input"
               />
             </Form.Group>
 
             <Form.Group controlId="res-time">
-              <Form.Label>Choose time</Form.Label>
+              <Form.Label className="text-white d-flex align-items-center gap-2">
+                <Clock size={20} /> Choose time
+              </Form.Label>
               {loadingTimes ? (
-                <Spinner animation="border" size="sm" />
+                <Spinner animation="border" size="sm" variant="light" />
               ) : (
                 <Form.Select
                   value={time}
                   onChange={(e) => setTime(e.target.value)}
+                  className="custom-input"
                 >
                   <option value="">-- Select time --</option>
                   {availableTimes.map((availableTime, index) => (
@@ -118,7 +123,9 @@ function BookingForm() {
             </Form.Group>
 
             <Form.Group controlId="guests">
-              <Form.Label>Number of guests</Form.Label>
+              <Form.Label className="text-white d-flex align-items-center gap-2">
+                <UsersThree size={20} /> Number of guests
+              </Form.Label>
               <Form.Control
                 type="number"
                 min="1"
@@ -130,22 +137,26 @@ function BookingForm() {
                     setGuest(value);
                   }
                 }}
+                className="custom-input"
               />
             </Form.Group>
 
             <Form.Group controlId="occasion">
-              <Form.Label>Occasion</Form.Label>
+              <Form.Label className="text-white d-flex align-items-center gap-2">
+                <Sparkle size={20} /> Occasion
+              </Form.Label>
               <Form.Select
                 value={occasion}
                 onChange={(e) => setOccasion(e.target.value)}
+                className="custom-input"
               >
                 <option value="Birthday">Birthday</option>
                 <option value="Anniversary">Anniversary</option>
               </Form.Select>
             </Form.Group>
 
-            <Button type="submit" variant="primary" className="w-100">
-              Make Your reservation
+            <Button type="submit" variant="light" className="custom-btn">
+              Make your reservation
             </Button>
           </Form>
         </Col>
