@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback, useRef } from "react";
-import { Container, Row, Col, Alert, Spinner, ButtonGroup, Button } from "react-bootstrap";
+import { Container, Row, Col, Alert, Spinner } from "react-bootstrap";
 import { ClockClockwise } from "phosphor-react";
 import { getImage } from "../../api/images/getImage";
 import { useNavigate } from "react-router-dom";
@@ -12,7 +12,6 @@ import MenuCategoryFilter from "./MenuCategoryFilter";
 import MenuSortButtons from "./MenuSortButtons";
 import MenuItemCard from "./MenuItemCard";
 import MenuPagination from "./MenuPagination";
-import './MenuPage.css';
 
 const PAGE_SIZE = 10;
 
@@ -42,12 +41,7 @@ const MenuPage = () => {
 
   const fetchMenu = useCallback(
     async (pageNum = 1, categorySlug = "all") => {
-      if (
-        lastFetchRef.current.page === pageNum &&
-        lastFetchRef.current.category === categorySlug
-      )
-        return;
-
+      
       lastFetchRef.current = { page: pageNum, category: categorySlug };
 
       try {
@@ -65,6 +59,7 @@ const MenuPage = () => {
         setTotalPages(Math.ceil(data.count / PAGE_SIZE));
         setPage(pageNum);
 
+        // Obtener imágenes y cachearlas
         const imgs = await Promise.all(
           data.results.map(async (item) => {
             if (imagesCacheRef.current[item.id]) {
@@ -81,21 +76,27 @@ const MenuPage = () => {
           })
         );
 
-        const map = {};
-        const qtyMap = {};
-        imgs.forEach(({ id, url }) => {
-          map[id] = url;
-          qtyMap[id] = quantities[id] || 1;
+        // Mapear imágenes y cantidades (preservar cantidades previas)
+        setImages((prev) => {
+          const newImages = { ...prev };
+          imgs.forEach(({ id, url }) => (newImages[id] = url));
+          return newImages;
         });
-        setImages(map);
-        setQuantities(qtyMap);
+
+        setQuantities((prev) => {
+          const newQty = { ...prev };
+          imgs.forEach(({ id }) => {
+            if (!newQty[id]) newQty[id] = 1;
+          });
+          return newQty;
+        });
       } catch (err) {
         setError(err.message);
       } finally {
         setLoading(false);
       }
     },
-    [API_URL, quantities]
+    [API_URL]
   );
 
   useEffect(() => {
@@ -112,6 +113,7 @@ const MenuPage = () => {
     fetchCategories();
   }, [API_URL]);
 
+  // Cuando cambia la categoría, resetear filtros y buscar menú
   useEffect(() => {
     setSearchTerm("");
     setSortField(null);
@@ -119,6 +121,7 @@ const MenuPage = () => {
     fetchMenu(1, selectedCategory);
   }, [selectedCategory, fetchMenu]);
 
+  // Filtrado y ordenamiento local
   const filteredSortedItems = menuItems
     .filter((item) =>
       item.title.toLowerCase().includes(searchTerm.trim().toLowerCase())
@@ -154,14 +157,17 @@ const MenuPage = () => {
 
   const handleViewMore = (id) => navigate(`/menu/${id}`);
 
-  const gotoPage = (p) =>
-    p >= 1 && p <= totalPages && fetchMenu(p, selectedCategory);
+  const gotoPage = (p) => {
+    if (p >= 1 && p <= totalPages) {
+      fetchMenu(p, selectedCategory);
+    }
+  };
 
   const handleSearchChange = (value) => setSearchTerm(value);
   const clearSearch = () => setSearchTerm("");
   const toggleSort = (field) => {
     if (sortField === field) {
-      setSortDirection(sortDirection === "asc" ? "desc" : "asc");
+      setSortDirection((dir) => (dir === "asc" ? "desc" : "asc"));
     } else {
       setSortField(field);
       setSortDirection("asc");
@@ -170,11 +176,19 @@ const MenuPage = () => {
 
   if (loading)
     return (
-      <Container className="d-flex justify-content-center align-items-center" style={{ minHeight: "60vh" }}>
+      <Container
+        className="d-flex justify-content-center align-items-center"
+        style={{ minHeight: "60vh" }}
+      >
         <div className="text-center p-4 shadow-sm">
-          <ClockClockwise size={48} weight="duotone" className="mb-3 text-primary" />
+          <ClockClockwise
+            size={48}
+            weight="duotone"
+            className="mb-3 text-primary"
+          />
           <p className="mb-3 fw-semibold">
-            The backend automatically deactivates after 15 minutes of inactivity and is now waking up. This may take a few seconds…
+            The backend automatically deactivates after 15 minutes of
+            inactivity and is now waking up. This may take a few seconds…
           </p>
           <Spinner animation="border" />
         </div>
@@ -193,7 +207,11 @@ const MenuPage = () => {
     <Container className="my-5">
       <h1 className="text-center mb-4">Menu</h1>
 
-      <MenuSearch value={searchTerm} onChange={handleSearchChange} onClear={clearSearch} />
+      <MenuSearch
+        value={searchTerm}
+        onChange={handleSearchChange}
+        onClear={clearSearch}
+      />
 
       <MenuCategoryFilter
         categories={categories}
@@ -208,27 +226,26 @@ const MenuPage = () => {
       />
 
       <Row className="g-4">
-
-        {filteredSortedItems.length === 0 && (
+        {filteredSortedItems.length === 0 ? (
           <Col>
             <Alert variant="warning" className="text-center">
               No items found
             </Alert>
           </Col>
+        ) : (
+          filteredSortedItems.map((item) => (
+            <Col key={item.id} xs={6} sm={6} md={4} lg={3}>
+              <MenuItemCard
+                item={item}
+                image={images[item.id]}
+                quantity={quantities[item.id] || 1}
+                onQuantityChange={handleQuantityChange}
+                onAddToCart={handleAddToCart}
+                onViewMore={handleViewMore}
+              />
+            </Col>
+          ))
         )}
-        {filteredSortedItems.map((item) => (
-          <Col key={item.id} xs={6} sm={6} md={4} lg={3}>
-
-            <MenuItemCard
-              item={item}
-              image={images[item.id]}
-              quantity={quantities[item.id] || 1}
-              onQuantityChange={handleQuantityChange}
-              onAddToCart={handleAddToCart}
-              onViewMore={handleViewMore}
-            />
-          </Col>
-        ))}
       </Row>
 
       <MenuPagination page={page} totalPages={totalPages} onPageChange={gotoPage} />
