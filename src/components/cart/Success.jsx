@@ -1,11 +1,13 @@
 import { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
+import { useUser } from '../../contexts/UserContext'; 
 
 export default function Success() {
   const [searchParams] = useSearchParams();
   const sessionId = searchParams.get('session_id');
   const [session, setSession] = useState(null);
   const [error, setError] = useState(null);
+  const { token } = useUser();
 
   useEffect(() => {
     if (!sessionId) {
@@ -13,13 +15,12 @@ export default function Success() {
       return;
     }
 
-    const API_URL = import.meta.env.VITE_API_URL;
-    const token = localStorage.getItem('accessToken');
-
     if (!token) {
       setError('No estás autenticado.');
       return;
     }
+
+    const API_URL = import.meta.env.VITE_API_URL;
 
     fetch(`${API_URL}/api/checkout/session/${sessionId}`, {
       method: 'GET',
@@ -43,7 +44,7 @@ export default function Success() {
       })
       .then(data => setSession(data))
       .catch(err => setError(err.message));
-  }, [sessionId]);
+  }, [sessionId, token]);
 
   if (error) return <p>Error: {error}</p>;
   if (!session) return <p>Cargando detalles del pago...</p>;
