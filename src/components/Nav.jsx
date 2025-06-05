@@ -15,7 +15,7 @@ export default function NavigationBar() {
   const location = useLocation();
   const navigate = useNavigate();
   const { user, logout } = useUser();
-  const { totalItems } = useCart();
+  const { totalItems, clearCart } = useCart();
 
   useEffect(() => {
     setExpanded(false);
@@ -31,6 +31,7 @@ export default function NavigationBar() {
 
   const handleLogout = () => {
     logout();
+    clearCart();
     navigate("/login");
   };
 
