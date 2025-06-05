@@ -113,6 +113,10 @@ export const CartProvider = ({ children }) => {
     }
   };
 
+  const resetCart = () => {
+    setCart([]);
+  };
+
   const totalItems = Array.isArray(cart)
     ? cart.reduce((acc, i) => acc + i.quantity, 0)
     : 0;
@@ -153,6 +157,7 @@ export const CartProvider = ({ children }) => {
         removeFromCart,
         setQuantity,
         clearCart,
+        resetCart,
         totalItems,
         totalPrice,
         fetchCart,
