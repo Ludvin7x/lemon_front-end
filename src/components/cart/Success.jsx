@@ -8,30 +8,42 @@ export default function Success() {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-  if (!sessionId) {
-    setError('No se encontró la sesión de pago.');
-    return;
-  }
+    if (!sessionId) {
+      setError('No se encontró la sesión de pago.');
+      return;
+    }
 
-  const API_URL = import.meta.env.VITE_API_URL;
+    const API_URL = import.meta.env.VITE_API_URL;
+    const token = localStorage.getItem('accessToken');
 
-  fetch(`${API_URL}/api/checkout/session/${sessionId}`)
-    .then(async res => {
-      const contentType = res.headers.get("content-type");
-      if (!res.ok) {
-        const text = await res.text();
-        throw new Error(`Error: ${text}`);
-      }
-      if (contentType && contentType.includes("application/json")) {
-        return res.json();
-      } else {
-        const text = await res.text();
-        throw new Error(`Respuesta inesperada: ${text}`);
-      }
+    if (!token) {
+      setError('No estás autenticado.');
+      return;
+    }
+
+    fetch(`${API_URL}/api/checkout/session/${sessionId}`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
     })
-    .then(data => setSession(data))
-    .catch(err => setError(err.message));
-}, [sessionId]);
+      .then(async res => {
+        const contentType = res.headers.get("content-type");
+        if (!res.ok) {
+          const text = await res.text();
+          throw new Error(`Error: ${text}`);
+        }
+        if (contentType && contentType.includes("application/json")) {
+          return res.json();
+        } else {
+          const text = await res.text();
+          throw new Error(`Respuesta inesperada: ${text}`);
+        }
+      })
+      .then(data => setSession(data))
+      .catch(err => setError(err.message));
+  }, [sessionId]);
 
   if (error) return <p>Error: {error}</p>;
   if (!session) return <p>Cargando detalles del pago...</p>;
