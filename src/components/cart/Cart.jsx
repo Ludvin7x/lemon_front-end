@@ -1,15 +1,17 @@
 import React, { useState, useEffect } from "react";
 import { useCart } from "../../contexts/CartContext";
 import { PlusCircle, MinusCircle, Trash } from "phosphor-react";
-import "./Cart.css"; // ✅ solo afecta este componente
+import Checkout from "./Checkout";
+import "./Cart.css";
 
 export default function Cart() {
-  const { cart, loading, setQuantity, removeFromCart, clearCart, fetchCart } =
-    useCart();
+  const { cart, loading, setQuantity, removeFromCart, clearCart, fetchCart } = useCart();
   const [error, setError] = useState(null);
+  const [isUpdating, setIsUpdating] = useState(false);
+  const [showCheckout, setShowCheckout] = useState(false);
 
   useEffect(() => {
-    fetchCart();
+    fetchCart().catch(() => setError("Error al obtener el carrito"));
   }, []);
 
   useEffect(() => {
@@ -19,34 +21,42 @@ export default function Cart() {
     }
   }, [error]);
 
-  const handleDecrease = async (id, quantity) => {
+  const updateQuantity = async (id, quantity) => {
+    if (isUpdating) return;
+    setIsUpdating(true);
     try {
-      if (quantity <= 1) {
-        await removeFromCart(id);
-      } else {
-        await setQuantity(id, quantity - 1);
-      }
+      await setQuantity(id, quantity);
     } catch {
-      setError("Error updating cart. Please try again.");
+      setError("Error actualizando el carrito. Intenta nuevamente.");
+    } finally {
+      setIsUpdating(false);
     }
   };
 
-  const handleIncrease = async (id, quantity) => {
-    try {
-      await setQuantity(id, quantity + 1);
-    } catch {
-      setError("Error updating cart. Please try again.");
+  const handleDecrease = (id, quantity) => {
+    if (quantity <= 1) {
+      removeFromCart(id).catch(() => setError("Error eliminando el ítem."));
+    } else {
+      updateQuantity(id, quantity - 1);
     }
+  };
+
+  const handleIncrease = (id, quantity) => {
+    updateQuantity(id, quantity + 1);
   };
 
   const handleClearCart = async () => {
-    if (window.confirm("Are you sure you want to clear the cart?")) {
+    if (window.confirm("¿Seguro quieres vaciar el carrito?")) {
       try {
         await clearCart();
       } catch {
-        setError("Error clearing cart. Please try again.");
+        setError("Error vaciando el carrito. Intenta nuevamente.");
       }
     }
+  };
+
+  const handleProceedToCheckout = () => {
+    setShowCheckout(true); // Mostrar el componente Checkout
   };
 
   const total = Array.isArray(cart)
@@ -54,25 +64,30 @@ export default function Cart() {
     : 0;
 
   if (loading)
-    return <div className="alert alert-info mt-4">Loading cart...</div>;
+    return <div className="alert alert-info mt-4">Cargando carrito...</div>;
 
   if (!loading && cart.length === 0)
-    return <div className="alert alert-info mt-4">Empty cart.</div>;
+    return <div className="alert alert-info mt-4">El carrito está vacío.</div>;
+
+  if (showCheckout) {
+    // Renderizar Checkout dentro del carrito
+    return <Checkout />;
+  }
 
   return (
     <div className="cart-container mt-4">
-      <h2>Your Cart</h2>
+      <h2>Tu carrito</h2>
 
       {error && <div className="alert alert-danger">{error}</div>}
 
       <table className="table table-hover align-middle cart-table">
         <thead>
           <tr>
-            <th>Product</th>
-            <th>Quantity</th>
-            <th>Unit Price</th>
+            <th>Producto</th>
+            <th>Cantidad</th>
+            <th>Precio unitario</th>
             <th>Subtotal</th>
-            <th>Actions</th>
+            <th>Acciones</th>
           </tr>
         </thead>
         <tbody>
@@ -84,7 +99,8 @@ export default function Cart() {
                   <button
                     className="btn btn-sm btn-outline-secondary"
                     onClick={() => handleDecrease(id, quantity)}
-                    title="Decrease quantity"
+                    title="Disminuir cantidad"
+                    disabled={isUpdating}
                   >
                     <MinusCircle size={20} weight="bold" />
                   </button>
@@ -92,7 +108,8 @@ export default function Cart() {
                   <button
                     className="btn btn-sm btn-outline-secondary"
                     onClick={() => handleIncrease(id, quantity)}
-                    title="Increase quantity"
+                    title="Aumentar cantidad"
+                    disabled={isUpdating}
                   >
                     <PlusCircle size={20} weight="bold" />
                   </button>
@@ -103,14 +120,13 @@ export default function Cart() {
               <td>
                 <button
                   className="btn btn-sm btn-danger"
-                  onClick={async () => {
-                    try {
-                      await removeFromCart(id);
-                    } catch {
-                      setError("Error removing item. Please try again.");
-                    }
-                  }}
-                  title="Remove item"
+                  onClick={() =>
+                    removeFromCart(id).catch(() =>
+                      setError("Error eliminando el ítem.")
+                    )
+                  }
+                  title="Eliminar ítem"
+                  disabled={isUpdating}
                 >
                   <Trash size={18} weight="bold" />
                 </button>
@@ -123,15 +139,20 @@ export default function Cart() {
       <div className="cart-total">
         <h4>Total: ${total.toFixed(2)}</h4>
         <div>
-          <button className="btn btn-danger me-2" onClick={handleClearCart}>
-            Clear Cart
+          <button
+            className="btn btn-danger me-2"
+            onClick={handleClearCart}
+            disabled={isUpdating}
+          >
+            Vaciar carrito
           </button>
 
           <button
             className="btn btn-primary"
-            onClick={() => alert("Redirect to payment page (Checkout)")}
+            onClick={handleProceedToCheckout}
+            disabled={isUpdating}
           >
-            Proceed to Checkout
+            Proceder al pago
           </button>
         </div>
       </div>

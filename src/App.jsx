@@ -8,6 +8,7 @@ import MenuItemDetail from "./components/Pages/MenuItemDetail";
 import Cart from "./components/cart/Cart";
 import About from "./components/Pages/About";
 import Footer from "./components/Footer";
+import Success from "./components/cart/Success";
 
 export default function App() {
   return (
@@ -23,6 +24,7 @@ export default function App() {
           <Route path="/Cart" element={<Cart />} />
           <Route path="/About" element={<About />} />
           <Route path="/Login" element={<Login />} />
+          <Route path="/success" element={<Success />} />
         </Routes>
       </main>
 

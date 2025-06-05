@@ -4,6 +4,7 @@
   "description": "A web application providing **Lemon** customers a complete table reservation system along with a digital menu and a modern, accessible, responsive interface.",
   "main": "eslint.config.js",
   "dependencies": {
+    "@stripe/stripe-js": "^7.3.1",
     "ansi-regex": "^5.0.1",
     "array-buffer-byte-length": "^1.0.0",
     "available-typed-arrays": "^1.0.5",
