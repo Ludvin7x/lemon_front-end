@@ -1,0 +1,258 @@
+/* MenuPage.css */
+
+/* Contenedor principal */
+.container.my-5 {
+  max-width: 1200px;
+  padding: 0 1rem;
+}
+
+/* Título principal */
+h1.text-center.mb-4 {
+  font-weight: 700;
+  font-size: 2.5rem;
+  color: #2c3e50;
+}
+
+/* --- MenuSearch --- */
+.menu-search-container {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.menu-search-input {
+  flex-grow: 1;
+  padding: 0.5rem 1rem;
+  font-size: 1rem;
+  border: 2px solid #ddd;
+  border-radius: 4px;
+  transition: border-color 0.2s ease;
+}
+
+.menu-search-input:focus {
+  outline: none;
+  border-color: #007bff;
+}
+
+.menu-search-clear-btn {
+  background-color: #e0e0e0;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 600;
+  color: #333;
+  transition: background-color 0.2s ease;
+}
+
+.menu-search-clear-btn:hover {
+  background-color: #c0c0c0;
+}
+
+/* --- MenuCategoryFilter --- */
+.menu-category-filter {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+  justify-content: center;
+}
+
+.menu-category-btn {
+  padding: 0.4rem 1rem;
+  border: 1.5px solid #007bff;
+  background-color: transparent;
+  border-radius: 25px;
+  cursor: pointer;
+  color: #007bff;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.menu-category-btn:hover {
+  background-color: #007bff;
+  color: white;
+}
+
+.menu-category-btn.active {
+  background-color: #007bff;
+  color: white;
+}
+
+/* --- MenuSortButtons --- */
+.menu-sort-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.menu-sort-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  background-color: #f1f3f5;
+  border: 1px solid #007bff;
+  color: #007bff;
+  padding: 0.4rem 1rem;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 600;
+  user-select: none;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.menu-sort-btn:hover {
+  background-color: #007bff;
+  color: white;
+}
+
+.menu-sort-btn.active {
+  background-color: #0056b3;
+  color: white;
+}
+
+.menu-sort-icon {
+  font-size: 1.1rem;
+}
+
+/* --- MenuItemCard --- */
+.menu-item-card {
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background-color: white;
+  box-shadow: 0 2px 6px rgb(0 0 0 / 0.1);
+  transition: box-shadow 0.3s ease;
+}
+
+.menu-item-card:hover {
+  box-shadow: 0 6px 15px rgb(0 0 0 / 0.15);
+}
+
+.menu-item-image {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  border-bottom: 1px solid #ddd;
+}
+
+.menu-item-body {
+  flex-grow: 1;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.menu-item-title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #2c3e50;
+  margin-bottom: 0.25rem;
+  text-align: center;
+}
+
+.menu-item-price {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #007bff;
+  margin-bottom: 1rem;
+  text-align: center;
+}
+
+.menu-item-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.menu-quantity-input {
+  width: 60px;
+  padding: 0.3rem 0.5rem;
+  border: 1.5px solid #007bff;
+  border-radius: 4px;
+  text-align: center;
+  font-weight: 600;
+  font-size: 1rem;
+  color: #007bff;
+  transition: border-color 0.2s ease;
+}
+
+.menu-quantity-input:focus {
+  outline: none;
+  border-color: #0056b3;
+}
+
+.menu-add-to-cart-btn {
+  background-color: #007bff;
+  border: none;
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background-color 0.3s ease;
+  flex-shrink: 0;
+}
+
+.menu-add-to-cart-btn:hover {
+  background-color: #0056b3;
+}
+
+/* --- MenuPagination --- */
+.menu-pagination {
+  display: flex;
+  justify-content: center;
+  margin-top: 2rem;
+  gap: 0.5rem;
+}
+
+.menu-pagination-btn {
+  padding: 0.4rem 0.8rem;
+  border: 1.5px solid #007bff;
+  background-color: transparent;
+  border-radius: 4px;
+  cursor: pointer;
+  color: #007bff;
+  font-weight: 600;
+  user-select: none;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.menu-pagination-btn:hover {
+  background-color: #007bff;
+  color: white;
+}
+
+.menu-pagination-btn.active {
+  background-color: #0056b3;
+  color: white;
+}
+
+/* Responsive tweaks */
+@media (max-width: 576px) {
+  .menu-category-filter {
+    justify-content: flex-start;
+    overflow-x: auto;
+    padding-bottom: 0.5rem;
+  }
+
+  .menu-category-btn {
+    flex-shrink: 0;
+  }
+
+  .menu-item-actions {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .menu-add-to-cart-btn {
+    width: 100%;
+  }
+}

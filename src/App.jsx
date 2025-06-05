@@ -1,7 +1,7 @@
 import { Routes, Route } from "react-router-dom";
 import NavigationBar from "./components/Nav";
 import Home from "./components/Pages/HomePage";
-import MenuPage from "./components/Pages/MenuPage";
+import MenuPage from "./components/Pages/Menu/MenuPage";
 import BookingForm from "./components/Pages/BookingForm";
 import Login from "./components/Pages/Login";
 import MenuItemDetail from "./components/Pages/MenuItemDetail";
