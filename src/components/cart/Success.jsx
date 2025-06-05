@@ -54,7 +54,6 @@ export default function Success() {
       <h1>Pago exitoso</h1>
       <p>Gracias por tu compra, {session.customer_details?.email}</p>
       <p>Monto total: ${(session.amount_total / 100).toFixed(2)} {session.currency.toUpperCase()}</p>
-      <p>ID de sesión: {session.id}</p>
     </div>
   );
 }
