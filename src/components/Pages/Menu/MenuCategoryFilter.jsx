@@ -1,25 +1,29 @@
-import { ButtonGroup, Button } from "react-bootstrap";
-
-const MenuCategoryFilter = ({ categories, selectedCategory, onSelectCategory }) => (
-  <div className="text-center mb-3">
-    <ButtonGroup>
-      <Button
-        variant={selectedCategory === "all" ? "primary" : "outline-primary"}
+const MenuCategoryFilter = ({ categories, selectedCategory, onSelectCategory }) => {
+  return (
+    <div className="flex flex-wrap justify-center gap-2 mb-6">
+      <button
         onClick={() => onSelectCategory("all")}
+        className={`px-4 py-2 rounded-full border transition 
+          ${selectedCategory === "all" 
+            ? "bg-primary text-white" 
+            : "bg-background border-muted text-muted-foreground hover:bg-muted"}`}
       >
         All
-      </Button>
+      </button>
       {categories.map((cat) => (
-        <Button
+        <button
           key={cat.id}
-          variant={selectedCategory === cat.slug ? "primary" : "outline-primary"}
           onClick={() => onSelectCategory(cat.slug)}
+          className={`px-4 py-2 rounded-full border transition 
+            ${selectedCategory === cat.slug 
+              ? "bg-primary text-white" 
+              : "bg-background border-muted text-muted-foreground hover:bg-muted"}`}
         >
           {cat.title}
-        </Button>
+        </button>
       ))}
-    </ButtonGroup>
-  </div>
-);
+    </div>
+  );
+};
 
 export default MenuCategoryFilter;

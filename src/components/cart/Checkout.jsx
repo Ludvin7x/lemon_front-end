@@ -11,7 +11,6 @@ import { loadStripe } from '@stripe/stripe-js';
 
 const API_URL = import.meta.env.VITE_API_URL.replace(/\/+$/, '');
 
-// Carga la instancia Stripe una sola vez fuera del componente para no recargarla
 const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY);
 
 export default function Checkout() {
@@ -75,9 +74,12 @@ export default function Checkout() {
 
   if (!Array.isArray(cart) || cart.length === 0) {
     return (
-      <div className="container mt-5">
-        <div className="alert alert-warning text-center fs-5 d-flex align-items-center justify-content-center gap-2">
-          <WarningCircle size={24} weight="bold" />
+      <div className="container mx-auto mt-12 max-w-xl px-4">
+        <div
+          className="flex items-center justify-center gap-3 bg-yellow-100 text-yellow-800 rounded-lg p-4 text-lg font-medium"
+          role="alert"
+        >
+          <WarningCircle size={28} weight="bold" />
           Tu carrito está vacío.
         </div>
       </div>
@@ -85,88 +87,130 @@ export default function Checkout() {
   }
 
   return (
-    <div className="container mt-5" style={{ maxWidth: '700px' }}>
-      <h2 className="mb-4 text-center fw-bold d-flex align-items-center justify-content-center gap-2">
-        <ShoppingCart size={28} weight="bold" />
+    <div className="container mx-auto mt-12 max-w-3xl px-4">
+      <h2 className="flex items-center justify-center gap-3 text-3xl font-extrabold mb-8 text-gray-900 dark:text-gray-100">
+        <ShoppingCart size={32} weight="bold" />
         Resumen del pedido
       </h2>
 
       {error && (
         <div
-          className="alert alert-danger text-center d-flex align-items-center justify-content-center gap-2"
+          className="flex items-center justify-center gap-3 bg-red-100 text-red-700 rounded-lg p-4 mb-6 font-semibold"
           role="alert"
         >
-          <WarningCircle size={24} weight="bold" />
+          <WarningCircle size={28} weight="bold" />
           {error}
         </div>
       )}
 
-      <div className="table-responsive shadow-sm rounded">
-        <table className="table table-hover align-middle mb-0 bg-white">
-          <thead className="table-light">
+      <div className="overflow-x-auto rounded-lg shadow-md border border-gray-200 dark:border-gray-700">
+        <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+          <thead className="bg-gray-100 dark:bg-gray-800">
             <tr>
-              <th>Producto</th>
-              <th className="text-center">
-                <NumberSquareEight size={16} weight="bold" className="me-1" />
-                Cantidad
+              <th
+                scope="col"
+                className="px-6 py-3 text-left text-sm font-semibold text-gray-700 dark:text-gray-300"
+              >
+                Producto
               </th>
-              <th className="text-end">
-                <CurrencyDollar size={16} weight="bold" className="me-1" />
-                Precio unitario
+              <th
+                scope="col"
+                className="px-6 py-3 text-center text-sm font-semibold text-gray-700 dark:text-gray-300"
+              >
+                <div className="flex items-center justify-center gap-1">
+                  <NumberSquareEight size={18} weight="bold" />
+                  Cantidad
+                </div>
               </th>
-              <th className="text-end">
-                <CurrencyDollar size={16} weight="bold" className="me-1" />
-                Subtotal
+              <th
+                scope="col"
+                className="px-6 py-3 text-right text-sm font-semibold text-gray-700 dark:text-gray-300"
+              >
+                <div className="flex items-center justify-end gap-1">
+                  <CurrencyDollar size={18} weight="bold" />
+                  Precio unitario
+                </div>
+              </th>
+              <th
+                scope="col"
+                className="px-6 py-3 text-right text-sm font-semibold text-gray-700 dark:text-gray-300"
+              >
+                <div className="flex items-center justify-end gap-1">
+                  <CurrencyDollar size={18} weight="bold" />
+                  Subtotal
+                </div>
               </th>
             </tr>
           </thead>
-          <tbody>
+          <tbody className="bg-white dark:bg-gray-900 divide-y divide-gray-200 dark:divide-gray-700">
             {cart.map((item) => (
-              <tr key={item.id}>
-                <td>{item.menuitem?.title || 'Producto'}</td>
-                <td className="text-center">{item.quantity}</td>
-                <td className="text-end">${Number(item.unit_price).toFixed(2)}</td>
-                <td className="text-end">${(item.unit_price * item.quantity).toFixed(2)}</td>
+              <tr key={item.id} className="hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
+                <td className="px-6 py-4 text-gray-900 dark:text-gray-100">{item.menuitem?.title || 'Producto'}</td>
+                <td className="px-6 py-4 text-center text-gray-700 dark:text-gray-300">{item.quantity}</td>
+                <td className="px-6 py-4 text-right text-gray-700 dark:text-gray-300">
+                  ${Number(item.unit_price).toFixed(2)}
+                </td>
+                <td className="px-6 py-4 text-right font-semibold text-gray-900 dark:text-gray-100">
+                  ${(item.unit_price * item.quantity).toFixed(2)}
+                </td>
               </tr>
             ))}
           </tbody>
         </table>
       </div>
 
-      <div className="d-flex flex-column align-items-center mt-4 pt-3 border-top w-100">
-        <div className="d-flex justify-content-between align-items-center w-100 mb-2">
-          <h4 className="fw-semibold mb-0 d-flex align-items-center gap-1">
-            <CurrencyDollar size={24} weight="bold" />
-            Total: ${total.toFixed(2)}
-          </h4>
-          <button
-            className="btn btn-primary btn-lg d-flex align-items-center gap-2"
-            onClick={handleCheckout}
-            disabled={loading}
-            aria-busy={loading}
-          >
-            {loading ? (
-              <>
-                Procesando...
-                <span
-                  className="spinner-border spinner-border-sm ms-2"
-                  role="status"
-                  aria-hidden="true"
-                />
-              </>
-            ) : (
-              <>
-                <CreditCard size={22} />
-                Pagar con tarjeta
-              </>
-            )}
-          </button>
+      <div className="mt-8 border-t border-gray-300 dark:border-gray-700 pt-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+        <div className="flex items-center gap-2 text-2xl font-semibold text-gray-900 dark:text-gray-100">
+          <CurrencyDollar size={28} weight="bold" />
+          Total: ${total.toFixed(2)}
         </div>
 
+        <button
+          onClick={handleCheckout}
+          disabled={loading}
+          aria-busy={loading}
+          className="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 active:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 dark:focus:ring-blue-500 text-white font-semibold rounded-lg px-6 py-3 transition disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          {loading ? (
+            <>
+              Procesando...
+              <svg
+                className="animate-spin h-5 w-5 ml-2 text-white"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                aria-hidden="true"
+              >
+                <circle
+                  className="opacity-25"
+                  cx="12"
+                  cy="12"
+                  r="10"
+                  stroke="currentColor"
+                  strokeWidth="4"
+                ></circle>
+                <path
+                  className="opacity-75"
+                  fill="currentColor"
+                  d="M4 12a8 8 0 018-8v8H4z"
+                ></path>
+              </svg>
+            </>
+          ) : (
+            <>
+              <CreditCard size={24} weight="bold" />
+              Pagar con tarjeta
+            </>
+          )}
+        </button>
+      </div>
+
+      <div className="mt-4 flex justify-center">
         <img
           src="/img/pagoseguro-stripe.png"
           alt="Pago seguro con Stripe"
-          style={{ maxWidth: '180px', marginTop: '10px', userSelect: 'none' }}
+          className="max-w-[180px] select-none"
+          draggable={false}
         />
       </div>
     </div>

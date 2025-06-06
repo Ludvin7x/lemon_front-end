@@ -1,7 +1,10 @@
 import React, { useState } from "react";
 import { register } from "../api/auth";
-
-import "./Login.css";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { UserPlus, X } from "phosphor-react";
 
 export default function SignupForm({ onCancel }) {
   const [username, setUsername] = useState("");
@@ -16,7 +19,7 @@ export default function SignupForm({ onCancel }) {
     e.preventDefault();
 
     if (password1 !== password2) {
-      setAlert({ type: "danger", message: "Passwords do not match" });
+      setAlert({ type: "error", message: "Passwords do not match" });
       return;
     }
 
@@ -33,117 +36,84 @@ export default function SignupForm({ onCancel }) {
       setTimeout(() => onCancel(), 2000);
     } catch (err) {
       setAlert({
-        type: "danger",
+        type: "error",
         message: err.message || "Registration failed",
       });
     }
   };
 
   return (
-    <div className="login">
-      <h1 className="text-center mb-4">Sign Up</h1>
+    <div className="min-h-screen flex items-center justify-center bg-muted px-4">
+      <Card className="w-full max-w-md shadow-xl">
+        <CardHeader className="text-center">
+          <CardTitle className="text-2xl flex items-center justify-center gap-2">
+            <UserPlus size={24} /> Sign Up
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          {alert && (
+            <Alert variant={alert.type} className="mb-4">
+              <div className="flex justify-between items-center w-full">
+                <div>
+                  <AlertTitle>{alert.type === "success" ? "Success" : "Error"}</AlertTitle>
+                  <AlertDescription>{alert.message}</AlertDescription>
+                </div>
+                <Button variant="ghost" size="icon" onClick={() => setAlert(null)}>
+                  <X size={18} />
+                </Button>
+              </div>
+            </Alert>
+          )}
 
-      {alert && (
-        <div
-          className={`alert alert-${alert.type} alert-dismissible fade show`}
-          role="alert"
-        >
-          {alert.message}
-          <button
-            type="button"
-            className="btn-close"
-            aria-label="Close"
-            onClick={() => setAlert(null)}
-          ></button>
-        </div>
-      )}
-
-      <form className="form-login" onSubmit={handleSubmit}>
-        <div className="form-group mb-3">
-          <label htmlFor="username">Username:</label>
-          <input
-            id="username"
-            type="text"
-            className="form-control"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-            required
-            autoFocus
-          />
-        </div>
-
-        <div className="form-group mb-3">
-          <label htmlFor="email">Email:</label>
-          <input
-            id="email"
-            type="email"
-            className="form-control"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-          />
-        </div>
-
-        <div className="form-group mb-3">
-          <label htmlFor="firstName">First Name:</label>
-          <input
-            id="firstName"
-            type="text"
-            className="form-control"
-            value={firstName}
-            onChange={(e) => setFirstName(e.target.value)}
-            required
-          />
-        </div>
-
-        <div className="form-group mb-3">
-          <label htmlFor="lastName">Last Name:</label>
-          <input
-            id="lastName"
-            type="text"
-            className="form-control"
-            value={lastName}
-            onChange={(e) => setLastName(e.target.value)}
-            required
-          />
-        </div>
-
-        <div className="form-group mb-3">
-          <label htmlFor="password1">Password:</label>
-          <input
-            id="password1"
-            type="password"
-            className="form-control"
-            value={password1}
-            onChange={(e) => setPassword1(e.target.value)}
-            required
-          />
-        </div>
-
-        <div className="form-group mb-3">
-          <label htmlFor="password2">Confirm Password:</label>
-          <input
-            id="password2"
-            type="password"
-            className="form-control"
-            value={password2}
-            onChange={(e) => setPassword2(e.target.value)}
-            required
-          />
-        </div>
-
-        <button type="submit" className="btn btn-success w-100 mb-2">
-          Register
-        </button>
-
-        <button
-          type="button"
-          className="btn btn-outline-secondary w-100"
-          onClick={onCancel}
-        >
-          Back to Login
-        </button>
-      </form>
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <Input
+              placeholder="Username"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              required
+            />
+            <Input
+              type="email"
+              placeholder="Email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+            />
+            <Input
+              placeholder="First Name"
+              value={firstName}
+              onChange={(e) => setFirstName(e.target.value)}
+              required
+            />
+            <Input
+              placeholder="Last Name"
+              value={lastName}
+              onChange={(e) => setLastName(e.target.value)}
+              required
+            />
+            <Input
+              type="password"
+              placeholder="Password"
+              value={password1}
+              onChange={(e) => setPassword1(e.target.value)}
+              required
+            />
+            <Input
+              type="password"
+              placeholder="Confirm Password"
+              value={password2}
+              onChange={(e) => setPassword2(e.target.value)}
+              required
+            />
+            <Button type="submit" className="w-full">
+              Register
+            </Button>
+            <Button variant="outline" className="w-full" onClick={onCancel}>
+              Back to Login
+            </Button>
+          </form>
+        </CardContent>
+      </Card>
     </div>
   );
 }

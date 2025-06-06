@@ -1,26 +1,50 @@
-import { Pagination } from "react-bootstrap";
+import React from "react";
 
 const MenuPagination = ({ page, totalPages, onPageChange }) => {
-  // Evitar renderizar paginación si no hay páginas o solo 1 página
   if (totalPages <= 1) return null;
 
+  const pages = Array.from({ length: totalPages }, (_, i) => i + 1);
+
   return (
-    <Pagination className="justify-content-center mt-4">
-      <Pagination.Prev onClick={() => onPageChange(page - 1)} disabled={page === 1} />
-      {[...Array(totalPages)].map((_, idx) => {
-        const pageNum = idx + 1;
-        return (
-          <Pagination.Item
-            key={pageNum}
-            active={page === pageNum}
-            onClick={() => onPageChange(pageNum)}
-          >
-            {pageNum}
-          </Pagination.Item>
-        );
-      })}
-      <Pagination.Next onClick={() => onPageChange(page + 1)} disabled={page === totalPages} />
-    </Pagination>
+    <div className="flex justify-center mt-6 space-x-1">
+      <button
+        onClick={() => onPageChange(page - 1)}
+        disabled={page === 1}
+        className={`px-3 py-1 text-sm rounded-md border ${
+          page === 1
+            ? "text-gray-400 border-gray-300 cursor-not-allowed"
+            : "text-blue-600 border-blue-300 hover:bg-blue-100"
+        }`}
+      >
+        Prev
+      </button>
+
+      {pages.map((num) => (
+        <button
+          key={num}
+          onClick={() => onPageChange(num)}
+          className={`px-3 py-1 text-sm rounded-md border ${
+            page === num
+              ? "bg-blue-600 text-white border-blue-600"
+              : "text-blue-600 border-blue-300 hover:bg-blue-100"
+          }`}
+        >
+          {num}
+        </button>
+      ))}
+
+      <button
+        onClick={() => onPageChange(page + 1)}
+        disabled={page === totalPages}
+        className={`px-3 py-1 text-sm rounded-md border ${
+          page === totalPages
+            ? "text-gray-400 border-gray-300 cursor-not-allowed"
+            : "text-blue-600 border-blue-300 hover:bg-blue-100"
+        }`}
+      >
+        Next
+      </button>
+    </div>
   );
 };
 

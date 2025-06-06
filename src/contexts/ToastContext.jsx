@@ -1,5 +1,5 @@
-import { createContext, useContext, useState, useCallback } from "react";
-import { Toast } from "react-bootstrap";
+import { createContext, useContext, useState, useCallback, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import {
   CheckCircle,
   WarningCircle,
@@ -12,15 +12,21 @@ const ToastContext = createContext();
 export const useToast = () => useContext(ToastContext);
 
 const ICONS = {
-  success: <CheckCircle size={20} weight="fill" className="me-2 text-white" />,
-  danger: <XCircle size={20} weight="fill" className="me-2 text-white" />,
-  warning: <WarningCircle size={20} weight="fill" className="me-2 text-white" />,
-  info: <Info size={20} weight="fill" className="me-2 text-white" />,
+  success: <CheckCircle size={20} weight="fill" className="mr-2 text-white" />,
+  danger: <XCircle size={20} weight="fill" className="mr-2 text-white" />,
+  warning: <WarningCircle size={20} weight="fill" className="mr-2 text-white" />,
+  info: <Info size={20} weight="fill" className="mr-2 text-white" />,
+};
+
+const COLORS = {
+  success: "bg-green-600",
+  danger: "bg-red-600",
+  warning: "bg-yellow-600",
+  info: "bg-blue-600",
 };
 
 export const ToastProvider = ({ children }) => {
   const [show, setShow] = useState(false);
-  // Siempre iniciar como string, no como objeto para evitar confusión
   const [message, setMessage] = useState("");
   const [variant, setVariant] = useState("success");
   const [header, setHeader] = useState(null);
@@ -34,27 +40,44 @@ export const ToastProvider = ({ children }) => {
 
   const hideToast = () => setShow(false);
 
+  useEffect(() => {
+    if (show) {
+      const timer = setTimeout(() => setShow(false), 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [show]);
+
   return (
     <ToastContext.Provider value={{ showToast, hideToast }}>
       {children}
 
-      <Toast
-        onClose={hideToast}
-        show={show}
-        delay={3000}
-        autohide
-        bg={variant}
-        className="position-fixed top-0 start-50 translate-middle-x mt-3 shadow-lg"
-        style={{ maxWidth: "90vw", width: "350px", zIndex: 1080 }}
-      >
-        <Toast.Header closeButton={false}>
-          {ICONS[variant] || null}
-          <strong className="me-auto text-white">
-            {header || variant.charAt(0).toUpperCase() + variant.slice(1)}
-          </strong>
-        </Toast.Header>
-        <Toast.Body className="text-white">{message}</Toast.Body>
-      </Toast>
+      <AnimatePresence>
+        {show && (
+          <motion.div
+            initial={{ opacity: 0, y: -30, scale: 0.9 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: -30, scale: 0.9 }}
+            transition={{ duration: 0.3 }}
+            className={`fixed top-5 left-1/2 transform -translate-x-1/2 flex items-center rounded shadow-lg px-4 py-3 max-w-md w-[90vw] z-50 ${COLORS[variant]}`}
+            role="alert"
+          >
+            {ICONS[variant]}
+            <div className="flex flex-col">
+              <strong className="text-white font-semibold">
+                {header || variant.charAt(0).toUpperCase() + variant.slice(1)}
+              </strong>
+              <span className="text-white">{message}</span>
+            </div>
+            <button
+              onClick={hideToast}
+              aria-label="Cerrar"
+              className="ml-auto text-white hover:text-gray-200"
+            >
+              ✕
+            </button>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </ToastContext.Provider>
   );
 };

@@ -1,12 +1,11 @@
 import React from "react";
-import { Row, Col } from "react-bootstrap";
 import MenuItemCard from "./MenuItemCard";
 
 const MenuGrid = ({ items, images, quantities, onQuantityChange, onAddToCart, onViewMore }) => {
   return (
-    <Row className="g-3">
+    <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
       {items.map((item) => (
-        <Col key={item.id} xs={6} sm={6} md={4} lg={3}>
+        <div key={item.id}>
           <MenuItemCard
             item={item}
             image={images[item.id]}
@@ -15,9 +14,9 @@ const MenuGrid = ({ items, images, quantities, onQuantityChange, onAddToCart, on
             onAddToCart={onAddToCart}
             onViewMore={onViewMore}
           />
-        </Col>
+        </div>
       ))}
-    </Row>
+    </div>
   );
 };
 

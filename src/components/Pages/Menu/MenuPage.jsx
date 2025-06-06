@@ -1,5 +1,4 @@
 import { useState, useEffect, useCallback, useRef } from "react";
-import { Container, Row, Col, Alert, Spinner } from "react-bootstrap";
 import { ClockClockwise } from "phosphor-react";
 import { getImage } from "../../api/images/getImage";
 import { useNavigate } from "react-router-dom";
@@ -39,65 +38,58 @@ const MenuPage = () => {
   const [sortField, setSortField] = useState(null);
   const [sortDirection, setSortDirection] = useState("asc");
 
-  const fetchMenu = useCallback(
-    async (pageNum = 1, categorySlug = "all") => {
-      
-      lastFetchRef.current = { page: pageNum, category: categorySlug };
+  const fetchMenu = useCallback(async (pageNum = 1, categorySlug = "all") => {
+    lastFetchRef.current = { page: pageNum, category: categorySlug };
 
-      try {
-        setLoading(true);
-        setError(null);
+    try {
+      setLoading(true);
+      setError(null);
 
-        let url = `${API_URL}/api/menu-items/?page=${pageNum}`;
-        if (categorySlug !== "all") url += `&category=${categorySlug}`;
+      let url = `${API_URL}/api/menu-items/?page=${pageNum}`;
+      if (categorySlug !== "all") url += `&category=${categorySlug}`;
 
-        const res = await fetch(url);
-        if (!res.ok) throw new Error("Failed to fetch menu");
+      const res = await fetch(url);
+      if (!res.ok) throw new Error("Failed to fetch menu");
 
-        const data = await res.json();
-        setMenuItems(data.results);
-        setTotalPages(Math.ceil(data.count / PAGE_SIZE));
-        setPage(pageNum);
+      const data = await res.json();
+      setMenuItems(data.results);
+      setTotalPages(Math.ceil(data.count / PAGE_SIZE));
+      setPage(pageNum);
 
-        // Obtener imágenes y cachearlas
-        const imgs = await Promise.all(
-          data.results.map(async (item) => {
-            if (imagesCacheRef.current[item.id]) {
-              return { id: item.id, url: imagesCacheRef.current[item.id] };
-            }
-            const categoryName =
-              typeof item.category === "string"
-                ? item.category
-                : item.category?.title || item.category?.slug || "";
-            const query = `${item.title} ${categoryName}`.trim();
-            const url = await getImage(query, item.id);
-            imagesCacheRef.current[item.id] = url;
-            return { id: item.id, url };
-          })
-        );
+      const imgs = await Promise.all(
+        data.results.map(async (item) => {
+          if (imagesCacheRef.current[item.id]) {
+            return { id: item.id, url: imagesCacheRef.current[item.id] };
+          }
+          const categoryName = typeof item.category === "string"
+            ? item.category
+            : item.category?.title || item.category?.slug || "";
+          const query = `${item.title} ${categoryName}`.trim();
+          const url = await getImage(query, item.id);
+          imagesCacheRef.current[item.id] = url;
+          return { id: item.id, url };
+        })
+      );
 
-        // Mapear imágenes y cantidades (preservar cantidades previas)
-        setImages((prev) => {
-          const newImages = { ...prev };
-          imgs.forEach(({ id, url }) => (newImages[id] = url));
-          return newImages;
+      setImages((prev) => {
+        const newImages = { ...prev };
+        imgs.forEach(({ id, url }) => (newImages[id] = url));
+        return newImages;
+      });
+
+      setQuantities((prev) => {
+        const newQty = { ...prev };
+        imgs.forEach(({ id }) => {
+          if (!newQty[id]) newQty[id] = 1;
         });
-
-        setQuantities((prev) => {
-          const newQty = { ...prev };
-          imgs.forEach(({ id }) => {
-            if (!newQty[id]) newQty[id] = 1;
-          });
-          return newQty;
-        });
-      } catch (err) {
-        setError(err.message);
-      } finally {
-        setLoading(false);
-      }
-    },
-    [API_URL]
-  );
+        return newQty;
+      });
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  }, [API_URL]);
 
   useEffect(() => {
     const fetchCategories = async () => {
@@ -113,7 +105,6 @@ const MenuPage = () => {
     fetchCategories();
   }, [API_URL]);
 
-  // Cuando cambia la categoría, resetear filtros y buscar menú
   useEffect(() => {
     setSearchTerm("");
     setSortField(null);
@@ -121,7 +112,6 @@ const MenuPage = () => {
     fetchMenu(1, selectedCategory);
   }, [selectedCategory, fetchMenu]);
 
-  // Filtrado y ordenamiento local
   const filteredSortedItems = menuItems
     .filter((item) =>
       item.title.toLowerCase().includes(searchTerm.trim().toLowerCase())
@@ -130,19 +120,14 @@ const MenuPage = () => {
       if (!sortField) return 0;
       let aVal = sortField === "price" ? Number(a.price) : a.title.toLowerCase();
       let bVal = sortField === "price" ? Number(b.price) : b.title.toLowerCase();
-
-      if (aVal < bVal) return sortDirection === "asc" ? -1 : 1;
-      if (aVal > bVal) return sortDirection === "asc" ? 1 : -1;
-      return 0;
+      return sortDirection === "asc" ? aVal - bVal : bVal - aVal;
     });
 
   const handleCategorySelect = (slug) => setSelectedCategory(slug);
-
   const handleQuantityChange = (id, value) => {
     const qty = Math.max(1, Math.min(99, parseInt(value) || 1));
     setQuantities((prev) => ({ ...prev, [id]: qty }));
   };
-
   const handleAddToCart = async (item) => {
     if (!user) return navigate("/login");
     const qty = quantities[item.id] || 1;
@@ -154,15 +139,12 @@ const MenuPage = () => {
       ok ? "success" : "danger"
     );
   };
-
   const handleViewMore = (id) => navigate(`/menu/${id}`);
-
   const gotoPage = (p) => {
     if (p >= 1 && p <= totalPages) {
       fetchMenu(p, selectedCategory);
     }
   };
-
   const handleSearchChange = (value) => setSearchTerm(value);
   const clearSearch = () => setSearchTerm("");
   const toggleSort = (field) => {
@@ -174,38 +156,30 @@ const MenuPage = () => {
     }
   };
 
-  if (loading)
+  if (loading) {
     return (
-      <Container
-        className="d-flex justify-content-center align-items-center"
-        style={{ minHeight: "60vh" }}
-      >
-        <div className="text-center p-4 shadow-sm">
-          <ClockClockwise
-            size={48}
-            weight="duotone"
-            className="mb-3 text-primary"
-          />
-          <p className="mb-3 fw-semibold">
-            The backend automatically deactivates after 15 minutes of
-            inactivity and is now waking up. This may take a few seconds…
-          </p>
-          <Spinner animation="border" />
-        </div>
-      </Container>
+      <div className="flex flex-col items-center justify-center min-h-[60vh] text-center gap-4 p-6">
+        <ClockClockwise size={48} weight="duotone" className="text-primary" />
+        <p className="text-muted-foreground font-semibold max-w-lg">
+          The backend automatically deactivates after 15 minutes of inactivity and is now waking up. This may take a few seconds…
+        </p>
+        <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin" />
+      </div>
     );
+  }
 
-  if (error)
+  if (error) {
     return (
-      <Alert variant="danger" className="my-5">
-        <Alert.Heading>Error</Alert.Heading>
+      <div className="bg-destructive text-destructive-foreground rounded-md p-4 my-6 text-center max-w-xl mx-auto">
+        <h2 className="font-bold text-lg">Error</h2>
         <p>{error}</p>
-      </Alert>
+      </div>
     );
+  }
 
   return (
-    <Container className="my-5">
-      <h1 className="text-center mb-4">Menu</h1>
+    <div className="container mx-auto my-10 px-4">
+      <h1 className="text-3xl font-bold text-center mb-8">Menu</h1>
 
       <MenuSearch
         value={searchTerm}
@@ -225,31 +199,28 @@ const MenuPage = () => {
         onToggleSort={toggleSort}
       />
 
-      <Row className="g-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 my-6">
         {filteredSortedItems.length === 0 ? (
-          <Col>
-            <Alert variant="warning" className="text-center">
-              No items found
-            </Alert>
-          </Col>
+          <div className="col-span-full text-center text-yellow-600 font-medium bg-yellow-100 border border-yellow-300 rounded p-4">
+            No items found
+          </div>
         ) : (
           filteredSortedItems.map((item) => (
-            <Col key={item.id} xs={6} sm={6} md={4} lg={3}>
-              <MenuItemCard
-                item={item}
-                image={images[item.id]}
-                quantity={quantities[item.id] || 1}
-                onQuantityChange={handleQuantityChange}
-                onAddToCart={handleAddToCart}
-                onViewMore={handleViewMore}
-              />
-            </Col>
+            <MenuItemCard
+              key={item.id}
+              item={item}
+              image={images[item.id]}
+              quantity={quantities[item.id] || 1}
+              onQuantityChange={handleQuantityChange}
+              onAddToCart={handleAddToCart}
+              onViewMore={handleViewMore}
+            />
           ))
         )}
-      </Row>
+      </div>
 
       <MenuPagination page={page} totalPages={totalPages} onPageChange={gotoPage} />
-    </Container>
+    </div>
   );
 };
 

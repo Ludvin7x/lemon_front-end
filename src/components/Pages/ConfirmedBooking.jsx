@@ -1,6 +1,7 @@
 import React from "react";
-import { Container, Row, Col, Card, Button, ListGroup } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
+import { Button } from "../ui/button";
+import { CheckCircle, CalendarBlank, Clock, UsersThree, Sparkle } from "phosphor-react";
 
 const ConfirmedBooking = ({ bookingDetails }) => {
   const navigate = useNavigate();
@@ -10,35 +11,53 @@ const ConfirmedBooking = ({ bookingDetails }) => {
   };
 
   return (
-    <Container className="py-5">
-      <Row className="justify-content-center">
-        <Col xs={12} md={8} lg={6}>
-          <Card className="text-center shadow border-0">
-            <Card.Header className="bg-success text-white">
-              <h4 className="mb-0">🎉 Reservation Confirmed</h4>
-            </Card.Header>
-            <Card.Body>
-              <Card.Text className="mb-4">
-                Thank you for booking with us! Here are your booking details
-              </Card.Text>
-              <ListGroup variant="flush" className="text-start">
-                <ListGroup.Item><strong>📅 Fecha:</strong> {bookingDetails.date}</ListGroup.Item>
-                <ListGroup.Item><strong>⏰ Hora:</strong> {bookingDetails.time}</ListGroup.Item>
-                <ListGroup.Item><strong>👥 Invitados:</strong> {bookingDetails.guests}</ListGroup.Item>
-                <ListGroup.Item><strong>🎈 Ocasión:</strong> {bookingDetails.occasion}</ListGroup.Item>
-              </ListGroup>
-              <Button 
-                variant="outline-success" 
-                onClick={handleBackToHome} 
-                className="mt-4"
-              >
-                Back to Home
-              </Button>
-            </Card.Body>
-          </Card>
-        </Col>
-      </Row>
-    </Container>
+    <div className="py-12 px-6 max-w-md mx-auto bg-white rounded-lg shadow-lg">
+      <header className="bg-green-600 text-white text-center py-6 rounded-t-lg">
+        <CheckCircle size={36} weight="bold" className="mx-auto mb-2" />
+        <h2 className="text-2xl font-semibold">🎉 Reservation Confirmed</h2>
+      </header>
+
+      <section className="mt-6 text-gray-700 text-center">
+        <p className="mb-8 text-lg">
+          Thank you for booking with us! Here are your booking details:
+        </p>
+
+        <ul className="text-left space-y-4">
+          <li className="flex items-center gap-3">
+            <CalendarBlank size={24} className="text-green-600" />
+            <span>
+              <strong>Fecha:</strong> {bookingDetails.date}
+            </span>
+          </li>
+          <li className="flex items-center gap-3">
+            <Clock size={24} className="text-green-600" />
+            <span>
+              <strong>Hora:</strong> {bookingDetails.time}
+            </span>
+          </li>
+          <li className="flex items-center gap-3">
+            <UsersThree size={24} className="text-green-600" />
+            <span>
+              <strong>Invitados:</strong> {bookingDetails.guests}
+            </span>
+          </li>
+          <li className="flex items-center gap-3">
+            <Sparkle size={24} className="text-green-600" />
+            <span>
+              <strong>Ocasión:</strong> {bookingDetails.occasion}
+            </span>
+          </li>
+        </ul>
+
+        <Button
+          variant="outline"
+          className="mt-10 w-full"
+          onClick={handleBackToHome}
+        >
+          Back to Home
+        </Button>
+      </section>
+    </div>
   );
 };
 

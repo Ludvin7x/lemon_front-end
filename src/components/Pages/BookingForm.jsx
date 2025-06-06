@@ -1,10 +1,13 @@
 import React, { useState, useEffect } from "react";
-import { Container, Row, Col, Form, Button, Spinner } from "react-bootstrap";
-import { CalendarBlank, Clock, UsersThree, Sparkle } from "phosphor-react";
+import {
+  CalendarBlank,
+  Clock,
+  UsersThree,
+  Sparkle,
+} from "phosphor-react";
 import ConfirmedBooking from "./ConfirmedBooking";
 import { getAvailableTimes, submitBooking } from "../api/apiBooking";
 import { useToast } from "../../contexts/ToastContext";
-import "./BookingForm.css";
 
 function BookingForm() {
   const { showToast } = useToast();
@@ -39,8 +42,7 @@ function BookingForm() {
 
   useEffect(() => {
     fetchAvailableTimes(date);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleDateChange = (e) => {
     const selectedDate = e.target.value;
@@ -81,87 +83,134 @@ function BookingForm() {
   }
 
   return (
-    <Container className="bookingform py-5">
-      <Row className="justify-content-center">
-        <Col xs={12} md={8} lg={6}>
-          <h1 className="mb-4 text-center text-white">Make a Reservation</h1>
+    <div className="max-w-lg mx-auto p-6 bg-gray-900 rounded-lg shadow-lg mt-12">
+      <h1 className="text-3xl font-semibold text-center text-white mb-8">
+        Make a Reservation
+      </h1>
 
-          <Form onSubmit={handleSubmission} className="d-grid gap-3">
-            <Form.Group controlId="res-date">
-              <Form.Label className="text-white d-flex align-items-center gap-2">
-                <CalendarBlank size={20} /> Choose date
-              </Form.Label>
-              <Form.Control
-                type="date"
-                min={currentDate}
-                value={date}
-                onChange={handleDateChange}
-                className="custom-input"
-              />
-            </Form.Group>
+      <form onSubmit={handleSubmission} className="space-y-6">
+        {/* Date */}
+        <div>
+          <label
+            htmlFor="res-date"
+            className="flex items-center gap-2 text-white font-medium mb-2"
+          >
+            <CalendarBlank size={20} weight="bold" />
+            Choose date
+          </label>
+          <input
+            type="date"
+            id="res-date"
+            min={currentDate}
+            value={date}
+            onChange={handleDateChange}
+            className="w-full rounded-md border border-gray-700 bg-gray-800 text-white px-4 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+          />
+        </div>
 
-            <Form.Group controlId="res-time">
-              <Form.Label className="text-white d-flex align-items-center gap-2">
-                <Clock size={20} /> Choose time
-              </Form.Label>
-              {loadingTimes ? (
-                <Spinner animation="border" size="sm" variant="light" />
-              ) : (
-                <Form.Select
-                  value={time}
-                  onChange={(e) => setTime(e.target.value)}
-                  className="custom-input"
-                >
-                  <option value="">-- Select time --</option>
-                  {availableTimes.map((availableTime, index) => (
-                    <option key={index} value={availableTime}>
-                      {availableTime}
-                    </option>
-                  ))}
-                </Form.Select>
-              )}
-            </Form.Group>
-
-            <Form.Group controlId="guests">
-              <Form.Label className="text-white d-flex align-items-center gap-2">
-                <UsersThree size={20} /> Number of guests
-              </Form.Label>
-              <Form.Control
-                type="number"
-                min="1"
-                max="120"
-                value={guests}
-                onChange={(e) => {
-                  const value = parseInt(e.target.value, 10);
-                  if (!isNaN(value) && value >= 1) {
-                    setGuest(value);
-                  }
-                }}
-                className="custom-input"
-              />
-            </Form.Group>
-
-            <Form.Group controlId="occasion">
-              <Form.Label className="text-white d-flex align-items-center gap-2">
-                <Sparkle size={20} /> Occasion
-              </Form.Label>
-              <Form.Select
-                value={occasion}
-                onChange={(e) => setOccasion(e.target.value)}
-                className="custom-input"
+        {/* Time */}
+        <div>
+          <label
+            htmlFor="res-time"
+            className="flex items-center gap-2 text-white font-medium mb-2"
+          >
+            <Clock size={20} weight="bold" />
+            Choose time
+          </label>
+          {loadingTimes ? (
+            <div className="flex justify-center">
+              <svg
+                className="animate-spin h-6 w-6 text-indigo-500"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
               >
-                <option value="Birthday">Birthday</option>
-                <option value="Anniversary">Anniversary</option>
-              </Form.Select>
-            </Form.Group>
+                <circle
+                  className="opacity-25"
+                  cx="12"
+                  cy="12"
+                  r="10"
+                  stroke="currentColor"
+                  strokeWidth="4"
+                ></circle>
+                <path
+                  className="opacity-75"
+                  fill="currentColor"
+                  d="M4 12a8 8 0 018-8v8H4z"
+                ></path>
+              </svg>
+            </div>
+          ) : (
+            <select
+              id="res-time"
+              value={time}
+              onChange={(e) => setTime(e.target.value)}
+              className="w-full rounded-md border border-gray-700 bg-gray-800 text-white px-4 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            >
+              <option value="">-- Select time --</option>
+              {availableTimes.map((availableTime, index) => (
+                <option key={index} value={availableTime}>
+                  {availableTime}
+                </option>
+              ))}
+            </select>
+          )}
+        </div>
 
-            <Button type="submit"  className="custom-btn">
-              Make your reservation
-            </Button>
-          </Form>
-        </Col>
-      </Row>
-    </Container>
+        {/* Guests */}
+        <div>
+          <label
+            htmlFor="guests"
+            className="flex items-center gap-2 text-white font-medium mb-2"
+          >
+            <UsersThree size={20} weight="bold" />
+            Number of guests
+          </label>
+          <input
+            type="number"
+            id="guests"
+            min="1"
+            max="120"
+            value={guests}
+            onChange={(e) => {
+              const value = parseInt(e.target.value, 10);
+              if (!isNaN(value) && value >= 1) {
+                setGuest(value);
+              }
+            }}
+            className="w-full rounded-md border border-gray-700 bg-gray-800 text-white px-4 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+          />
+        </div>
+
+        {/* Occasion */}
+        <div>
+          <label
+            htmlFor="occasion"
+            className="flex items-center gap-2 text-white font-medium mb-2"
+          >
+            <Sparkle size={20} weight="bold" />
+            Occasion
+          </label>
+          <select
+            id="occasion"
+            value={occasion}
+            onChange={(e) => setOccasion(e.target.value)}
+            className="w-full rounded-md border border-gray-700 bg-gray-800 text-white px-4 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+          >
+            <option value="Birthday">Birthday</option>
+            <option value="Anniversary">Anniversary</option>
+          </select>
+        </div>
+
+        {/* Submit Button */}
+        <button
+          type="submit"
+          className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-md py-3 transition-colors duration-200"
+        >
+          Make your reservation
+        </button>
+      </form>
+    </div>
   );
 }
 
