@@ -120,7 +120,12 @@ const MenuPage = () => {
       if (!sortField) return 0;
       let aVal = sortField === "price" ? Number(a.price) : a.title.toLowerCase();
       let bVal = sortField === "price" ? Number(b.price) : b.title.toLowerCase();
-      return sortDirection === "asc" ? aVal - bVal : bVal - aVal;
+      if (typeof aVal === "number") {
+        return sortDirection === "asc" ? aVal - bVal : bVal - aVal;
+      }
+      return sortDirection === "asc"
+        ? aVal.localeCompare(bVal)
+        : bVal.localeCompare(aVal);
     });
 
   const handleCategorySelect = (slug) => setSelectedCategory(slug);
@@ -147,6 +152,7 @@ const MenuPage = () => {
   };
   const handleSearchChange = (value) => setSearchTerm(value);
   const clearSearch = () => setSearchTerm("");
+
   const toggleSort = (field) => {
     if (sortField === field) {
       setSortDirection((dir) => (dir === "asc" ? "desc" : "asc"));
@@ -154,6 +160,12 @@ const MenuPage = () => {
       setSortField(field);
       setSortDirection("asc");
     }
+  };
+
+  const handleReset = () => {
+    setSearchTerm("");
+    setSortField(null);
+    setSortDirection("asc");
   };
 
   if (loading) {
