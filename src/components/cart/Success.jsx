@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { useUser } from '@/contexts/UserContext';
+import { useCart } from '@/contexts/CartContext';
 import { CheckCircle, WarningCircle, Hourglass, House } from 'phosphor-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { motion } from 'framer-motion';
@@ -8,11 +9,12 @@ import { Button } from '@/components/ui/button';
 
 export default function Success() {
   const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
   const sessionId = searchParams.get('session_id');
   const [session, setSession] = useState(null);
   const [error, setError] = useState(null);
   const { token } = useUser();
-  const navigate = useNavigate();
+  const { fetchCart } = useCart();
 
   useEffect(() => {
     if (!sessionId) {
@@ -47,9 +49,12 @@ export default function Success() {
           throw new Error(`Respuesta inesperada: ${text}`);
         }
       })
-      .then((data) => setSession(data))
+      .then((data) => {
+        setSession(data);
+        fetchCart(); // 🔄 Recargar carrito al obtener la sesión exitosamente
+      })
       .catch((err) => setError(err.message));
-  }, [sessionId, token]);
+  }, [sessionId, token, fetchCart]);
 
   const animation = {
     initial: { opacity: 0, y: 20 },
@@ -95,11 +100,12 @@ export default function Success() {
             Monto total: ${(session.amount_total / 100).toFixed(2)}{' '}
             <span className="uppercase">{session.currency}</span>
           </p>
+
           <Button
             onClick={() => navigate('/')}
-            className="flex items-center gap-2 mx-auto"
+            className="mt-2 flex items-center gap-2"
           >
-            <House size={20} weight="bold" />
+            <House size={20} />
             Volver al inicio
           </Button>
         </CardContent>

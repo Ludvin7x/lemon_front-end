@@ -1,115 +1,170 @@
-import { useEffect, useState } from 'react';
-import { useSearchParams, useNavigate } from 'react-router-dom';
-import { useUser } from '@/contexts/UserContext';
-import { useCart } from '@/contexts/CartContext';
-import { CheckCircle, WarningCircle, Hourglass, House } from 'phosphor-react';
-import { Card, CardContent } from '@/components/ui/card';
-import { motion } from 'framer-motion';
-import { Button } from '@/components/ui/button';
+import { createContext, useContext, useEffect, useState } from "react";
+import { useUser } from "./UserContext";
 
-export default function Success() {
-  const [searchParams] = useSearchParams();
-  const navigate = useNavigate();
-  const sessionId = searchParams.get('session_id');
-  const [session, setSession] = useState(null);
-  const [error, setError] = useState(null);
+const CartContext = createContext();
+export const useCart = () => useContext(CartContext);
+
+export const CartProvider = ({ children }) => {
   const { token } = useUser();
-  const { fetchCart } = useCart();
+  const [cart, setCart] = useState([]);
+  const [loading, setLoading] = useState(false);
 
-  useEffect(() => {
-    if (!sessionId) {
-      setError('No se encontró la sesión de pago.');
-      return;
-    }
+  const API_URL = `${import.meta.env.VITE_API_URL}/api/cart/`;
 
-    if (!token) {
-      setError('No estás autenticado.');
-      return;
-    }
+  // Cargar carrito desde la API
+  const fetchCart = async () => {
+    if (!token) return;
 
-    const API_URL = import.meta.env.VITE_API_URL;
-
-    fetch(`${API_URL}/api/checkout/session/${sessionId}`, {
-      method: 'GET',
+    setLoading(true);
+    try {
+      const res = await fetch(API_URL, {
       headers: {
-        'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,
       },
-    })
-      .then(async (res) => {
-        const contentType = res.headers.get('content-type');
-        if (!res.ok) {
-          const text = await res.text();
-          throw new Error(`Error: ${text}`);
-        }
-        if (contentType && contentType.includes('application/json')) {
-          return res.json();
-        } else {
-          const text = await res.text();
-          throw new Error(`Respuesta inesperada: ${text}`);
-        }
-      })
-      .then((data) => {
-        setSession(data);
-        fetchCart(); // 🔄 Recargar carrito al obtener la sesión exitosamente
-      })
-      .catch((err) => setError(err.message));
-  }, [sessionId, token, fetchCart]);
+      });
 
-  const animation = {
-    initial: { opacity: 0, y: 20 },
-    animate: { opacity: 1, y: 0 },
-    transition: { duration: 0.4 },
+      if (res.ok) {
+        const data = await res.json();
+        if (data && Array.isArray(data.results)) {
+          setCart(data.results);
+        } else {
+          setCart([]);
+        }
+      } else {
+        console.error("Error al obtener el carrito");
+        }
+    } catch (error) {
+      console.error("Error en fetchCart:", error);
+    } finally {
+      setLoading(false);
+    }
   };
 
-  if (error) {
-    return (
-      <motion.div className="container mx-auto max-w-lg mt-10" {...animation}>
-        <Card className="bg-red-100 dark:bg-red-950 border border-red-300 dark:border-red-800 text-red-700 dark:text-red-300 p-6 flex items-center gap-3">
-          <WarningCircle size={32} weight="bold" />
-          <p className="text-lg font-semibold">Error: {error}</p>
-        </Card>
-      </motion.div>
-    );
-  }
+  const addToCart = async (item, quantity = 1) => {
+    const existingItem = cart.find((i) => i.menuitem.id === item.id);
 
-  if (!session) {
-    return (
-      <motion.div className="container mx-auto max-w-lg mt-10" {...animation}>
-        <Card className="bg-yellow-100 dark:bg-yellow-900 border border-yellow-300 dark:border-yellow-700 text-yellow-700 dark:text-yellow-100 p-6 flex items-center gap-3">
-          <Hourglass size={32} weight="bold" className="animate-spin" />
-          <p className="text-lg font-semibold">Cargando detalles del pago...</p>
-        </Card>
-      </motion.div>
-    );
+    try {
+      const url = existingItem ? `${API_URL}${existingItem.id}/` : API_URL;
+      const method = existingItem ? "PATCH" : "POST";
+      const body = existingItem
+        ? JSON.stringify({ quantity: existingItem.quantity + quantity })
+        : JSON.stringify({ menuitem_id: item.id, quantity });
+
+      const res = await fetch(url, {
+        method,
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body,
+      });
+
+      if (res.ok) {
+        fetchCart();
+        return { ok: true };
+      } else {
+        const errorText = await res.text();
+        console.error(
+          "Error al añadir/actualizar item en el carrito",
+          errorText
+        );
+        return { ok: false, error: errorText };
+      }
+    } catch (error) {
+      console.error("Error en addToCart:", error);
+      return { ok: false, error: error.message };
+    }
+  };
+
+  const setQuantity = async (id, quantity) => {
+    try {
+      const res = await fetch(`${API_URL}${id}/`, {
+        method: "PATCH",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ quantity }),
+      });
+
+      if (res.ok) {
+        fetchCart();
+      } else {
+        console.error("Error al actualizar la cantidad");
+      }
+    } catch (error) {
+      console.error("Error en setQuantity:", error);
+    }
+  };
+
+  const clearCart = async () => {
+    try {
+      const res = await fetch(`${API_URL}clear/`, {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (!res.ok) throw new Error("Error al vaciar el carrito");
+      setCart([]);
+    } catch (error) {
+      console.error("Error al vaciar carrito", error);
+    }
+  };
+
+  const resetCart = () => {
+    setCart([]);
+  };
+
+  const totalItems = Array.isArray(cart)
+    ? cart.reduce((acc, i) => acc + i.quantity, 0)
+    : 0;
+
+  const totalPrice = Array.isArray(cart)
+    ? cart.reduce((acc, i) => acc + i.unit_price * i.quantity, 0)
+    : 0;
+
+  useEffect(() => {
+    fetchCart();
+  }, [token]);
+
+  const removeFromCart = async (id) => {
+    try {
+      const res = await fetch(`${API_URL}${id}/`, {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (res.ok) {
+        fetchCart();
+      } else {
+        console.error("Error al eliminar el item del carrito");
+      }
+    } catch (error) {
+      console.error("Error en removeFromCart:", error);
   }
+  };
+
 
   return (
-    <motion.div className="container mx-auto max-w-lg mt-10" {...animation}>
-      <Card className="bg-white dark:bg-zinc-900 text-center shadow-md">
-        <CardContent className="p-8">
-          <CheckCircle size={48} weight="bold" className="mx-auto mb-4 text-green-600 dark:text-green-400" />
-          <h1 className="text-3xl font-bold mb-2 text-gray-900 dark:text-gray-100">Pago exitoso</h1>
-          <p className="text-lg text-gray-700 dark:text-gray-300 mb-4">
-            Gracias por tu compra,{' '}
-            <span className="font-semibold">
-              {session.customer_details?.email}
-            </span>
-          </p>
-          <p className="text-xl font-semibold text-gray-900 dark:text-white mb-6">
-            Monto total: ${(session.amount_total / 100).toFixed(2)}{' '}
-            <span className="uppercase">{session.currency}</span>
-          </p>
-
-          <Button
-            onClick={() => navigate('/')}
-            className="mt-2 flex items-center gap-2"
-          >
-            <House size={20} />
-            Volver al inicio
-          </Button>
-        </CardContent>
-      </Card>
-    </motion.div>
+    <CartContext.Provider
+      value={{
+        cart,
+        loading,
+        addToCart,
+        removeFromCart,
+        setQuantity,
+        clearCart,
+        resetCart,
+        totalItems,
+        totalPrice,
+        fetchCart,
+      }}
+    >
+      {children}
+    </CartContext.Provider>
   );
-}
+};
