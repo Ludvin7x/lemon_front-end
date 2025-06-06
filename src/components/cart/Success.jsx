@@ -14,7 +14,7 @@ export default function Success() {
   const [session, setSession] = useState(null);
   const [error, setError] = useState(null);
   const { token } = useUser();
-  const { fetchCart } = useCart();
+  const { resetCart } = useCart();
 
   useEffect(() => {
     if (!sessionId) {
@@ -51,10 +51,10 @@ export default function Success() {
       })
       .then((data) => {
         setSession(data);
-        fetchCart(); // 🔄 Recargar carrito al obtener la sesión exitosamente
+        resetCart();
       })
       .catch((err) => setError(err.message));
-  }, [sessionId, token, fetchCart]);
+  }, [sessionId, token, resetCart]);
 
   const animation = {
     initial: { opacity: 0, y: 20 },
