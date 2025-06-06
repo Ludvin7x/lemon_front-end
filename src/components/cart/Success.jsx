@@ -87,7 +87,7 @@ export default function Success() {
   return (
     <motion.div className="container mx-auto max-w-lg mt-10" {...animation}>
       <Card className="bg-white dark:bg-zinc-900 text-center shadow-md">
-        <CardContent className="p-8">
+        <CardContent className="p-8 flex flex-col items-center"> {/* Added flex-col and items-center */}
           <CheckCircle size={48} weight="bold" className="mx-auto mb-4 text-green-600 dark:text-green-400" />
           <h1 className="text-3xl font-bold mb-2 text-gray-900 dark:text-gray-100">Pago exitoso</h1>
           <p className="text-lg text-gray-700 dark:text-gray-300 mb-4">
@@ -103,7 +103,7 @@ export default function Success() {
 
           <Button
             onClick={() => navigate('/')}
-            className="mt-2 flex items-center gap-2"
+            className="mt-2 flex items-center gap-2" // The flex and gap are for content *within* the button, not its position on the page
           >
             <House size={20} />
             Volver al inicio

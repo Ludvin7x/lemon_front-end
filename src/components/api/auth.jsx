@@ -2,14 +2,12 @@ const API_URL = import.meta.env.VITE_API_URL.replace(/\/+$/, '');
 
 const url = (path) => `${API_URL}/${path.replace(/^\/+/, '')}`;
 
-// Logout: elimina tokens y datos del almacenamiento local
 export function logout() {
   localStorage.removeItem('accessToken');
   localStorage.removeItem('refreshToken');
   localStorage.removeItem('user');
 }
 
-// Login: obtiene tokens (access + refresh) y los guarda localmente
 export async function login(username, password) {
   const res = await fetch(url('/auth/token/'), {
     method: 'POST',
@@ -28,7 +26,6 @@ export async function login(username, password) {
   return data;
 }
 
-// Refrescar el token de acceso usando el refresh token
 export async function refreshAccessToken(refreshToken) {
   const res = await fetch(url('/auth/token/refresh/'), {
     method: 'POST',
@@ -45,31 +42,13 @@ export async function refreshAccessToken(refreshToken) {
   return data.access;
 }
 
-// Wrapper para hacer fetch con token de acceso y refrescar si es necesario
-export async function fetchWithAuth(path, options = {}) {
-  let accessToken = localStorage.getItem('accessToken');
-  const refreshToken = localStorage.getItem('refreshToken');
-
+export async function fetchWithAuth(path, options = {}, accessToken) {
   options.headers = {
     ...(options.headers || {}),
     Authorization: `Bearer ${accessToken}`,
   };
 
-  let res = await fetch(url(path), options);
-
-  if (res.status === 401 && refreshToken) {
-    // Intentar refrescar el token
-    try {
-      accessToken = await refreshAccessToken(refreshToken);
-
-      options.headers.Authorization = `Bearer ${accessToken}`;
-      res = await fetch(url(path), options);
-    } catch (error) {
-      // Si falla refrescar token, limpiar todo y lanzar error
-      logout();
-      throw new Error('Sesión expirada. Por favor, ingresa de nuevo.');
-    }
-  }
+  const res = await fetch(url(path), options);
 
   if (!res.ok) {
     const errorData = await res.json().catch(() => ({}));
@@ -79,12 +58,10 @@ export async function fetchWithAuth(path, options = {}) {
   return res.json();
 }
 
-// Obtener datos del usuario autenticado
-export async function getUserInfo() {
-  return fetchWithAuth('/api/users/me/');
+export async function getUserInfo(accessToken) {
+  return fetchWithAuth('/api/users/me/', {}, accessToken);
 }
 
-// Registro: crea nuevo usuario
 export async function register({ username, email, password, password2, first_name, last_name }) {
   const res = await fetch(url('/api/auth/register/'), {
     method: 'POST',
