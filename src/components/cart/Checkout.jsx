@@ -11,7 +11,6 @@ import { loadStripe } from '@stripe/stripe-js';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const API_URL = import.meta.env.VITE_API_URL.replace(/\/+$/, '');
-const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY);
 
 export default function Checkout() {
   const { cart } = useCart();
@@ -54,7 +53,9 @@ export default function Checkout() {
       }
 
       const data = await res.json();
-      const stripe = await stripePromise;
+
+      // Solo carga Stripe cuando el usuario hace clic
+      const stripe = await loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY);
       if (!stripe) throw new Error('Error al inicializar Stripe.');
 
       const { error: stripeError } = await stripe.redirectToCheckout({
