@@ -59,8 +59,8 @@ export default function Login() {
   }
 
   return (
-    <div className="max-w-md mx-auto p-6 shadow-lg rounded-xl bg-white">
-      <h1 className="text-2xl font-bold text-center mb-6">Login</h1>
+    <div className="max-w-md mx-auto mt-20 p-6 rounded-2xl shadow-xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800">
+      <h1 className="text-3xl font-semibold text-center mb-6 text-zinc-900 dark:text-zinc-100">Login</h1>
 
       {errorMsg && (
         <Alert variant="destructive" className="mb-4">
@@ -77,7 +77,10 @@ export default function Login() {
 
       <form onSubmit={handleSubmit} aria-busy={loading} aria-live="polite">
         <div className="mb-4">
-          <Label htmlFor="username" className="flex items-center gap-2">
+          <Label
+            htmlFor="username"
+            className="flex items-center gap-2 text-zinc-700 dark:text-zinc-300"
+          >
             <User size={20} />
             Usuario
           </Label>
@@ -90,11 +93,15 @@ export default function Login() {
             autoFocus
             disabled={loading}
             aria-disabled={loading}
+            className="bg-zinc-100 dark:bg-zinc-800 border-zinc-300 dark:border-zinc-700 text-zinc-900 dark:text-zinc-100 placeholder-zinc-400 dark:placeholder-zinc-500"
           />
         </div>
 
         <div className="mb-6">
-          <Label htmlFor="password" className="flex items-center gap-2">
+          <Label
+            htmlFor="password"
+            className="flex items-center gap-2 text-zinc-700 dark:text-zinc-300"
+          >
             <Lock size={20} />
             Contraseña
           </Label>
@@ -108,12 +115,12 @@ export default function Login() {
               required
               disabled={loading}
               aria-disabled={loading}
-              className="pr-10"
+              className="pr-10 bg-zinc-100 dark:bg-zinc-800 border-zinc-300 dark:border-zinc-700 text-zinc-900 dark:text-zinc-100 placeholder-zinc-400 dark:placeholder-zinc-500"
             />
             <button
               type="button"
               onClick={() => setShowPassword((prev) => !prev)}
-              className="absolute inset-y-0 right-2 flex items-center text-muted-foreground hover:text-foreground focus:outline-none"
+              className="absolute inset-y-0 right-2 flex items-center text-zinc-500 dark:text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-200 focus:outline-none"
               tabIndex={-1}
               aria-label={showPassword ? "Ocultar contraseña" : "Mostrar contraseña"}
             >
@@ -122,13 +129,17 @@ export default function Login() {
           </div>
         </div>
 
-        <Button type="submit" className="w-full mb-3" disabled={loading}>
+        <Button
+          type="submit"
+          className="w-full mb-3 bg-indigo-600 hover:bg-indigo-500 text-white"
+          disabled={loading}
+        >
           {loading ? "Ingresando…" : "Login"}
         </Button>
 
         <Button
           variant="outline"
-          className="w-full"
+          className="w-full border-zinc-300 dark:border-zinc-600 text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800"
           type="button"
           onClick={() => setIsSignup(true)}
           disabled={loading}

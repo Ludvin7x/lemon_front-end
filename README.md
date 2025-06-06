@@ -54,18 +54,13 @@ These enhancements help users find relevant information faster and navigate the 
 
 ---
 
-## Screenshots
-
-_(Add screenshots here as needed)_
-
----
 
 ## Tech Stack
 
 | Category           | Stack                                |
 | ------------------ | ------------------------------------ |
 | Language           | JavaScript (ES2022)                  |
-| Framework          | React 18 + Vite                      |
+| Framework          | React 19 + Vite                      |
 | Routing            | React Router DOM 7                   |
 | State Management   | Context API + `useReducer`           |
 | API Requests       | Fetch                                |

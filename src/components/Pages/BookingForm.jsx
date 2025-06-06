@@ -83,8 +83,8 @@ function BookingForm() {
   }
 
   return (
-    <div className="max-w-lg mx-auto p-6 bg-gray-900 rounded-lg shadow-lg mt-12">
-      <h1 className="text-3xl font-semibold text-center text-white mb-8">
+    <div className="max-w-lg mx-auto p-6 bg-white dark:bg-gray-900 rounded-lg shadow-lg mt-12">
+      <h1 className="text-3xl font-semibold text-center text-gray-900 dark:text-white mb-8">
         Make a Reservation
       </h1>
 
@@ -93,7 +93,7 @@ function BookingForm() {
         <div>
           <label
             htmlFor="res-date"
-            className="flex items-center gap-2 text-white font-medium mb-2"
+            className="flex items-center gap-2 text-gray-900 dark:text-white font-medium mb-2"
           >
             <CalendarBlank size={20} weight="bold" />
             Choose date
@@ -104,7 +104,7 @@ function BookingForm() {
             min={currentDate}
             value={date}
             onChange={handleDateChange}
-            className="w-full rounded-md border border-gray-700 bg-gray-800 text-white px-4 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            className="w-full rounded-md border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white px-4 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500"
           />
         </div>
 
@@ -112,7 +112,7 @@ function BookingForm() {
         <div>
           <label
             htmlFor="res-time"
-            className="flex items-center gap-2 text-white font-medium mb-2"
+            className="flex items-center gap-2 text-gray-900 dark:text-white font-medium mb-2"
           >
             <Clock size={20} weight="bold" />
             Choose time
@@ -120,7 +120,7 @@ function BookingForm() {
           {loadingTimes ? (
             <div className="flex justify-center">
               <svg
-                className="animate-spin h-6 w-6 text-indigo-500"
+                className="animate-spin h-6 w-6 text-indigo-600 dark:text-indigo-400"
                 xmlns="http://www.w3.org/2000/svg"
                 fill="none"
                 viewBox="0 0 24 24"
@@ -145,7 +145,7 @@ function BookingForm() {
               id="res-time"
               value={time}
               onChange={(e) => setTime(e.target.value)}
-              className="w-full rounded-md border border-gray-700 bg-gray-800 text-white px-4 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              className="w-full rounded-md border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white px-4 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500"
             >
               <option value="">-- Select time --</option>
               {availableTimes.map((availableTime, index) => (
@@ -161,7 +161,7 @@ function BookingForm() {
         <div>
           <label
             htmlFor="guests"
-            className="flex items-center gap-2 text-white font-medium mb-2"
+            className="flex items-center gap-2 text-gray-900 dark:text-white font-medium mb-2"
           >
             <UsersThree size={20} weight="bold" />
             Number of guests
@@ -178,7 +178,7 @@ function BookingForm() {
                 setGuest(value);
               }
             }}
-            className="w-full rounded-md border border-gray-700 bg-gray-800 text-white px-4 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            className="w-full rounded-md border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white px-4 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500"
           />
         </div>
 
@@ -186,7 +186,7 @@ function BookingForm() {
         <div>
           <label
             htmlFor="occasion"
-            className="flex items-center gap-2 text-white font-medium mb-2"
+            className="flex items-center gap-2 text-gray-900 dark:text-white font-medium mb-2"
           >
             <Sparkle size={20} weight="bold" />
             Occasion
@@ -195,7 +195,7 @@ function BookingForm() {
             id="occasion"
             value={occasion}
             onChange={(e) => setOccasion(e.target.value)}
-            className="w-full rounded-md border border-gray-700 bg-gray-800 text-white px-4 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            className="w-full rounded-md border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white px-4 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500"
           >
             <option value="Birthday">Birthday</option>
             <option value="Anniversary">Anniversary</option>

@@ -1,7 +1,8 @@
+import React, { useEffect, useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
-import { useEffect, useState } from "react";
 import { CaretLeft, CaretRight } from "phosphor-react";
 import { useSwipeable } from "react-swipeable";
+import { motion, AnimatePresence } from "framer-motion";
 
 function importSlides() {
   const slides = [];
@@ -29,52 +30,73 @@ const boxes = [
   },
 ];
 
+const slideVariants = {
+  enter: (direction) => ({
+    x: direction > 0 ? 300 : -300,
+    opacity: 0,
+  }),
+  center: {
+    x: 0,
+    opacity: 1,
+  },
+  exit: (direction) => ({
+    x: direction < 0 ? 300 : -300,
+    opacity: 0,
+  }),
+};
+
 const HomePage = () => {
   const images = importSlides();
-  const [current, setCurrent] = useState(0);
+  const [[current, direction], setCurrent] = useState([0, 0]);
 
   useEffect(() => {
     const interval = setInterval(() => {
-      setCurrent((prev) => (prev + 1) % images.length);
+      setCurrent(([prev]) => [(prev + 1) % images.length, 1]);
     }, 4000);
     return () => clearInterval(interval);
   }, [images.length]);
 
   const prevSlide = () => {
-    setCurrent((prev) => (prev === 0 ? images.length - 1 : prev - 1));
+    setCurrent(([prev]) => [
+      prev === 0 ? images.length - 1 : prev - 1,
+      -1,
+    ]);
   };
 
   const nextSlide = () => {
-    setCurrent((prev) => (prev + 1) % images.length);
+    setCurrent(([prev]) => [(prev + 1) % images.length, 1]);
   };
 
-  // Configuración para swipe
   const handlers = useSwipeable({
     onSwipedLeft: () => nextSlide(),
     onSwipedRight: () => prevSlide(),
     preventDefaultTouchmoveEvent: true,
-    trackMouse: true, // Opcional: permite probar swipe con mouse
+    trackMouse: true,
   });
 
   return (
     <div className="container mx-auto px-6 py-10">
-      {/* Carrusel con swipe */}
+      {/* Carrusel con swipe y animaciones */}
       <div
         {...handlers}
-        className="relative w-full h-[500px] overflow-hidden rounded-3xl shadow-xl mb-10 select-none touch-none"
+        className="relative w-full h-[500px] overflow-hidden rounded-3xl shadow-xl mb-10 select-none touch-none bg-gray-100 dark:bg-gray-900"
       >
-        {images.map((img, idx) => (
-          <img
-            key={idx}
-            src={img}
-            alt={`Slide ${idx + 1}`}
-            className={`absolute top-0 left-0 w-full h-full object-cover transition-opacity duration-1000 ${
-              idx === current ? "opacity-100" : "opacity-0 pointer-events-none"
-            }`}
+        <AnimatePresence initial={false} custom={direction}>
+          <motion.img
+            key={current}
+            src={images[current]}
+            alt={`Slide ${current + 1}`}
+            custom={direction}
+            variants={slideVariants}
+            initial="enter"
+            animate="center"
+            exit="exit"
+            transition={{ type: "tween", duration: 0.7 }}
+            className="absolute top-0 left-0 w-full h-full object-cover"
             loading="lazy"
             draggable={false}
           />
-        ))}
+        </AnimatePresence>
 
         {/* Flecha izquierda */}
         <button
@@ -99,7 +121,7 @@ const HomePage = () => {
           {images.map((_, idx) => (
             <button
               key={idx}
-              onClick={() => setCurrent(idx)}
+              onClick={() => setCurrent([idx, idx > current ? 1 : -1])}
               aria-label={`Ir a la diapositiva ${idx + 1}`}
               className={`h-4 w-4 rounded-full transition-colors duration-300 ${
                 idx === current ? "bg-white" : "bg-white/50 hover:bg-white"
@@ -114,7 +136,7 @@ const HomePage = () => {
         {boxes.map(({ image, title, text }, idx) => (
           <Card
             key={idx}
-            className="rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl transition-shadow duration-300"
+            className="rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl transition-shadow duration-300 bg-white dark:bg-gray-800"
           >
             <img
               src={image}
@@ -124,8 +146,12 @@ const HomePage = () => {
               draggable={false}
             />
             <CardContent className="p-6 space-y-3">
-              <h3 className="text-xl font-semibold text-gray-900">{title}</h3>
-              <p className="text-gray-600 text-base leading-relaxed">{text}</p>
+              <h3 className="text-xl font-semibold text-gray-900 dark:text-gray-100">
+                {title}
+              </h3>
+              <p className="text-gray-600 dark:text-gray-300 text-base leading-relaxed">
+                {text}
+              </p>
             </CardContent>
           </Card>
         ))}
