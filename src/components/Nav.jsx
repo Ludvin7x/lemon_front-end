@@ -2,17 +2,35 @@ import { useEffect, useState, useRef } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import logo from "/img/logo.png";
 import { ShoppingCart, List, X, ChevronDown } from "lucide-react";
+import { Sun, Moon } from "phosphor-react";
 import { useUser } from "../contexts/UserContext";
 import { useCart } from "../contexts/CartContext";
 
 export default function NavigationBar() {
   const { totalItems, resetCart } = useCart();
-  const { user, logout } = useUser(); // Aquí solo user y logout
+  const { user, logout } = useUser(); 
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
+  const [isDark, setIsDark] = useState(false);
+
   const navigate = useNavigate();
   const userMenuRef = useRef(null);
+
+  useEffect(() => {
+    // Detectar tema guardado o preferencia sistema
+    const savedTheme = localStorage.getItem("theme");
+    if (
+      savedTheme === "dark" ||
+      (!savedTheme && window.matchMedia("(prefers-color-scheme: dark)").matches)
+    ) {
+      setIsDark(true);
+      document.documentElement.classList.add("dark");
+    } else {
+      setIsDark(false);
+      document.documentElement.classList.remove("dark");
+    }
+  }, []);
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 10);
@@ -20,7 +38,6 @@ export default function NavigationBar() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  // Cerrar el menú de usuario si clic afuera
   useEffect(() => {
     function handleClickOutside(event) {
       if (
@@ -33,6 +50,18 @@ export default function NavigationBar() {
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
+
+  const toggleTheme = () => {
+    if (isDark) {
+      document.documentElement.classList.remove("dark");
+      localStorage.setItem("theme", "light");
+      setIsDark(false);
+    } else {
+      document.documentElement.classList.add("dark");
+      localStorage.setItem("theme", "dark");
+      setIsDark(true);
+    }
+  };
 
   const handleLogout = () => {
     logout(); 
@@ -91,6 +120,19 @@ export default function NavigationBar() {
 
           {/* Right Side */}
           <div className="flex items-center space-x-6 relative">
+            {/* Botón cambio de tema */}
+            <button
+              onClick={toggleTheme}
+              aria-label="Toggle dark mode"
+              className="p-2 rounded-md hover:bg-green-100 dark:hover:bg-green-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-green-500 transition"
+            >
+              {isDark ? (
+                <Sun size={24} weight="bold" className="text-yellow-400" />
+              ) : (
+                <Moon size={24} weight="bold" className="text-gray-700" />
+              )}
+            </button>
+
             <NavLink
               to="/Cart"
               className="relative text-gray-700 dark:text-gray-300 hover:text-green-600 dark:hover:text-green-400 focus:outline-none focus-visible:ring-2 focus-visible:ring-green-500 rounded"
@@ -203,14 +245,7 @@ export default function NavigationBar() {
               >
                 About
               </NavLink>
-              {user ? (
-                <button
-                  onClick={handleLogout}
-                  className="text-left text-red-600 dark:text-red-400 font-medium transition focus:outline-none focus-visible:ring-2 focus-visible:ring-red-500 rounded"
-                >
-                  Logout
-                </button>
-              ) : (
+              {!user && (
                 <NavLink
                   to="/Login"
                   className={navLinkClass}
@@ -219,6 +254,37 @@ export default function NavigationBar() {
                   Login
                 </NavLink>
               )}
+              {user && (
+                <button
+                  onClick={() => {
+                    handleLogout();
+                    setMenuOpen(false);
+                  }}
+                  className="text-red-600 dark:text-red-400 font-medium text-left"
+                >
+                  Logout
+                </button>
+              )}
+              {/* Botón cambio tema en móvil */}
+              <button
+                onClick={() => {
+                  toggleTheme();
+                  // No cerramos menú para UX mejor
+                }}
+                className="flex items-center space-x-2 mt-4 p-2 rounded-md hover:bg-green-100 dark:hover:bg-green-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-green-500"
+              >
+                {isDark ? (
+                  <>
+                    <Sun size={20} weight="bold" className="text-yellow-400" />
+                    <span>Light Mode</span>
+                  </>
+                ) : (
+                  <>
+                    <Moon size={20} weight="bold" className="text-gray-700" />
+                    <span>Dark Mode</span>
+                  </>
+                )}
+              </button>
             </nav>
           </div>
         </div>
