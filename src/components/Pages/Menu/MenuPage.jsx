@@ -162,12 +162,6 @@ const MenuPage = () => {
     }
   };
 
-  const handleReset = () => {
-    setSearchTerm("");
-    setSortField(null);
-    setSortDirection("asc");
-  };
-
   if (loading) {
     return (
       <div className="flex flex-col items-center justify-center min-h-[60vh] text-center gap-4 p-6">
@@ -211,7 +205,8 @@ const MenuPage = () => {
         onToggleSort={toggleSort}
       />
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 my-6">
+      {/* Aquí: 2 columnas en móviles pequeños */}
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 my-6">
         {filteredSortedItems.length === 0 ? (
           <div className="col-span-full text-center text-yellow-600 font-medium bg-yellow-100 border border-yellow-300 rounded p-4">
             No items found
