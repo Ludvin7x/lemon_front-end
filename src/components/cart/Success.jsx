@@ -16,6 +16,8 @@ export default function Success() {
   const { token } = useUser();
   const { resetCart } = useCart();
 
+  const API_URL = import.meta.env.VITE_API_URL;
+
   useEffect(() => {
     if (!sessionId) {
       setError('No se encontró la sesión de pago.');
@@ -27,34 +29,46 @@ export default function Success() {
       return;
     }
 
-    const API_URL = import.meta.env.VITE_API_URL;
+    const controller = new AbortController();
 
-    fetch(`${API_URL}/api/checkout/session/${sessionId}`, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`,
-      },
-    })
-      .then(async (res) => {
+    const fetchSession = async () => {
+      try {
+        const res = await fetch(`${API_URL}/api/checkout/session/${sessionId}`, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+          },
+          signal: controller.signal,
+        });
+
         const contentType = res.headers.get('content-type');
         if (!res.ok) {
           const text = await res.text();
           throw new Error(`Error: ${text}`);
         }
-        if (contentType && contentType.includes('application/json')) {
-          return res.json();
+
+        const data = contentType?.includes('application/json')
+          ? await res.json()
+          : await res.text();
+
+        if (typeof data === 'object') {
+          setSession(data);
+          resetCart(); // solo una vez
         } else {
-          const text = await res.text();
-          throw new Error(`Respuesta inesperada: ${text}`);
+          throw new Error(`Respuesta inesperada: ${data}`);
         }
-      })
-      .then((data) => {
-        setSession(data);
-        resetCart();
-      })
-      .catch((err) => setError(err.message));
-  }, [sessionId, token, resetCart]);
+      } catch (err) {
+        if (err.name !== 'AbortError') {
+          setError(err.message);
+        }
+      }
+    };
+
+    fetchSession();
+
+    return () => controller.abort();
+  }, [sessionId, token]); // resetCart intencionalmente fuera
 
   const animation = {
     initial: { opacity: 0, y: 20 },
@@ -87,7 +101,7 @@ export default function Success() {
   return (
     <motion.div className="container mx-auto max-w-lg mt-10" {...animation}>
       <Card className="bg-white dark:bg-zinc-900 text-center shadow-md">
-        <CardContent className="p-8 flex flex-col items-center"> {/* Added flex-col and items-center */}
+        <CardContent className="p-8 flex flex-col items-center">
           <CheckCircle size={48} weight="bold" className="mx-auto mb-4 text-green-600 dark:text-green-400" />
           <h1 className="text-3xl font-bold mb-2 text-gray-900 dark:text-gray-100">Pago exitoso</h1>
           <p className="text-lg text-gray-700 dark:text-gray-300 mb-4">
@@ -103,7 +117,7 @@ export default function Success() {
 
           <Button
             onClick={() => navigate('/')}
-            className="mt-2 flex items-center gap-2" // The flex and gap are for content *within* the button, not its position on the page
+            className="mt-2 flex items-center gap-2"
           >
             <House size={20} />
             Volver al inicio
