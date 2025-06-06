@@ -1,9 +1,10 @@
 import { useEffect, useState } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { useSearchParams, useNavigate } from 'react-router-dom';
 import { useUser } from '@/contexts/UserContext';
-import { CheckCircle, WarningCircle, Hourglass } from 'phosphor-react';
+import { CheckCircle, WarningCircle, Hourglass, House } from 'phosphor-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { motion } from 'framer-motion';
+import { Button } from '@/components/ui/button';
 
 export default function Success() {
   const [searchParams] = useSearchParams();
@@ -11,6 +12,7 @@ export default function Success() {
   const [session, setSession] = useState(null);
   const [error, setError] = useState(null);
   const { token } = useUser();
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (!sessionId) {
@@ -57,10 +59,7 @@ export default function Success() {
 
   if (error) {
     return (
-      <motion.div
-        className="container mx-auto max-w-lg mt-10"
-        {...animation}
-      >
+      <motion.div className="container mx-auto max-w-lg mt-10" {...animation}>
         <Card className="bg-red-100 dark:bg-red-950 border border-red-300 dark:border-red-800 text-red-700 dark:text-red-300 p-6 flex items-center gap-3">
           <WarningCircle size={32} weight="bold" />
           <p className="text-lg font-semibold">Error: {error}</p>
@@ -71,10 +70,7 @@ export default function Success() {
 
   if (!session) {
     return (
-      <motion.div
-        className="container mx-auto max-w-lg mt-10"
-        {...animation}
-      >
+      <motion.div className="container mx-auto max-w-lg mt-10" {...animation}>
         <Card className="bg-yellow-100 dark:bg-yellow-900 border border-yellow-300 dark:border-yellow-700 text-yellow-700 dark:text-yellow-100 p-6 flex items-center gap-3">
           <Hourglass size={32} weight="bold" className="animate-spin" />
           <p className="text-lg font-semibold">Cargando detalles del pago...</p>
@@ -84,10 +80,7 @@ export default function Success() {
   }
 
   return (
-    <motion.div
-      className="container mx-auto max-w-lg mt-10"
-      {...animation}
-    >
+    <motion.div className="container mx-auto max-w-lg mt-10" {...animation}>
       <Card className="bg-white dark:bg-zinc-900 text-center shadow-md">
         <CardContent className="p-8">
           <CheckCircle size={48} weight="bold" className="mx-auto mb-4 text-green-600 dark:text-green-400" />
@@ -98,10 +91,17 @@ export default function Success() {
               {session.customer_details?.email}
             </span>
           </p>
-          <p className="text-xl font-semibold text-gray-900 dark:text-white">
+          <p className="text-xl font-semibold text-gray-900 dark:text-white mb-6">
             Monto total: ${(session.amount_total / 100).toFixed(2)}{' '}
             <span className="uppercase">{session.currency}</span>
           </p>
+          <Button
+            onClick={() => navigate('/')}
+            className="flex items-center gap-2 mx-auto"
+          >
+            <House size={20} weight="bold" />
+            Volver al inicio
+          </Button>
         </CardContent>
       </Card>
     </motion.div>
