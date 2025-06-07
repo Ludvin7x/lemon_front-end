@@ -31,90 +31,76 @@ const MenuPage = () => {
   const navigate = useNavigate();
   const API_URL = import.meta.env.VITE_API_URL;
 
-  // Para evitar peticiones duplicadas si no cambia página ni categoría
   const lastFetchRef = useRef({ page: null, category: null });
-
-  // Cache local para URLs de imágenes por item id
   const imagesCacheRef = useRef({});
 
   const [searchTerm, setSearchTerm] = useState("");
   const [sortField, setSortField] = useState(null);
   const [sortDirection, setSortDirection] = useState("asc");
 
-  // Fetch menu items según página y categoría
-  const fetchMenu = useCallback(
-    async (pageNum = 1, categorySlug = "all") => {
-      // Evitar doble fetch innecesario
-      if (
-        lastFetchRef.current.page === pageNum &&
-        lastFetchRef.current.category === categorySlug
-      ) {
-        return;
-      }
-      lastFetchRef.current = { page: pageNum, category: categorySlug };
+  const fetchMenu = useCallback(async (pageNum = 1, categorySlug = "all") => {
+    if (
+      lastFetchRef.current.page === pageNum &&
+      lastFetchRef.current.category === categorySlug
+    ) return;
 
-      try {
-        setLoading(true);
-        setError(null);
+    lastFetchRef.current = { page: pageNum, category: categorySlug };
+    setLoading(true);
+    setError(null);
 
-        let url = `${API_URL}/api/menu-items/?page=${pageNum}`;
-        if (categorySlug !== "all") url += `&category=${categorySlug}`;
+    try {
+      let url = `${API_URL}/api/menu-items/?page=${pageNum}`;
+      if (categorySlug !== "all") url += `&category=${categorySlug}`;
 
-        const res = await fetch(url);
-        if (!res.ok) throw new Error("Failed to fetch menu");
+      const res = await fetch(url);
+      if (!res.ok) throw new Error("Failed to fetch menu");
 
-        const data = await res.json();
-        setMenuItems(data.results);
-        setTotalPages(Math.ceil(data.count / PAGE_SIZE));
-        setPage(pageNum);
+      const data = await res.json();
+      setMenuItems(data.results);
+      setTotalPages(Math.ceil(data.count / PAGE_SIZE));
+      setPage(pageNum);
 
-        // Obtener imágenes (cache para optimizar)
-        const imgs = await Promise.all(
-          data.results.map(async (item) => {
-            if (imagesCacheRef.current[item.id]) {
-              return { id: item.id, url: imagesCacheRef.current[item.id] };
-            }
-            const categoryName =
-              typeof item.category === "string"
-                ? item.category
-                : item.category?.title || item.category?.slug || "";
-            const query = `${item.title} ${categoryName}`.trim();
-            const url = await getImage(query, item.id);
-            imagesCacheRef.current[item.id] = url;
-            return { id: item.id, url };
-          })
-        );
+      const imgs = await Promise.all(
+        data.results.map(async (item) => {
+          if (imagesCacheRef.current[item.id]) {
+            return { id: item.id, url: imagesCacheRef.current[item.id] };
+          }
+          const categoryName = typeof item.category === "string"
+            ? item.category
+            : item.category?.title || item.category?.slug || "";
+          const query = `${item.title} ${categoryName}`.trim();
+          const url = await getImage(query, item.id);
+          imagesCacheRef.current[item.id] = url;
+          return { id: item.id, url };
+        })
+      );
 
-        setImages((prev) => {
-          const newImages = { ...prev };
-          imgs.forEach(({ id, url }) => (newImages[id] = url));
-          return newImages;
+      setImages((prev) => {
+        const newImages = { ...prev };
+        imgs.forEach(({ id, url }) => (newImages[id] = url));
+        return newImages;
+      });
+
+      setQuantities((prev) => {
+        const newQty = { ...prev };
+        imgs.forEach(({ id }) => {
+          if (!newQty[id]) newQty[id] = 1;
         });
+        return newQty;
+      });
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  }, [API_URL]);
 
-        setQuantities((prev) => {
-          const newQty = { ...prev };
-          imgs.forEach(({ id }) => {
-            if (!newQty[id]) newQty[id] = 1;
-          });
-          return newQty;
-        });
-      } catch (err) {
-        setError(err.message);
-      } finally {
-        setLoading(false);
-      }
-    },
-    [API_URL]
-  );
-
-  // Fetch categorías solo una vez al montar
   useEffect(() => {
     const fetchCategories = async () => {
       try {
         const res = await fetch(`${API_URL}/api/categories/`);
         if (!res.ok) throw new Error("Failed to fetch categories");
         const data = await res.json();
-        // Ajusta aquí si la estructura es distinta (p. ej data o categories)
         setCategories(Array.isArray(data.results) ? data.results : []);
       } catch (err) {
         console.error("Error loading categories:", err);
@@ -123,7 +109,6 @@ const MenuPage = () => {
     fetchCategories();
   }, [API_URL]);
 
-  // Cada vez que cambia categoría, resetear búsqueda, orden y página
   useEffect(() => {
     setSearchTerm("");
     setSortField(null);
@@ -131,7 +116,6 @@ const MenuPage = () => {
     fetchMenu(1, selectedCategory);
   }, [selectedCategory, fetchMenu]);
 
-  // Filtrar y ordenar antes de mostrar
   const filteredSortedItems = menuItems
     .filter((item) =>
       item.title.toLowerCase().includes(searchTerm.trim().toLowerCase())
@@ -140,15 +124,11 @@ const MenuPage = () => {
       if (!sortField) return 0;
       let aVal = sortField === "price" ? Number(a.price) : a.title.toLowerCase();
       let bVal = sortField === "price" ? Number(b.price) : b.title.toLowerCase();
-      if (typeof aVal === "number") {
-        return sortDirection === "asc" ? aVal - bVal : bVal - aVal;
-      }
       return sortDirection === "asc"
-        ? aVal.localeCompare(bVal)
-        : bVal.localeCompare(aVal);
+        ? aVal > bVal ? 1 : -1
+        : aVal < bVal ? 1 : -1;
     });
 
-  // Manejadores UI
   const handleCategorySelect = (slug) => setSelectedCategory(slug);
 
   const handleQuantityChange = (id, value) => {
@@ -161,19 +141,15 @@ const MenuPage = () => {
     const qty = quantities[item.id] || 1;
     const { ok } = await addToCart(item, qty);
     showToast(
-      ok
-        ? `${qty} × ${item.title} added to cart!`
-        : `Failed to add ${item.title} to cart.`,
+      ok ? `${qty} × ${item.title} added to cart!` : `Failed to add ${item.title} to cart.`,
       ok ? "success" : "danger"
     );
   };
 
-  const handleViewMore = (id) => navigate(`/menu/${id}`);
+  const handleViewMore = (item) => navigate("/menu/" + item.id, { state: { item } });
 
   const gotoPage = (p) => {
-    if (p >= 1 && p <= totalPages) {
-      fetchMenu(p, selectedCategory);
-    }
+    if (p >= 1 && p <= totalPages) fetchMenu(p, selectedCategory);
   };
 
   const handleSearchChange = (value) => setSearchTerm(value);
@@ -193,8 +169,7 @@ const MenuPage = () => {
       <div className="flex flex-col items-center justify-center min-h-[60vh] text-center gap-4 p-6">
         <ClockClockwise size={48} weight="duotone" className="text-primary" />
         <p className="text-muted-foreground font-semibold max-w-lg">
-          The backend automatically deactivates after 15 minutes of inactivity
-          and is now waking up. This may take a few seconds…
+          The backend is waking up. This may take a few seconds…
         </p>
         <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin" />
       </div>
@@ -246,13 +221,17 @@ const MenuPage = () => {
               quantity={quantities[item.id] || 1}
               onQuantityChange={handleQuantityChange}
               onAddToCart={handleAddToCart}
-              onViewMore={handleViewMore}
+              onViewMore={() => handleViewMore(item)}
             />
           ))
         )}
       </div>
 
-      <MenuPagination page={page} totalPages={totalPages} onPageChange={gotoPage} />
+      <MenuPagination
+        page={page}
+        totalPages={totalPages}
+        onPageChange={gotoPage}
+      />
     </div>
   );
 };
