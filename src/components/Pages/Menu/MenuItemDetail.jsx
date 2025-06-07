@@ -3,7 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { Spinner, ShoppingCart, ArrowLeft } from "phosphor-react";
 import { getImage } from "../../api/images/getImage";
 import { Button } from "@/components/ui/button"; 
-import { Card, CardContent } from "@/components/ui/card"; card
+import { Card, CardContent } from "@/components/ui/card";
 
 const MenuItemDetail = () => {
   const { id } = useParams();
