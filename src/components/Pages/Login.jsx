@@ -8,6 +8,7 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Spinner } from "@/components/ui/spinner"; // ⚠️ Crea este componente si no lo tienes
 
 import { Eye, EyeSlash, Lock, User } from "phosphor-react";
 
@@ -20,6 +21,7 @@ export default function Login() {
   const [errorMsg, setErrorMsg] = useState("");
   const [successMsg, setSuccessMsg] = useState("");
   const [loading, setLoading] = useState(false);
+  const [redirecting, setRedirecting] = useState(false);
 
   const { login } = useUser();
   const navigate = useNavigate();
@@ -27,6 +29,7 @@ export default function Login() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (loading) return;
+
     setErrorMsg("");
     setSuccessMsg("");
     setLoading(true);
@@ -34,6 +37,7 @@ export default function Login() {
     try {
       await login({ username, password });
       setSuccessMsg(`Welcome, ${username}! Redirecting…`);
+      setRedirecting(true);
       setTimeout(() => navigate("/"), 1200);
     } catch (err) {
       setErrorMsg(err?.message || "Unexpected error. Please try again.");
@@ -68,6 +72,7 @@ export default function Login() {
           <AlertDescription>{errorMsg}</AlertDescription>
         </Alert>
       )}
+
       {successMsg && (
         <Alert variant="success" className="mb-4">
           <AlertTitle>Success</AlertTitle>
@@ -87,6 +92,7 @@ export default function Login() {
           <Input
             id="username"
             type="text"
+            autoComplete="username"
             value={username}
             onChange={(e) => setUsername(e.target.value)}
             required
@@ -110,6 +116,7 @@ export default function Login() {
             <Input
               id="password"
               type={showPassword ? "text" : "password"}
+              autoComplete="current-password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
@@ -121,7 +128,6 @@ export default function Login() {
               type="button"
               onClick={() => setShowPassword((prev) => !prev)}
               className="absolute inset-y-0 right-2 flex items-center text-zinc-500 dark:text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-200 focus:outline-none"
-              tabIndex={-1}
               aria-label={showPassword ? "Hide password" : "Show password"}
             >
               {showPassword ? <EyeSlash size={20} /> : <Eye size={20} />}
@@ -134,7 +140,14 @@ export default function Login() {
           className="w-full mb-3 bg-indigo-600 hover:bg-indigo-500 text-white"
           disabled={loading}
         >
-          {loading ? "Logging in…" : "Login"}
+          {loading ? (
+            <span className="flex items-center justify-center gap-2">
+              <Spinner className="w-4 h-4 animate-spin" />
+              {redirecting ? "Redirecting..." : "Logging in…"}
+            </span>
+          ) : (
+            "Login"
+          )}
         </Button>
 
         <Button
