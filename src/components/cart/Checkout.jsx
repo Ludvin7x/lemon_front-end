@@ -36,9 +36,9 @@ export default function Checkout() {
 
     try {
       const accessToken = localStorage.getItem('accessToken');
-      if (!accessToken) throw new Error('No estás autenticado.');
+      if (!accessToken) throw new Error('You are not authenticated.');
 
-      const res = await fetch(`${API_URL}/api/checkout/create-session/`, {
+      const response = await fetch(`${API_URL}/api/checkout/create-session/`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -47,26 +47,19 @@ export default function Checkout() {
         body: JSON.stringify({}),
       });
 
-      if (!res.ok) {
-        const errorData = await res.json().catch(() => ({}));
-        throw new Error(errorData.error || 'Error al crear la sesión de pago.');
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.error || 'Failed to create checkout session.');
       }
 
-      const data = await res.json();
-
-      // Solo carga Stripe cuando el usuario hace clic
+      const { id } = await response.json();
       const stripe = await loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY);
-      if (!stripe) throw new Error('Error al inicializar Stripe.');
+      if (!stripe) throw new Error('Failed to initialize Stripe.');
 
-      const { error: stripeError } = await stripe.redirectToCheckout({
-        sessionId: data.id,
-      });
-
-      if (stripeError) {
-        throw new Error(stripeError.message);
-      }
+      const { error: stripeError } = await stripe.redirectToCheckout({ sessionId: id });
+      if (stripeError) throw new Error(stripeError.message);
     } catch (err) {
-      setError(err.message || 'Error inesperado.');
+      setError(err.message || 'Unexpected error.');
     } finally {
       setLoading(false);
     }
@@ -84,7 +77,7 @@ export default function Checkout() {
           role="alert"
         >
           <WarningCircle size={28} weight="bold" />
-          Tu carrito está vacío.
+          Your cart is currently empty.
         </div>
       </motion.div>
     );
@@ -103,7 +96,7 @@ export default function Checkout() {
         animate={{ y: 0, opacity: 1 }}
       >
         <ShoppingCart size={32} weight="bold" />
-        Resumen del pedido
+        Order Summary
       </motion.h2>
 
       <AnimatePresence>
@@ -132,18 +125,18 @@ export default function Checkout() {
           <thead className="bg-gray-100 dark:bg-gray-800">
             <tr>
               <th className="px-6 py-3 text-left text-sm font-semibold text-gray-700 dark:text-gray-300">
-                Producto
+                Product
               </th>
               <th className="px-6 py-3 text-center text-sm font-semibold text-gray-700 dark:text-gray-300">
                 <div className="flex items-center justify-center gap-1">
                   <NumberSquareEight size={18} weight="bold" />
-                  Cantidad
+                  Quantity
                 </div>
               </th>
               <th className="px-6 py-3 text-right text-sm font-semibold text-gray-700 dark:text-gray-300">
                 <div className="flex items-center justify-end gap-1">
                   <CurrencyDollar size={18} weight="bold" />
-                  Precio unitario
+                  Unit Price
                 </div>
               </th>
               <th className="px-6 py-3 text-right text-sm font-semibold text-gray-700 dark:text-gray-300">
@@ -164,7 +157,7 @@ export default function Checkout() {
                 transition={{ delay: 0.1 }}
               >
                 <td className="px-6 py-4 text-gray-900 dark:text-gray-100">
-                  {item.menuitem?.title || 'Producto'}
+                  {item.menuitem?.title || 'Product'}
                 </td>
                 <td className="px-6 py-4 text-center text-gray-700 dark:text-gray-300">
                   {item.quantity}
@@ -201,7 +194,7 @@ export default function Checkout() {
         >
           {loading ? (
             <>
-              Procesando...
+              Processing...
               <svg
                 className="animate-spin h-5 w-5 ml-2 text-white"
                 xmlns="http://www.w3.org/2000/svg"
@@ -227,7 +220,7 @@ export default function Checkout() {
           ) : (
             <>
               <CreditCard size={24} weight="bold" />
-              Pagar con tarjeta
+              Pay with Card
             </>
           )}
         </motion.button>
@@ -241,7 +234,7 @@ export default function Checkout() {
       >
         <img
           src="/img/pagoseguro-stripe.png"
-          alt="Pago seguro con Stripe"
+          alt="Secure payment via Stripe"
           className="max-w-[180px] select-none"
           draggable={false}
         />

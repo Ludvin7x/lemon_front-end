@@ -20,16 +20,17 @@ export default function Success() {
 
   useEffect(() => {
     if (!sessionId) {
-      setError('No se encontró la sesión de pago.');
+      setError('No payment session found.');
       return;
     }
 
     if (!token) {
-      setError('No estás autenticado.');
+      setError('You are not authenticated.');
       return;
     }
 
     const controller = new AbortController();
+    let didReset = false;
 
     const fetchSession = async () => {
       try {
@@ -54,9 +55,12 @@ export default function Success() {
 
         if (typeof data === 'object') {
           setSession(data);
-          resetCart(); // solo una vez
+          if (!didReset) {
+            resetCart();
+            didReset = true;
+          }
         } else {
-          throw new Error(`Respuesta inesperada: ${data}`);
+          throw new Error(`Unexpected response: ${data}`);
         }
       } catch (err) {
         if (err.name !== 'AbortError') {
@@ -68,13 +72,27 @@ export default function Success() {
     fetchSession();
 
     return () => controller.abort();
-  }, [sessionId, token]); // resetCart intencionalmente fuera
+  }, [sessionId, token]);
+
+  // Optional auto-redirect after a few seconds
+  useEffect(() => {
+    if (session) {
+      const timeout = setTimeout(() => navigate('/'), 10000);
+      return () => clearTimeout(timeout);
+    }
+  }, [session]);
 
   const animation = {
     initial: { opacity: 0, y: 20 },
     animate: { opacity: 1, y: 0 },
     transition: { duration: 0.4 },
   };
+
+  const formatAmount = (amount, currency) =>
+    new Intl.NumberFormat('en-US', {
+      style: 'currency',
+      currency: currency.toUpperCase(),
+    }).format(amount / 100);
 
   if (error) {
     return (
@@ -92,7 +110,7 @@ export default function Success() {
       <motion.div className="container mx-auto max-w-lg mt-10" {...animation}>
         <Card className="bg-yellow-100 dark:bg-yellow-900 border border-yellow-300 dark:border-yellow-700 text-yellow-700 dark:text-yellow-100 p-6 flex items-center gap-3">
           <Hourglass size={32} weight="bold" className="animate-spin" />
-          <p className="text-lg font-semibold">Cargando detalles del pago...</p>
+          <p className="text-lg font-semibold">Loading payment details...</p>
         </Card>
       </motion.div>
     );
@@ -103,16 +121,18 @@ export default function Success() {
       <Card className="bg-white dark:bg-zinc-900 text-center shadow-md">
         <CardContent className="p-8 flex flex-col items-center">
           <CheckCircle size={48} weight="bold" className="mx-auto mb-4 text-green-600 dark:text-green-400" />
-          <h1 className="text-3xl font-bold mb-2 text-gray-900 dark:text-gray-100">Pago exitoso</h1>
+          <h1 className="text-3xl font-bold mb-2 text-gray-900 dark:text-gray-100">Payment Successful</h1>
           <p className="text-lg text-gray-700 dark:text-gray-300 mb-4">
-            Gracias por tu compra,{' '}
+            Thank you for your purchase,&nbsp;
             <span className="font-semibold">
               {session.customer_details?.email}
             </span>
           </p>
-          <p className="text-xl font-semibold text-gray-900 dark:text-white mb-6">
-            Monto total: ${(session.amount_total / 100).toFixed(2)}{' '}
-            <span className="uppercase">{session.currency}</span>
+          <p className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
+            Total Amount: {formatAmount(session.amount_total, session.currency)}
+          </p>
+          <p className="text-sm text-gray-500 dark:text-gray-400 mb-6">
+            Session ID: {session.id}
           </p>
 
           <Button
@@ -120,8 +140,12 @@ export default function Success() {
             className="mt-2 flex items-center gap-2"
           >
             <House size={20} />
-            Volver al inicio
+            Return Home
           </Button>
+
+          <p className="text-sm text-gray-400 mt-3">
+            You will be redirected in a few seconds...
+          </p>
         </CardContent>
       </Card>
     </motion.div>

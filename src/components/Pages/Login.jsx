@@ -24,40 +24,36 @@ export default function Login() {
   const { login } = useUser();
   const navigate = useNavigate();
 
-  const resetForm = () => {
-    setUsername("");
-    setPassword("");
-    setErrorMsg("");
-    setSuccessMsg("");
-    setLoading(false);
-  };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (loading) return;
-
     setErrorMsg("");
     setSuccessMsg("");
     setLoading(true);
 
     try {
       await login({ username, password });
-      setSuccessMsg(`¡Bienvenido, ${username}! Redirigiendo…`);
+      setSuccessMsg(`Welcome, ${username}! Redirecting…`);
       setTimeout(() => navigate("/"), 1200);
     } catch (err) {
-      setErrorMsg(
-        err?.message || "Error inesperado. Por favor, intenta nuevamente."
-      );
+      setErrorMsg(err?.message || "Unexpected error. Please try again.");
     } finally {
       setLoading(false);
     }
   };
 
   if (isSignup) {
-    return <SignupForm onCancel={() => {
-      setIsSignup(false);
-      resetForm();
-    }} />;
+    return (
+      <SignupForm
+        onCancel={() => {
+          setIsSignup(false);
+          setErrorMsg("");
+          setSuccessMsg("");
+          setUsername("");
+          setPassword("");
+        }}
+      />
+    );
   }
 
   return (
@@ -72,20 +68,21 @@ export default function Login() {
           <AlertDescription>{errorMsg}</AlertDescription>
         </Alert>
       )}
-
       {successMsg && (
         <Alert variant="success" className="mb-4">
-          <AlertTitle>Éxito</AlertTitle>
+          <AlertTitle>Success</AlertTitle>
           <AlertDescription>{successMsg}</AlertDescription>
         </Alert>
       )}
 
       <form onSubmit={handleSubmit} aria-busy={loading} aria-live="polite">
-        {/* Username */}
         <div className="mb-4">
-          <Label htmlFor="username" className="flex items-center gap-2 text-zinc-700 dark:text-zinc-300">
+          <Label
+            htmlFor="username"
+            className="flex items-center gap-2 text-zinc-700 dark:text-zinc-300"
+          >
             <User size={20} />
-            Usuario
+            Username
           </Label>
           <Input
             id="username"
@@ -100,12 +97,15 @@ export default function Login() {
           />
         </div>
 
-        {/* Password */}
         <div className="mb-6">
-          <Label htmlFor="password" className="flex items-center gap-2 text-zinc-700 dark:text-zinc-300">
+          <Label
+            htmlFor="password"
+            className="flex items-center gap-2 text-zinc-700 dark:text-zinc-300"
+          >
             <Lock size={20} />
-            Contraseña
+            Password
           </Label>
+
           <div className="relative">
             <Input
               id="password"
@@ -121,24 +121,22 @@ export default function Login() {
               type="button"
               onClick={() => setShowPassword((prev) => !prev)}
               className="absolute inset-y-0 right-2 flex items-center text-zinc-500 dark:text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-200 focus:outline-none"
-              aria-label={showPassword ? "Ocultar contraseña" : "Mostrar contraseña"}
               tabIndex={-1}
+              aria-label={showPassword ? "Hide password" : "Show password"}
             >
               {showPassword ? <EyeSlash size={20} /> : <Eye size={20} />}
             </button>
           </div>
         </div>
 
-        {/* Login button */}
         <Button
           type="submit"
           className="w-full mb-3 bg-indigo-600 hover:bg-indigo-500 text-white"
           disabled={loading}
         >
-          {loading ? "Ingresando…" : "Login"}
+          {loading ? "Logging in…" : "Login"}
         </Button>
 
-        {/* Sign up toggle */}
         <Button
           variant="outline"
           className="w-full border-zinc-300 dark:border-zinc-600 text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800"
@@ -146,7 +144,7 @@ export default function Login() {
           onClick={() => setIsSignup(true)}
           disabled={loading}
         >
-          Crear cuenta
+          Sign Up
         </Button>
       </form>
     </div>
