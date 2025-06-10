@@ -6,7 +6,7 @@ import { motion, AnimatePresence } from "framer-motion";
 
 function importSlides() {
   const slides = [];
-  for (let i = 1; i <= 23; i++) {
+  for (let i = 1; i <= 15; i++) {
     slides.push(`/img/Slider/Diapositiva${i}.jpg`);
   }
   return slides;
@@ -15,18 +15,18 @@ function importSlides() {
 const boxes = [
   {
     image: "/img/ensalada.jpg",
-    title: "Ensaladas Frescas",
-    text: "Variedad de ensaladas frescas y saludables para disfrutar en cualquier momento del día.",
+    title: "Fresh Salads",
+    text: "A variety of fresh and healthy salads to enjoy any time of the day.",
   },
   {
     image: "/img/food_carne.jpg",
-    title: "Opciones de Carne",
-    text: "Deliciosas selecciones de carnes para los amantes de los sabores intensos.",
+    title: "Meat Selections",
+    text: "Delicious meat options for those who love rich flavors.",
   },
   {
     image: "/img/lugar.jpg",
-    title: "Ambiente Acogedor",
-    text: "Un lugar acogedor diseñado para disfrutar momentos especiales.",
+    title: "Cozy Ambiance",
+    text: "A welcoming place designed to enjoy special moments.",
   },
 ];
 
@@ -47,45 +47,46 @@ const slideVariants = {
 
 const HomePage = () => {
   const images = importSlides();
-  const [[current, direction], setCurrent] = useState([0, 0]);
+  const [[currentIndex, direction], setCurrentIndex] = useState([0, 0]);
 
   useEffect(() => {
     const interval = setInterval(() => {
-      setCurrent(([prev]) => [(prev + 1) % images.length, 1]);
+      setCurrentIndex(([prev]) => [(prev + 1) % images.length, 1]);
     }, 4000);
     return () => clearInterval(interval);
   }, [images.length]);
 
   const prevSlide = () => {
-    setCurrent(([prev]) => [
+    setCurrentIndex(([prev]) => [
       prev === 0 ? images.length - 1 : prev - 1,
       -1,
     ]);
   };
 
   const nextSlide = () => {
-    setCurrent(([prev]) => [(prev + 1) % images.length, 1]);
+    setCurrentIndex(([prev]) => [(prev + 1) % images.length, 1]);
   };
 
   const handlers = useSwipeable({
-    onSwipedLeft: () => nextSlide(),
-    onSwipedRight: () => prevSlide(),
+    onSwipedLeft: nextSlide,
+    onSwipedRight: prevSlide,
     preventDefaultTouchmoveEvent: true,
     trackMouse: true,
   });
 
   return (
     <div className="container mx-auto px-6 py-10">
-      {/* Carrusel con swipe y animaciones */}
+      {/* Carousel with swipe and animations */}
       <div
         {...handlers}
         className="relative w-full h-[500px] overflow-hidden rounded-3xl shadow-xl mb-10 select-none touch-none bg-gray-100 dark:bg-gray-900"
+        aria-label="Image carousel"
       >
         <AnimatePresence initial={false} custom={direction}>
           <motion.img
-            key={current}
-            src={images[current]}
-            alt={`Slide ${current + 1}`}
+            key={currentIndex}
+            src={images[currentIndex]}
+            alt={`Slide ${currentIndex + 1}`}
             custom={direction}
             variants={slideVariants}
             initial="enter"
@@ -98,45 +99,49 @@ const HomePage = () => {
           />
         </AnimatePresence>
 
-        {/* Flecha izquierda */}
+        {/* Left arrow button */}
         <button
           onClick={prevSlide}
-          aria-label="Anterior"
+          aria-label="Previous slide"
           className="absolute top-1/2 left-4 -translate-y-1/2 rounded-full bg-black bg-opacity-40 p-3 text-white shadow-lg hover:bg-opacity-70 transition"
+          type="button"
         >
           <CaretLeft size={28} weight="bold" />
         </button>
 
-        {/* Flecha derecha */}
+        {/* Right arrow button */}
         <button
           onClick={nextSlide}
-          aria-label="Siguiente"
+          aria-label="Next slide"
           className="absolute top-1/2 right-4 -translate-y-1/2 rounded-full bg-black bg-opacity-40 p-3 text-white shadow-lg hover:bg-opacity-70 transition"
+          type="button"
         >
           <CaretRight size={28} weight="bold" />
         </button>
 
-        {/* Indicadores de puntos */}
+        {/* Pagination dots */}
         <div className="absolute bottom-5 left-1/2 flex -translate-x-1/2 gap-4">
           {images.map((_, idx) => (
             <button
               key={idx}
-              onClick={() => setCurrent([idx, idx > current ? 1 : -1])}
-              aria-label={`Ir a la diapositiva ${idx + 1}`}
+              onClick={() => setCurrentIndex([idx, idx > currentIndex ? 1 : -1])}
+              aria-label={`Go to slide ${idx + 1}`}
               className={`h-4 w-4 rounded-full transition-colors duration-300 ${
-                idx === current ? "bg-white" : "bg-white/50 hover:bg-white"
+                idx === currentIndex ? "bg-white" : "bg-white/50 hover:bg-white"
               }`}
+              type="button"
             />
           ))}
         </div>
       </div>
 
-      {/* Tarjetas con shadcn UI */}
+      {/* Feature cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
         {boxes.map(({ image, title, text }, idx) => (
           <Card
             key={idx}
             className="rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl transition-shadow duration-300 bg-white dark:bg-gray-800"
+            tabIndex={0}
           >
             <img
               src={image}
